@@ -1,7 +1,6 @@
 "use client"
 
 import Link from "next/link"
-import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { Menu, ExternalLink } from "lucide-react"
 
@@ -13,14 +12,21 @@ import {
 } from "@/components/ui/sheet"
 import { ConnectButton } from "@/components/connect-button"
 
-const navLinks = [
+interface NavLink {
+  name: string
+  href: string
+  external?: boolean
+}
+
+const navLinks: NavLink[] = [
   { name: "Home", href: "/" },
-  { name: "Docs", href: "https://docs.celo.org", external: true },
+  { name: "Scan", href: "/scan" },
+  { name: "Rewards", href: "/rewards" },
 ]
 
 export function Navbar() {
   const pathname = usePathname()
-  
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 max-w-screen-2xl items-center justify-between px-4">
@@ -56,9 +62,7 @@ export function Navbar() {
                   </Link>
                 ))}
                 <div className="mt-6 pt-6 border-t">
-                  <Button asChild className="w-full">
-                    <WalletConnectButton />
-                  </Button>
+                  <ConnectButton />
                 </div>
               </nav>
             </SheetContent>
@@ -72,7 +76,7 @@ export function Navbar() {
             </span>
           </Link>
         </div>
-        
+
         {/* Desktop navigation */}
         <nav className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
@@ -91,9 +95,9 @@ export function Navbar() {
               {link.external && <ExternalLink className="h-4 w-4" />}
             </Link>
           ))}
-          
+
           <div className="flex items-center gap-3">
-            <WalletConnectButton />
+            <ConnectButton />
           </div>
         </nav>
       </div>

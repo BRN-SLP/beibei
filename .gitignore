@@ -98,3 +98,11 @@ Thumbs.db
 
 # Turbo
 .turbo
+# Lines to append to the project's .gitignore after scaffolding,
+# to keep internal planning documents OUT of the public git history.
+
+# Internal planning / strategy notes — local only
+PLAN.md
+INTERNAL.md
+.internal-notes/
+.private/

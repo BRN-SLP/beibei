@@ -23,7 +23,7 @@ A modern Celo blockchain application built with Next.js, TypeScript, and Turbore
 This is a monorepo managed by Turborepo with the following structure:
 
 - `apps/web` - Next.js application with embedded UI components and utilities
-- `apps/hardhat` - Smart contract development environment
+- `apps/contracts` - Smart contract development environment
 
 ## Available Scripts
 
