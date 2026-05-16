@@ -47,6 +47,20 @@ export const priceOracleAbi = [
     outputs: [{ name: "", type: "uint256" }],
   },
   {
+    type: "function",
+    name: "SUBMITTER_REWARD",
+    stateMutability: "view",
+    inputs: [],
+    outputs: [{ name: "", type: "uint256" }],
+  },
+  {
+    type: "function",
+    name: "VERIFIER_REWARD",
+    stateMutability: "view",
+    inputs: [],
+    outputs: [{ name: "", type: "uint256" }],
+  },
+  {
     type: "event",
     name: "PriceSubmitted",
     inputs: [

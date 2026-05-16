@@ -11,12 +11,21 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { usePendingRewards } from "@/hooks/usePendingRewards";
+import { useRewardConstants } from "@/hooks/useRewardConstants";
 import { useRewardsActivity } from "@/hooks/useRewardsActivity";
+
+function formatReward(wei: bigint | null): string {
+  if (wei === null) return "—";
+  // Trim trailing zeros so 50000000000000000 → "0.05", not "0.050000000000000000".
+  const s = formatUnits(wei, 18);
+  return s.includes(".") ? s.replace(/0+$/, "").replace(/\.$/, "") : s;
+}
 
 export default function RewardsPage() {
   const { isConnected, address } = useAccount();
   const { pending, refetch, oracleAddress } = usePendingRewards();
   const { activity, loading } = useRewardsActivity();
+  const rewards = useRewardConstants();
 
   if (!isConnected || !address) {
     return (
@@ -109,13 +118,24 @@ export default function RewardsPage() {
         </CardHeader>
         <CardContent className="space-y-2 text-sm text-muted-foreground">
           <p>
-            Each submission earns 0.001 cUSD once it gathers three consistent
-            verifications. Each verification on an accepted submission earns
-            0.0002 cUSD.
+            Each accepted submission earns{" "}
+            <span className="font-medium text-foreground">
+              {formatReward(rewards.submitter)} cUSD
+            </span>{" "}
+            once it gathers three consistent verifications. Each verification
+            on an accepted submission earns{" "}
+            <span className="font-medium text-foreground">
+              {formatReward(rewards.verifier)} cUSD
+            </span>
+            .
           </p>
           <p>
             Rewards accumulate inside the contract until you claim — one
             transaction sweeps the full balance to your wallet.
+          </p>
+          <p className="text-[11px] text-muted-foreground/70">
+            Values are read directly from the deployed PriceOracle, so they
+            always match the active chain.
           </p>
         </CardContent>
       </Card>
