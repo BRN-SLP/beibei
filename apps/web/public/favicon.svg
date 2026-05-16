@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <rect width="64" height="64" rx="14" fill="#0b1220"/>
+  <!-- Barcode stripes -->
+  <g fill="#22d3ee">
+    <rect x="12" y="16" width="3" height="32"/>
+    <rect x="18" y="16" width="2" height="32"/>
+    <rect x="23" y="16" width="4" height="32"/>
+    <rect x="30" y="16" width="2" height="32"/>
+    <rect x="35" y="16" width="3" height="32"/>
+    <rect x="41" y="16" width="2" height="32"/>
+    <rect x="46" y="16" width="4" height="32"/>
+  </g>
+  <!-- Scan beam -->
+  <rect x="8" y="30" width="48" height="3" rx="1.5" fill="#fbbf24" opacity="0.95"/>
+</svg>

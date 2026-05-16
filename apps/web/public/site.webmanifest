@@ -1,0 +1,13 @@
+{
+  "name": "BeiBei",
+  "short_name": "BeiBei",
+  "description": "Crowdsourced product price tracker on Celo",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "/apple-touch-icon.svg", "sizes": "180x180", "type": "image/svg+xml" }
+  ],
+  "theme_color": "#0b1220",
+  "background_color": "#0b1220",
+  "display": "standalone",
+  "start_url": "/"
+}
