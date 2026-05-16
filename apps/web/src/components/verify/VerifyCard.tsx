@@ -63,18 +63,26 @@ export function VerifyCard({ submission }: VerifyCardProps) {
             votes {submission.acceptVotes}-{submission.rejectVotes} of 3
           </span>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2" role="group" aria-label={`Verify submission #${submission.submissionId.toString()}`}>
           <Button
             size="sm"
             variant="outline"
             onClick={() => handle(true)}
             disabled={busy}
+            aria-label={`Accept submission #${submission.submissionId.toString()}`}
+            aria-busy={pending === "accept" || undefined}
             className="flex-1"
           >
             {pending === "accept" ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <Loader2
+                aria-hidden="true"
+                className="mr-2 h-4 w-4 animate-spin motion-reduce:animate-none"
+              />
             ) : (
-              <Check className="mr-2 h-4 w-4 text-emerald-600" />
+              <Check
+                aria-hidden="true"
+                className="mr-2 h-4 w-4 text-emerald-600"
+              />
             )}
             Looks right
           </Button>
@@ -83,12 +91,20 @@ export function VerifyCard({ submission }: VerifyCardProps) {
             variant="outline"
             onClick={() => handle(false)}
             disabled={busy}
+            aria-label={`Reject submission #${submission.submissionId.toString()}`}
+            aria-busy={pending === "reject" || undefined}
             className="flex-1"
           >
             {pending === "reject" ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <Loader2
+                aria-hidden="true"
+                className="mr-2 h-4 w-4 animate-spin motion-reduce:animate-none"
+              />
             ) : (
-              <X className="mr-2 h-4 w-4 text-rose-600" />
+              <X
+                aria-hidden="true"
+                className="mr-2 h-4 w-4 text-rose-600"
+              />
             )}
             Off
           </Button>
