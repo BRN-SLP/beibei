@@ -129,14 +129,21 @@ export function BarcodeScanner({ onDetected }: BarcodeScannerProps) {
         synchronous-from-gesture, which means the video element must
         exist before the tap (we cannot mount it on state change).
 
-        The container is `display:none`'d when not scanning so the idle /
-        manual / error overlays show in its place.
+        Critical: do NOT use `display: none` to hide the container when
+        not scanning. Multiple browsers (including Chrome and Firefox)
+        refuse to attach a MediaStream to a `<video>` whose ancestor is
+        display:none — the stream is requested, the camera light goes
+        on, but `.play()` never fires and the user sees nothing. We
+        collapse the box visually with `h-0 + opacity-0 + border-0`
+        instead, which keeps the video in the layout tree and lets the
+        stream attach reliably.
       */}
       <div
         className={cn(
-          "relative overflow-hidden rounded-md border border-input bg-black",
-          !showViewport && "hidden",
+          "relative overflow-hidden rounded-md border border-input bg-black transition-all",
+          !showViewport && "h-0 opacity-0 border-0",
         )}
+        aria-hidden={!showViewport}
       >
         <video
           ref={videoRef}
