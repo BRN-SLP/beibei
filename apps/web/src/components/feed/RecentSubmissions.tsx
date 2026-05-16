@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/card";
 import { usePriceFeed } from "@/hooks/usePriceFeed";
 import { zoneKeyToGps } from "@/lib/zone";
+import { findSeedLabel } from "@/lib/seed-labels";
 
 const MAX_ROWS = 8;
 
@@ -42,35 +43,58 @@ export function RecentSubmissions() {
         <ul className="divide-y text-sm">
           {records.slice(0, MAX_ROWS).map((r) => {
             const zone = safeZone(r.zoneKey);
+            const meta = findSeedLabel(r.barcode);
             return (
               <li
                 key={r.submissionId.toString()}
                 className="flex flex-col gap-1 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
               >
-                <div className="space-y-1">
-                  <Link
-                    href={`/item/${r.barcode}`}
-                    className="font-mono text-xs hover:underline"
-                  >
-                    {r.barcode}
-                  </Link>
+                <div className="min-w-0 space-y-1">
+                  {meta ? (
+                    <>
+                      <Link
+                        href={`/item/${r.barcode}`}
+                        className="block truncate font-medium hover:underline"
+                      >
+                        <span aria-hidden="true">{meta.flag}</span>{" "}
+                        {meta.label}
+                      </Link>
+                      <p className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
+                        {meta.city}
+                      </p>
+                    </>
+                  ) : (
+                    <Link
+                      href={`/item/${r.barcode}`}
+                      className="block truncate font-mono text-xs hover:underline"
+                    >
+                      {r.barcode}
+                    </Link>
+                  )}
+                </div>
+                <div className="flex flex-row items-center gap-3 sm:flex-col sm:items-end sm:gap-0">
                   <p className="text-base font-semibold tracking-tight">
                     {(Number(r.priceCents) / 100).toFixed(2)}
+                    {meta ? (
+                      <span className="ml-1 text-xs font-normal text-muted-foreground">
+                        {meta.currency}
+                      </span>
+                    ) : null}
                   </p>
-                </div>
-                <div className="text-right text-xs text-muted-foreground">
-                  {zone ? (
+                  <div className="text-right text-[11px] text-muted-foreground">
+                    {zone ? (
+                      <p>
+                        {zone.lat.toFixed(2)}, {zone.lng.toFixed(2)}
+                      </p>
+                    ) : null}
                     <p>
-                      zone {zone.lat.toFixed(2)}, {zone.lng.toFixed(2)}
+                      {r.finalized
+                        ? r.accepted
+                          ? "✓ accepted"
+                          : "✗ rejected"
+                        : `pending ${r.totalVotes}/3`}
                     </p>
-                  ) : null}
-                  <p>
-                    {r.finalized
-                      ? r.accepted
-                        ? "accepted"
-                        : "rejected"
-                      : `pending (${r.totalVotes}/3)`}
-                  </p>
+                  </div>
                 </div>
               </li>
             );

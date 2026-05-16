@@ -18,6 +18,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { RecentSubmissions } from "@/components/feed/RecentSubmissions";
+import { ZoneCoverage } from "@/components/landing/ZoneCoverage";
 import { UserBalance } from "@/components/user-balance";
 
 export default function Home() {
@@ -148,7 +149,7 @@ export default function Home() {
                 <CardTitle className="mt-3 text-lg">03 · Earn cUSD</CardTitle>
               </CardHeader>
               <CardContent className="text-sm text-muted-foreground">
-                Earn 0.001 cUSD per accepted submission and 0.0002 cUSD per
+                Earn 0.05 cUSD per accepted submission and 0.01 cUSD per
                 verification. Sweep your balance to MiniPay or any Celo
                 wallet.
               </CardContent>
@@ -173,7 +174,10 @@ export default function Home() {
             </div>
           </RevealOnScroll>
           <RevealOnScroll delay={0.08}>
-            <RecentSubmissions />
+            <div className="grid gap-5 lg:grid-cols-[1.1fr_1fr]">
+              <RecentSubmissions />
+              <ZoneCoverage />
+            </div>
           </RevealOnScroll>
         </div>
       </section>
