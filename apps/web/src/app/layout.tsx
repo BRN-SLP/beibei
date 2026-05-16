@@ -4,6 +4,7 @@ import './globals.css';
 
 import { Footer } from '@/components/footer';
 import { Navbar } from '@/components/navbar';
+import { Toaster } from '@/components/toaster';
 import { WalletProvider } from "@/components/wallet-provider"
 
 const inter = Inter({
@@ -85,6 +86,7 @@ export default function RootLayout({
               {children}
             </main>
             <Footer />
+            <Toaster />
           </WalletProvider>
         </div>
       </body>
