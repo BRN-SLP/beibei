@@ -145,16 +145,22 @@ export function PriceForm({ barcode, onCancel }: PriceFormProps) {
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-medium">Price</label>
+        <label htmlFor="price-whole" className="text-sm font-medium">
+          Price
+        </label>
         <div className="flex items-center gap-2">
           <input
+            id="price-whole"
             value={priceWhole}
             onChange={(e) => setPriceWhole(e.target.value.replace(/\D/g, ""))}
             placeholder="0"
             inputMode="numeric"
-            className="w-24 rounded-md border border-input bg-background px-3 py-2 text-right font-mono"
+            aria-label="Whole units"
+            className="min-w-0 flex-1 rounded-md border border-input bg-background px-3 py-2 text-right font-mono text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           />
-          <span className="text-muted-foreground">.</span>
+          <span aria-hidden="true" className="text-muted-foreground">
+            .
+          </span>
           <input
             value={priceCents}
             onChange={(e) =>
@@ -162,12 +168,14 @@ export function PriceForm({ barcode, onCancel }: PriceFormProps) {
             }
             placeholder="00"
             inputMode="numeric"
-            className="w-16 rounded-md border border-input bg-background px-3 py-2 font-mono"
+            aria-label="Cents"
+            className="w-14 shrink-0 rounded-md border border-input bg-background px-3 py-2 font-mono text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           />
           <select
             value={currency}
             onChange={(e) => setCurrency(e.target.value as Currency)}
-            className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+            aria-label="Currency"
+            className="w-20 shrink-0 rounded-md border border-input bg-background px-2 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             {CURRENCIES.map((c) => (
               <option key={c} value={c}>
@@ -217,14 +225,19 @@ export function PriceForm({ barcode, onCancel }: PriceFormProps) {
         )}
       </div>
 
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <SubmitStatus
           uploading={uploading}
           submitState={submit.state}
           error={error}
         />
-        <Button onClick={handleSubmit} disabled={!ready} size="lg">
-          <Camera className="mr-2 h-4 w-4" />
+        <Button
+          onClick={handleSubmit}
+          disabled={!ready}
+          size="lg"
+          className="w-full sm:w-auto"
+        >
+          <Camera className="mr-2 h-4 w-4" aria-hidden="true" />
           {busy ? "Submitting…" : "Submit"}
         </Button>
       </div>
