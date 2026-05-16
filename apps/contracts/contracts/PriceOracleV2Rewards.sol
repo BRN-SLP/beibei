@@ -17,13 +17,17 @@ import {PriceOracleStorage} from "./PriceOracleStorage.sol";
 ///         This V2 bumps to 0.05 / 0.01 cUSD without touching storage layout.
 ///
 /// Storage compatibility: inherits the same `PriceOracleStorage` as V1, so
-/// the OpenZeppelin Hardhat upgrades plugin accepts the upgrade. There is
-/// no new state to initialize — `cUSD` and the owner carry over from V1
-/// proxy storage — so the upgrade-safety `missing-initializer` check is
-/// explicitly waived. The plain `constant` bump cannot collide with any
-/// existing storage because constants live in bytecode.
+/// the OpenZeppelin Hardhat upgrades plugin accepts the upgrade. The
+/// `constant` bump lives in bytecode and cannot collide with any existing
+/// storage slot.
+///
+/// Dual-role: works both as an upgrade target (Sepolia path, started life
+/// as V1 → V2 via `upgradeProxy`) AND as the initial implementation for a
+/// fresh proxy (Mainnet path — skip V1 entirely, save one tx). The
+/// `initialize()` below mirrors V1's so `deployProxy` succeeds; on upgrade
+/// the `initializer` modifier blocks re-init, so V1 storage carries over
+/// untouched.
 /// @custom:oz-upgrades-from PriceOracle
-/// @custom:oz-upgrades-unsafe-allow missing-initializer
 contract PriceOracleV2Rewards is
     Initializable,
     UUPSUpgradeable,
@@ -78,6 +82,16 @@ contract PriceOracleV2Rewards is
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
         _disableInitializers();
+    }
+
+    /// @notice Initial proxy setup for a fresh deploy (Mainnet path).
+    ///         Skipped on upgrades — the `initializer` modifier blocks
+    ///         re-init, so V1 storage (owner + cUSD) carries over untouched
+    ///         when used as an `upgradeProxy` target on Sepolia.
+    function initialize(address owner_, address cUSD_) external initializer {
+        if (owner_ == address(0) || cUSD_ == address(0)) revert ZeroAddress();
+        __Ownable_init(owner_);
+        cUSD = cUSD_;
     }
 
     function submitPrice(

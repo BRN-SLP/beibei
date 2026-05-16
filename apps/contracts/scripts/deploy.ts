@@ -1,6 +1,13 @@
 /**
  * UUPS proxy deploy script for the PriceOracle contract.
  *
+ * Deploys `PriceOracleV2Rewards` — the current production contract with
+ * SUBMITTER_REWARD=0.05 cUSD and VERIFIER_REWARD=0.01 cUSD baked in as
+ * bytecode constants. V2Rewards exposes its own `initialize(owner, cUSD)`
+ * so it works as the initial implementation for a fresh proxy (no V1 step
+ * needed). On Sepolia we already followed the older V1 → V2 upgrade path
+ * for the rehearsal; mainnet skips it.
+ *
  * After deploy, fund the reward pool with `scripts/seed-rewards.ts` (or any
  * standard ERC-20 transfer from your deployer).
  *
@@ -34,14 +41,14 @@ async function main() {
 
   // eslint-disable-next-line no-console
   console.log(
-    `\nDeploying PriceOracle proxy on network=${network.name} chainId=${chainId}`,
+    `\nDeploying PriceOracleV2Rewards proxy on network=${network.name} chainId=${chainId}`,
   );
   // eslint-disable-next-line no-console
   console.log(`  deployer = ${deployer.address}`);
   // eslint-disable-next-line no-console
   console.log(`  cUSD     = ${cUSD}\n`);
 
-  const Factory = await ethers.getContractFactory("PriceOracle");
+  const Factory = await ethers.getContractFactory("PriceOracleV2Rewards");
   const proxy = await upgrades.deployProxy(
     Factory,
     [deployer.address, cUSD],
