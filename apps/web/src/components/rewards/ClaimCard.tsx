@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { toast } from "sonner";
 import { formatUnits } from "viem";
 import {
   useAccount,
@@ -52,13 +53,21 @@ export function ClaimCard({ pending, onClaimed }: ClaimCardProps) {
         functionName: "claimRewards",
       });
       setState({ kind: "confirming", txHash: tx });
+      const toastId = toast.loading("Claiming rewards…", {
+        description: `${formatUnits(pending, 18)} cUSD`,
+      });
       await publicClient.waitForTransactionReceipt({ hash: tx });
       setState({ kind: "success" });
+      toast.success("Rewards claimed", {
+        id: toastId,
+        description: "Funds are on their way to your wallet.",
+      });
       await onClaimed();
     } catch (err: unknown) {
       const message =
         err instanceof Error ? err.message.split("\n")[0] : "claim failed";
       setState({ kind: "error", message });
+      toast.error("Claim failed", { description: message });
     }
   }
 

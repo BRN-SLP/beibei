@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { toast } from "sonner";
 import {
   useAccount,
   useChainId,
@@ -53,6 +54,7 @@ export function useSubmitPrice() {
         });
         return;
       }
+      const toastId = toast.loading("Submitting price…");
       try {
         setState({ kind: "awaiting_signature" });
         const tx = await writeContractAsync({
@@ -71,12 +73,20 @@ export function useSubmitPrice() {
         const submissionId =
           extractSubmissionId(receipt.logs, oracleAddress) ?? -1n;
         setState({ kind: "success", submissionId });
+        toast.success("Submission live", {
+          id: toastId,
+          description:
+            submissionId >= 0n
+              ? `id #${submissionId.toString()} — awaiting 3 verifications`
+              : "Awaiting 3 verifications",
+        });
       } catch (err: unknown) {
         const message =
           err instanceof Error
             ? err.message.split("\n")[0]
             : "submission failed";
         setState({ kind: "error", message });
+        toast.error("Submission failed", { id: toastId, description: message });
       }
     },
     [address, chainId, publicClient, writeContractAsync],

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { toast } from "sonner";
 import {
   useChainId,
   usePublicClient,
@@ -39,6 +40,8 @@ export function useVerify() {
         });
         return;
       }
+      const verdict = isValid ? "Accept" : "Reject";
+      const toastId = toast.loading(`${verdict}ing #${submissionId.toString()}…`);
       try {
         setState({ kind: "submitting" });
         const tx = await writeContractAsync({
@@ -51,14 +54,17 @@ export function useVerify() {
         setState({ kind: "confirming", txHash: tx });
         await publicClient.waitForTransactionReceipt({ hash: tx });
         setState({ kind: "success", submissionId });
-      } catch (err: unknown) {
-        setState({
-          kind: "error",
-          message:
-            err instanceof Error
-              ? err.message.split("\n")[0]
-              : "verify failed",
+        toast.success(`Vote recorded`, {
+          id: toastId,
+          description: `${verdict.toLowerCase()}ed #${submissionId.toString()}`,
         });
+      } catch (err: unknown) {
+        const message =
+          err instanceof Error
+            ? err.message.split("\n")[0]
+            : "verify failed";
+        setState({ kind: "error", message });
+        toast.error("Verify failed", { id: toastId, description: message });
       }
     },
     [chainId, publicClient, writeContractAsync],
