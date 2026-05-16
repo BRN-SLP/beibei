@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 
+import { Footer } from '@/components/footer';
 import { Navbar } from '@/components/navbar';
 import { WalletProvider } from "@/components/wallet-provider"
 
@@ -83,6 +84,7 @@ export default function RootLayout({
             <main className="flex-1">
               {children}
             </main>
+            <Footer />
           </WalletProvider>
         </div>
       </body>
