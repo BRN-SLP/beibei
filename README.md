@@ -3,29 +3,25 @@
 > **The on-chain price index for everyday African goods.** Scan a barcode, type the price you paid, your zone verifies it — three matching votes finalize the median and pay micro-rewards in cUSD.
 
 🟢 **Live:** https://beibei-rho.vercel.app
-🧪 **Sepolia PriceOracle proxy:** [`0x9f3dc5C587415Dd551fA49fB0e3be47c66C9685B`](https://celo-sepolia.blockscout.com/address/0x9f3dc5C587415Dd551fA49fB0e3be47c66C9685B) (V2Rewards impl)
+🧪 **Sepolia PriceOracle proxy:** [`0x9f3dc5C587415Dd551fA49fB0e3be47c66C9685B`](https://celo-sepolia.blockscout.com/address/0x9f3dc5C587415Dd551fA49fB0e3be47c66C9685B)
 📖 **Talent App / Proof of Ship May edition** — eligible: MiniPay hook ✓, Celo contract ✓, OS repo ✓
 
 ---
 
 What does a 2 kg bag of Pembe maize flour cost this week in Westlands vs the CBD? What's the median price of cooking oil in Kisumu compared to Mombasa? Until now, that data lived in WhatsApp groups and personal memory. BeiBei moves it on-chain.
 
-A shopper scans a barcode in any kiosk, enters the price they paid (optionally a receipt photo), and their submission goes on-chain as a single transaction. Other users in the same 1.1 km zone tap ✓ or ✗. Three matching positives → consensus → the price is finalized and **everyone involved earns cUSD**: 0.05 cUSD to the submitter, 0.01 cUSD to each of the three verifiers.
+A shopper scans a barcode in any kiosk, enters the price they paid (optionally a receipt photo), and their submission goes on-chain as a single transaction. Other users in the same 1.1 km zone tap ✓ or ✗. Three matching positives → consensus → the price is finalized and the submitter + three verifiers each earn a small cUSD micro-reward from the project's seed pool.
 
 - 📷 **Scan** any UPC/EAN-13 barcode from the camera. iOS Safari user-gesture compliant; falls back to manual entry if the camera is blocked.
 - 🗳️ **Verify** nearby pending submissions with a single tap. Consensus at three matching votes.
-- 💸 **Earn** 0.05 cUSD per accepted submission + 0.01 cUSD per verification of an accepted submission. Sweep accumulated rewards in one claim.
+- 💸 **Earn** cUSD micro-rewards per accepted submission and per verification of an accepted submission. Sweep accumulated rewards in one claim.
 - 📈 **Read** the daily weighted median price for any item over the last 30 days, per zone — useful for travel, budgeting, anti-overcharging.
 
 ## Reward economics
 
-The launch values (`0.001 / 0.0002 cUSD`) were tuned around a Sybil-farm risk model — but they were too small to motivate real shoppers. Real users in KE/NG/GH/ZA need the per-action reward to clear their cognitive cost of acting; Sybil farmers don't. The logics are opposite, so the right move is to bias toward real users and accept a finite seed-pool ceiling as the Sybil cap.
+Mainnet launches with conservative bytecode constants: `SUBMITTER_REWARD = 0.001 cUSD`, `VERIFIER_REWARD = 0.0002 cUSD`. A 10 cUSD seed pool covers roughly 6 250 full consensus cycles — more than enough for May edition bootstrap. The numbers are deliberately small because the project bootstraps from the founder's wallet with no external revenue stream yet, and anti-Sybil gates aren't shipped, so a finite pool ceiling is the de-facto cap.
 
-**V2Rewards (live on Sepolia, ships to Mainnet at launch)** bumps to:
-- `SUBMITTER_REWARD = 0.05 cUSD` (~6.9 KES — visible but not large)
-- `VERIFIER_REWARD = 0.01 cUSD` (~1.4 KES per tap)
-
-UUPS-upgradeable: future V3 ships anti-Sybil gates (wallet-age threshold, daily cap, $1 bond, outlier flag) via `upgradeProxy` reusing the V1 storage gap, without redeploying or migrating data.
+The contract is **UUPS-upgradeable** — Sepolia has the same proxy upgraded to `PriceOracleV2Rewards` (50× bump, impl `0xc429cDDce1143B1AFd3040AE8E1FFb81c2e0A5D2`) as a rehearsal proving the mechanism works. Future V3 will add Sybil-mitigation gates (wallet-age threshold, daily cap, optional bond) via the same `upgradeProxy` pattern reusing the V1 storage gap — no redeploy, no data migration.
 
 ## Architecture
 

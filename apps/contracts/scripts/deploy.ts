@@ -1,12 +1,15 @@
 /**
  * UUPS proxy deploy script for the PriceOracle contract.
  *
- * Deploys `PriceOracleV2Rewards` — the current production contract with
- * SUBMITTER_REWARD=0.05 cUSD and VERIFIER_REWARD=0.01 cUSD baked in as
- * bytecode constants. V2Rewards exposes its own `initialize(owner, cUSD)`
- * so it works as the initial implementation for a fresh proxy (no V1 step
- * needed). On Sepolia we already followed the older V1 → V2 upgrade path
- * for the rehearsal; mainnet skips it.
+ * Deploys `PriceOracle` (V1) with conservative reward economics
+ * (SUBMITTER_REWARD=0.001 cUSD, VERIFIER_REWARD=0.0002 cUSD baked in as
+ * bytecode constants). Small enough that a 10 cUSD seed pool covers
+ * ~6250 finalized cycles — well over MVP needs.
+ *
+ * The Sepolia proxy was already upgraded to PriceOracleV2Rewards (50x
+ * bump) as a UUPS upgrade rehearsal — that bytecode is preserved on
+ * Sepolia as proof the upgrade mechanism works for future V3 (anti-Sybil
+ * gates). Mainnet skips that step entirely and launches on V1.
  *
  * After deploy, fund the reward pool with `scripts/seed-rewards.ts` (or any
  * standard ERC-20 transfer from your deployer).
@@ -41,14 +44,14 @@ async function main() {
 
   // eslint-disable-next-line no-console
   console.log(
-    `\nDeploying PriceOracleV2Rewards proxy on network=${network.name} chainId=${chainId}`,
+    `\nDeploying PriceOracle (V1) proxy on network=${network.name} chainId=${chainId}`,
   );
   // eslint-disable-next-line no-console
   console.log(`  deployer = ${deployer.address}`);
   // eslint-disable-next-line no-console
   console.log(`  cUSD     = ${cUSD}\n`);
 
-  const Factory = await ethers.getContractFactory("PriceOracleV2Rewards");
+  const Factory = await ethers.getContractFactory("PriceOracle");
   const proxy = await upgrades.deployProxy(
     Factory,
     [deployer.address, cUSD],

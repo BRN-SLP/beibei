@@ -149,9 +149,9 @@ export default function Home() {
                 <CardTitle className="mt-3 text-lg">03 · Earn cUSD</CardTitle>
               </CardHeader>
               <CardContent className="text-sm text-muted-foreground">
-                Earn 0.05 cUSD per accepted submission and 0.01 cUSD per
-                verification. Sweep your balance to MiniPay or any Celo
-                wallet.
+                Earn cUSD micro-rewards for every accepted submission and
+                for every verification you cast on someone else&apos;s. Sweep
+                your balance to MiniPay or any Celo wallet.
               </CardContent>
             </Card>
           </RevealOnScroll>
