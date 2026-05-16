@@ -23,6 +23,7 @@ type ScannerError =
   | { reason: "other"; message: string };
 
 type ScannerState =
+  | { kind: "idle" }
   | { kind: "starting" }
   | { kind: "scanning" }
   | { kind: "manual" }
@@ -34,6 +35,13 @@ type ScannerState =
  * webviews and desktop). Caller is notified once a valid digit string is
  * available.
  *
+ * iOS Safari requires `getUserMedia()` to be invoked from a user gesture
+ * (touchend / click handler). Auto-starting on mount works on desktop
+ * Chrome but fails silently / throws on iPhone — so we always start in the
+ * `idle` state and only kick off the camera after the user taps the
+ * "Start camera" button. `runId` bumps on each start request so the
+ * underlying effect re-runs cleanly on retry/restart.
+ *
  * Errors are categorised so the empty state can show actionable guidance
  * (e.g. "Permission blocked — open site settings to re-enable" vs "No
  * camera detected — use manual entry").
@@ -41,11 +49,12 @@ type ScannerState =
 export function BarcodeScanner({ onDetected }: BarcodeScannerProps) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const controlsRef = useRef<IScannerControls | null>(null);
-  const [state, setState] = useState<ScannerState>({ kind: "starting" });
+  const [state, setState] = useState<ScannerState>({ kind: "idle" });
   const [manualValue, setManualValue] = useState("");
+  const [runId, setRunId] = useState(0);
 
   useEffect(() => {
-    if (state.kind === "manual" || state.kind === "error") return;
+    if (runId === 0) return;
 
     let cancelled = false;
     const reader = new BrowserMultiFormatReader();
@@ -53,8 +62,10 @@ export function BarcodeScanner({ onDetected }: BarcodeScannerProps) {
     async function start() {
       if (!videoRef.current) return;
       try {
-        const controls = await reader.decodeFromVideoDevice(
-          undefined,
+        // Prefer rear camera on phones; `ideal` lets desktop / front-only
+        // devices fall back gracefully.
+        const controls = await reader.decodeFromConstraints(
+          { video: { facingMode: { ideal: "environment" } } },
           videoRef.current,
           (result, err, ctrls) => {
             if (cancelled) {
@@ -85,8 +96,23 @@ export function BarcodeScanner({ onDetected }: BarcodeScannerProps) {
     return () => {
       cancelled = true;
       controlsRef.current?.stop();
+      controlsRef.current = null;
     };
-  }, [onDetected, state.kind]);
+  }, [onDetected, runId]);
+
+  const launchCamera = () => {
+    setState({ kind: "starting" });
+    setRunId((id) => id + 1);
+  };
+
+  if (state.kind === "idle") {
+    return (
+      <IdleStart
+        onStart={launchCamera}
+        onManual={() => setState({ kind: "manual" })}
+      />
+    );
+  }
 
   if (state.kind === "manual") {
     return (
@@ -94,7 +120,7 @@ export function BarcodeScanner({ onDetected }: BarcodeScannerProps) {
         value={manualValue}
         onChange={(v) => setManualValue(v.replace(/\D/g, ""))}
         onSubmit={() => manualValue.length >= 8 && onDetected(manualValue)}
-        onBackToCamera={() => setState({ kind: "starting" })}
+        onBackToCamera={launchCamera}
       />
     );
   }
@@ -103,7 +129,7 @@ export function BarcodeScanner({ onDetected }: BarcodeScannerProps) {
     return (
       <CameraEmptyState
         error={state.error}
-        onRetry={() => setState({ kind: "starting" })}
+        onRetry={launchCamera}
         onManual={() => setState({ kind: "manual" })}
       />
     );
@@ -117,6 +143,7 @@ export function BarcodeScanner({ onDetected }: BarcodeScannerProps) {
           className="aspect-video w-full bg-black"
           playsInline
           muted
+          autoPlay
           aria-label="Live camera preview"
         />
         <div
@@ -137,7 +164,7 @@ export function BarcodeScanner({ onDetected }: BarcodeScannerProps) {
           size="sm"
           onClick={() => {
             controlsRef.current?.stop();
-            setState({ kind: "starting" });
+            launchCamera();
           }}
         >
           <RefreshCcw className="mr-2 h-4 w-4" aria-hidden="true" />
@@ -153,6 +180,40 @@ export function BarcodeScanner({ onDetected }: BarcodeScannerProps) {
         >
           <Keyboard className="mr-2 h-4 w-4" aria-hidden="true" />
           Type instead
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+interface IdleStartProps {
+  onStart: () => void;
+  onManual: () => void;
+}
+
+function IdleStart({ onStart, onManual }: IdleStartProps) {
+  return (
+    <div className="space-y-4 rounded-md border border-dashed border-input bg-background p-6 text-center">
+      <div className="mx-auto inline-flex h-12 w-12 items-center justify-center rounded-full bg-muted">
+        <Camera className="h-6 w-6 text-muted-foreground" aria-hidden="true" />
+      </div>
+      <div className="space-y-1">
+        <p className="text-sm font-medium text-foreground">
+          Scan a product barcode
+        </p>
+        <p className="text-xs text-muted-foreground">
+          Your browser will ask for camera permission. On iPhone the camera
+          only opens after you tap.
+        </p>
+      </div>
+      <div className="flex flex-col justify-center gap-2 sm:flex-row">
+        <Button size="sm" onClick={onStart}>
+          <Camera className="mr-2 h-4 w-4" aria-hidden="true" />
+          Tap to start camera
+        </Button>
+        <Button size="sm" variant="ghost" onClick={onManual}>
+          <Keyboard className="mr-2 h-4 w-4" aria-hidden="true" />
+          Type barcode instead
         </Button>
       </div>
     </div>
@@ -261,7 +322,7 @@ const COPY: Record<
   denied: {
     title: "Camera permission blocked",
     body: "Your browser is preventing this page from using the camera. You can still submit prices by typing the barcode digits manually.",
-    hint: "To re-enable: click the camera icon in your address bar → set Camera to “Allow” → reload the page.",
+    hint: "To re-enable on iPhone: Settings → Safari → Camera → Allow. Then reload the page.",
   },
   no_device: {
     title: "No camera detected",
