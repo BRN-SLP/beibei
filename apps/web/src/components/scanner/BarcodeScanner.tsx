@@ -11,6 +11,7 @@ import {
 import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface BarcodeScannerProps {
   onDetected: (text: string) => void;
@@ -30,114 +31,113 @@ type ScannerState =
   | { kind: "error"; error: ScannerError };
 
 /**
- * Camera-driven barcode scanner. Falls back to a manual text input if the
- * browser denies `getUserMedia` or no camera is present (common in MiniPay
- * webviews and desktop). Caller is notified once a valid digit string is
- * available.
+ * Camera-driven barcode scanner with iOS Safari user-gesture compliance.
  *
- * iOS Safari requires `getUserMedia()` to be invoked from a user gesture
- * (touchend / click handler). Auto-starting on mount works on desktop
- * Chrome but fails silently / throws on iPhone — so we always start in the
- * `idle` state and only kick off the camera after the user taps the
- * "Start camera" button. `runId` bumps on each start request so the
- * underlying effect re-runs cleanly on retry/restart.
+ * Critical implementation note: iOS Safari (and to a lesser extent
+ * desktop Safari + Chrome on macOS) requires `getUserMedia()` to be
+ * invoked synchronously inside a user-activation context. The earlier
+ * version routed the camera-start through a state change + `useEffect`,
+ * which lost transient activation by the time the effect ran and the
+ * camera silently never started.
  *
- * Errors are categorised so the empty state can show actionable guidance
- * (e.g. "Permission blocked — open site settings to re-enable" vs "No
- * camera detected — use manual entry").
+ * This version:
+ *   1. Always mounts the `<video>` element so `videoRef.current` is
+ *      live when the user taps "Start camera".
+ *   2. Calls `decodeFromVideoDevice(undefined, videoEl, callback)`
+ *      **synchronously** inside the `onClick` handler. iOS sees the
+ *      gesture, permission flows.
+ *   3. Resolves the returned promise to attach controls + flip to
+ *      "scanning" state. Errors flip to "error" with a categorized hint.
+ *
+ * Falls back to manual barcode entry on permission denial, no device,
+ * or other failures.
  */
 export function BarcodeScanner({ onDetected }: BarcodeScannerProps) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const controlsRef = useRef<IScannerControls | null>(null);
   const [state, setState] = useState<ScannerState>({ kind: "idle" });
   const [manualValue, setManualValue] = useState("");
-  const [runId, setRunId] = useState(0);
 
+  // Stop any active stream on unmount.
   useEffect(() => {
-    if (runId === 0) return;
-
-    let cancelled = false;
-    const reader = new BrowserMultiFormatReader();
-
-    async function start() {
-      if (!videoRef.current) return;
-      try {
-        // Prefer rear camera on phones; `ideal` lets desktop / front-only
-        // devices fall back gracefully.
-        const controls = await reader.decodeFromConstraints(
-          { video: { facingMode: { ideal: "environment" } } },
-          videoRef.current,
-          (result, err, ctrls) => {
-            if (cancelled) {
-              ctrls.stop();
-              return;
-            }
-            if (result) {
-              const text = result.getText();
-              if (text) {
-                ctrls.stop();
-                if ("vibrate" in navigator) navigator.vibrate?.(40);
-                onDetected(text);
-              }
-            }
-            // Suppress NotFoundException — that's just "no barcode in frame".
-            if (err && err.name && err.name !== "NotFoundException") {
-              setState({ kind: "error", error: categorize(err) });
-            }
-          },
-        );
-        controlsRef.current = controls;
-        if (!cancelled) setState({ kind: "scanning" });
-      } catch (err: unknown) {
-        if (!cancelled) setState({ kind: "error", error: categorize(err) });
-      }
-    }
-    start();
     return () => {
-      cancelled = true;
       controlsRef.current?.stop();
       controlsRef.current = null;
     };
-  }, [onDetected, runId]);
+  }, []);
 
-  const launchCamera = () => {
-    setState({ kind: "starting" });
-    setRunId((id) => id + 1);
+  const stopCamera = () => {
+    controlsRef.current?.stop();
+    controlsRef.current = null;
   };
 
-  if (state.kind === "idle") {
-    return (
-      <IdleStart
-        onStart={launchCamera}
-        onManual={() => setState({ kind: "manual" })}
-      />
-    );
-  }
+  /**
+   * Synchronous-from-gesture camera launcher. MUST be called from an
+   * onClick / onTouchEnd handler so iOS Safari preserves the
+   * user-activation context.
+   */
+  const launchCamera = () => {
+    const videoEl = videoRef.current;
+    if (!videoEl) {
+      setState({
+        kind: "error",
+        error: {
+          reason: "other",
+          message: "Video element not mounted yet — please retry.",
+        },
+      });
+      return;
+    }
 
-  if (state.kind === "manual") {
-    return (
-      <ManualEntry
-        value={manualValue}
-        onChange={(v) => setManualValue(v.replace(/\D/g, ""))}
-        onSubmit={() => manualValue.length >= 8 && onDetected(manualValue)}
-        onBackToCamera={launchCamera}
-      />
-    );
-  }
+    setState({ kind: "starting" });
+    stopCamera();
 
-  if (state.kind === "error") {
-    return (
-      <CameraEmptyState
-        error={state.error}
-        onRetry={launchCamera}
-        onManual={() => setState({ kind: "manual" })}
-      />
-    );
-  }
+    const reader = new BrowserMultiFormatReader();
+    reader
+      .decodeFromVideoDevice(undefined, videoEl, (result, err, ctrls) => {
+        if (result) {
+          const text = result.getText();
+          if (text) {
+            ctrls.stop();
+            if ("vibrate" in navigator) navigator.vibrate?.(40);
+            onDetected(text);
+          }
+        }
+        // NotFoundException = no barcode in frame yet (normal during scan).
+        if (err && err.name && err.name !== "NotFoundException") {
+          setState({ kind: "error", error: categorize(err) });
+        }
+      })
+      .then((controls) => {
+        controlsRef.current = controls;
+        setState({ kind: "scanning" });
+      })
+      .catch((err: unknown) => {
+        setState({ kind: "error", error: categorize(err) });
+      });
+  };
+
+  const showViewport =
+    state.kind === "starting" || state.kind === "scanning";
 
   return (
     <div className="space-y-3">
-      <div className="relative overflow-hidden rounded-md border border-input bg-black">
+      {/*
+        Camera viewport. The <video> element is always mounted so that
+        videoRef.current is live the moment the user taps the launch
+        button — iOS Safari needs the call into getUserMedia to be
+        synchronous-from-gesture, which means the video element must
+        exist before the tap (we cannot mount it on state change).
+
+        The container is `display:none`'d when not scanning so the idle /
+        manual / error overlays show in its place.
+      */}
+      <div
+        className={cn(
+          "relative overflow-hidden rounded-md border border-input bg-black",
+          !showViewport && "hidden",
+        )}
+      >
         <video
           ref={videoRef}
           className="aspect-video w-full bg-black"
@@ -158,30 +158,57 @@ export function BarcodeScanner({ onDetected }: BarcodeScannerProps) {
             : "Starting camera…"}
         </p>
       </div>
-      <div className="flex justify-between text-xs">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => {
-            controlsRef.current?.stop();
-            launchCamera();
-          }}
-        >
-          <RefreshCcw className="mr-2 h-4 w-4" aria-hidden="true" />
-          Restart
-        </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => {
-            controlsRef.current?.stop();
-            setState({ kind: "manual" });
-          }}
-        >
-          <Keyboard className="mr-2 h-4 w-4" aria-hidden="true" />
-          Type instead
-        </Button>
-      </div>
+
+      {state.kind === "idle" && (
+        <IdleStart
+          onStart={launchCamera}
+          onManual={() => setState({ kind: "manual" })}
+        />
+      )}
+
+      {state.kind === "manual" && (
+        <ManualEntry
+          value={manualValue}
+          onChange={(v) => setManualValue(v.replace(/\D/g, ""))}
+          onSubmit={() => manualValue.length >= 8 && onDetected(manualValue)}
+          onBackToCamera={launchCamera}
+        />
+      )}
+
+      {state.kind === "error" && (
+        <CameraEmptyState
+          error={state.error}
+          onRetry={launchCamera}
+          onManual={() => setState({ kind: "manual" })}
+        />
+      )}
+
+      {showViewport && (
+        <div className="flex justify-between text-xs">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              stopCamera();
+              launchCamera();
+            }}
+          >
+            <RefreshCcw className="mr-2 h-4 w-4" aria-hidden="true" />
+            Restart
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              stopCamera();
+              setState({ kind: "manual" });
+            }}
+          >
+            <Keyboard className="mr-2 h-4 w-4" aria-hidden="true" />
+            Type instead
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
@@ -301,6 +328,11 @@ function CameraEmptyState({ error, onRetry, onManual }: CameraEmptyStateProps) {
           {copy.hint}
         </p>
       )}
+      {/* Always surface the underlying error text — helps users + us debug
+          unexpected failures in the wild. */}
+      <p className="font-mono text-[10px] text-muted-foreground/70">
+        {error.message}
+      </p>
       <div className="flex flex-col justify-center gap-2 sm:flex-row">
         <Button size="sm" onClick={onManual}>
           <Keyboard className="mr-2 h-4 w-4" aria-hidden="true" />
