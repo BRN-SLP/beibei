@@ -33,21 +33,30 @@ type ScannerState =
 /**
  * Camera-driven barcode scanner with iOS Safari user-gesture compliance.
  *
- * Critical implementation note: iOS Safari (and to a lesser extent
- * desktop Safari + Chrome on macOS) requires `getUserMedia()` to be
- * invoked synchronously inside a user-activation context. The earlier
- * version routed the camera-start through a state change + `useEffect`,
- * which lost transient activation by the time the effect ran and the
- * camera silently never started.
+ * Two non-obvious things this component has to get right:
  *
- * This version:
- *   1. Always mounts the `<video>` element so `videoRef.current` is
- *      live when the user taps "Start camera".
- *   2. Calls `decodeFromVideoDevice(undefined, videoEl, callback)`
- *      **synchronously** inside the `onClick` handler. iOS sees the
- *      gesture, permission flows.
- *   3. Resolves the returned promise to attach controls + flip to
- *      "scanning" state. Errors flip to "error" with a categorized hint.
+ *  1. iOS Safari (and desktop Safari + Chrome on macOS) requires
+ *     `getUserMedia()` to be called **synchronously** inside a
+ *     user-activation context. We call `decodeFromVideoDevice(...)`
+ *     directly from `onClick` — no useEffect, no setTimeout — so the
+ *     gesture is preserved and the permission prompt fires.
+ *
+ *  2. ZXing's `decodeFromVideoDevice` callback fires once per video
+ *     frame with `(result, err, controls)`. The `err` is almost
+ *     always a "no barcode in this frame" exception (`NotFoundException`,
+ *     `NotFoundException2`, `ChecksumException`, `FormatException`, …).
+ *     This is **normal scan noise** and must never flip the UI to an
+ *     error state. Real fatal errors (permission denied, no device,
+ *     camera in use) come back via the returned promise's `.catch`.
+ *
+ *     The previous version filtered only the literal name
+ *     `NotFoundException`, which let `NotFoundException2` through and
+ *     immediately collapsed the viewport, orphaning the MediaStream
+ *     (controls were never captured in the ref, so unmount cleanup
+ *     was a no-op and the camera LED stayed on).
+ *
+ * A launch-generation ref also guards against the race where controls
+ * resolve after the user has tapped Restart or navigated away.
  *
  * Falls back to manual barcode entry on permission denial, no device,
  * or other failures.
@@ -55,12 +64,19 @@ type ScannerState =
 export function BarcodeScanner({ onDetected }: BarcodeScannerProps) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const controlsRef = useRef<IScannerControls | null>(null);
+  // Monotonic generation: bumped on every launch + on unmount.
+  // Any in-flight callbacks / promise resolutions that observe a
+  // stale generation are responsible for stopping their own controls
+  // instead of writing into `controlsRef`.
+  const launchIdRef = useRef(0);
   const [state, setState] = useState<ScannerState>({ kind: "idle" });
   const [manualValue, setManualValue] = useState("");
 
-  // Stop any active stream on unmount.
+  // Stop any active stream on unmount and invalidate any in-flight launch
+  // so a late-arriving controls promise stops its own stream.
   useEffect(() => {
     return () => {
+      launchIdRef.current += 1;
       controlsRef.current?.stop();
       controlsRef.current = null;
     };
@@ -89,12 +105,26 @@ export function BarcodeScanner({ onDetected }: BarcodeScannerProps) {
       return;
     }
 
+    // Mark this launch attempt; if anything else bumps the generation
+    // (unmount, restart, navigation) before our promise resolves, we
+    // know to stop the late-arriving stream instead of leaking it.
+    launchIdRef.current += 1;
+    const myLaunchId = launchIdRef.current;
+
     setState({ kind: "starting" });
     stopCamera();
 
     const reader = new BrowserMultiFormatReader();
     reader
-      .decodeFromVideoDevice(undefined, videoEl, (result, err, ctrls) => {
+      .decodeFromVideoDevice(undefined, videoEl, (result, _err, ctrls) => {
+        // Stale callback from a previous launch — kill its stream and bail.
+        if (myLaunchId !== launchIdRef.current) {
+          ctrls.stop();
+          return;
+        }
+        // Per-frame errors (no barcode this frame, checksum mismatch,
+        // format mismatch) are decode-loop noise. Ignore unconditionally.
+        // Fatal errors surface through the promise's .catch() instead.
         if (result) {
           const text = result.getText();
           if (text) {
@@ -103,16 +133,19 @@ export function BarcodeScanner({ onDetected }: BarcodeScannerProps) {
             onDetected(text);
           }
         }
-        // NotFoundException = no barcode in frame yet (normal during scan).
-        if (err && err.name && err.name !== "NotFoundException") {
-          setState({ kind: "error", error: categorize(err) });
-        }
       })
       .then((controls) => {
+        if (myLaunchId !== launchIdRef.current) {
+          // User restarted / navigated away before camera finished
+          // starting. Don't bind controls — just stop the stream.
+          controls.stop();
+          return;
+        }
         controlsRef.current = controls;
         setState({ kind: "scanning" });
       })
       .catch((err: unknown) => {
+        if (myLaunchId !== launchIdRef.current) return;
         setState({ kind: "error", error: categorize(err) });
       });
   };
