@@ -1,5 +1,6 @@
 "use client";
 
+import { notFound } from "next/navigation";
 import { useChainId } from "wagmi";
 import type { Hex } from "viem";
 import { use } from "react";
@@ -25,19 +26,14 @@ export default function ItemPage({ params }: ItemPageProps) {
   const chainId = useChainId();
   const hexBarcode = normalizeBarcode(barcode);
 
-  const { records, loading } = usePriceFeed(chainId, {
-    barcode: hexBarcode ?? undefined,
-  });
+  // Malformed barcode → render the item-specific 404 instead of an
+  // inline destructive paragraph. The not-found page already explains
+  // the expected format and CTAs the user to /scan.
+  if (!hexBarcode) notFound();
 
-  if (!hexBarcode) {
-    return (
-      <main className="container mx-auto max-w-3xl px-4 py-10">
-        <p className="text-sm text-destructive">
-          Invalid barcode in URL. Expected 12-byte hex with 0x prefix.
-        </p>
-      </main>
-    );
-  }
+  const { records, loading } = usePriceFeed(chainId, {
+    barcode: hexBarcode,
+  });
 
   const accepted = records.filter((r) => r.finalized && r.accepted);
   const pending = records.filter((r) => !r.finalized && r.totalVotes < 3);
