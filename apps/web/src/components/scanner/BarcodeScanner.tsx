@@ -88,6 +88,25 @@ export function BarcodeScanner({ onDetected }: BarcodeScannerProps) {
   };
 
   /**
+   * Tear down the entire camera workflow without starting a new one.
+   *
+   * Bumps `launchIdRef` so any in-flight `decodeFromVideoDevice` promise
+   * resolves into a stale-launch branch (stops its own controls and does
+   * not setState). Also stops any already-captured controls.
+   *
+   * MUST be called on every transition that leaves the camera flow
+   * (error card → manual entry, scanning view → manual entry, etc.).
+   * Otherwise a late-arriving `.then(controls => setState scanning)`
+   * will clobber the manual state and drag the user back into a
+   * black viewport while the leaked stream keeps the camera LED on.
+   */
+  const abandonLaunch = () => {
+    launchIdRef.current += 1;
+    controlsRef.current?.stop();
+    controlsRef.current = null;
+  };
+
+  /**
    * Synchronous-from-gesture camera launcher. MUST be called from an
    * onClick / onTouchEnd handler so iOS Safari preserves the
    * user-activation context.
@@ -219,7 +238,15 @@ export function BarcodeScanner({ onDetected }: BarcodeScannerProps) {
         <CameraEmptyState
           error={state.error}
           onRetry={launchCamera}
-          onManual={() => setState({ kind: "manual" })}
+          onManual={() => {
+            // Even from the error card we may have a still-in-flight
+            // decodeFromVideoDevice() promise that will resolve into
+            // a "scanning" setState and clobber the manual entry view.
+            // abandonLaunch() bumps the generation so the late .then
+            // takes the stale-launch branch.
+            abandonLaunch();
+            setState({ kind: "manual" });
+          }}
         />
       )}
 
@@ -229,7 +256,8 @@ export function BarcodeScanner({ onDetected }: BarcodeScannerProps) {
             variant="ghost"
             size="sm"
             onClick={() => {
-              stopCamera();
+              // launchCamera() itself bumps generation + stops controls,
+              // so no separate abandonLaunch() needed here.
               launchCamera();
             }}
           >
@@ -240,7 +268,7 @@ export function BarcodeScanner({ onDetected }: BarcodeScannerProps) {
             variant="ghost"
             size="sm"
             onClick={() => {
-              stopCamera();
+              abandonLaunch();
               setState({ kind: "manual" });
             }}
           >
