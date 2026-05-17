@@ -1,6 +1,10 @@
 "use client";
 
-import { BrowserMultiFormatReader, IScannerControls } from "@zxing/browser";
+import {
+  BrowserCodeReader,
+  BrowserMultiFormatReader,
+  IScannerControls,
+} from "@zxing/browser";
 import {
   Camera,
   CameraOff,
@@ -74,36 +78,45 @@ export function BarcodeScanner({ onDetected }: BarcodeScannerProps) {
 
   // Stop any active stream on unmount and invalidate any in-flight launch
   // so a late-arriving controls promise stops its own stream.
+  // releaseAllStreams() is a nuclear belt-and-suspenders that nukes any
+  // stream ZXing ever created and may have orphaned via internal pipeline
+  // failures (timeout in playVideoOnLoadAsync, etc.) where we never got
+  // a controls object back to stop ourselves.
   useEffect(() => {
     return () => {
       launchIdRef.current += 1;
       controlsRef.current?.stop();
       controlsRef.current = null;
+      BrowserCodeReader.releaseAllStreams();
     };
   }, []);
-
-  const stopCamera = () => {
-    controlsRef.current?.stop();
-    controlsRef.current = null;
-  };
 
   /**
    * Tear down the entire camera workflow without starting a new one.
    *
-   * Bumps `launchIdRef` so any in-flight `decodeFromVideoDevice` promise
-   * resolves into a stale-launch branch (stops its own controls and does
-   * not setState). Also stops any already-captured controls.
+   * Three layers of cleanup:
+   *
+   *   1. Bump `launchIdRef` — any in-flight `decodeFromVideoDevice`
+   *      promise resolves into a stale-launch branch.
+   *   2. Stop already-captured controls — covers the happy path where
+   *      we reached the "scanning" state.
+   *   3. `BrowserCodeReader.releaseAllStreams()` — ZXing keeps a static
+   *      `streamTracker` of every stream it ever opened via
+   *      `getUserMedia`. If anything inside ZXing failed AFTER the
+   *      stream was created but BEFORE controls came back to us (e.g.,
+   *      `playVideoOnLoadAsync` timeout), the stream is in that
+   *      tracker but we have no controls.stop() to call. This static
+   *      method nukes every stream in the tracker, guaranteeing the
+   *      camera LED is off.
    *
    * MUST be called on every transition that leaves the camera flow
    * (error card → manual entry, scanning view → manual entry, etc.).
-   * Otherwise a late-arriving `.then(controls => setState scanning)`
-   * will clobber the manual state and drag the user back into a
-   * black viewport while the leaked stream keeps the camera LED on.
    */
   const abandonLaunch = () => {
     launchIdRef.current += 1;
     controlsRef.current?.stop();
     controlsRef.current = null;
+    BrowserCodeReader.releaseAllStreams();
   };
 
   /**
@@ -124,14 +137,14 @@ export function BarcodeScanner({ onDetected }: BarcodeScannerProps) {
       return;
     }
 
-    // Mark this launch attempt; if anything else bumps the generation
-    // (unmount, restart, navigation) before our promise resolves, we
-    // know to stop the late-arriving stream instead of leaking it.
-    launchIdRef.current += 1;
+    // Tear down any previous launch / orphaned ZXing streams before
+    // creating a new one. abandonLaunch() bumps the generation, stops
+    // current controls, and calls releaseAllStreams() to nuke anything
+    // ZXing may have left in its static tracker.
+    abandonLaunch();
     const myLaunchId = launchIdRef.current;
 
     setState({ kind: "starting" });
-    stopCamera();
 
     const reader = new BrowserMultiFormatReader();
     reader
