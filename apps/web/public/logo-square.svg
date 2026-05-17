@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#0b1220"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="55%" r="55%">
+      <stop offset="0%" stop-color="#22d3ee" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#22d3ee" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="beamG" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fde68a"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Rounded-square base -->
+  <rect width="512" height="512" rx="96" fill="url(#bg)"/>
+
+  <!-- Soft cyan halo behind barcode -->
+  <circle cx="256" cy="260" r="220" fill="url(#glow)"/>
+
+  <!-- Barcode stripes — 7 vars scaled from the 64x64 favicon to a 512 canvas.
+       Centered horizontally so the eye reads "label" not "asymmetric pattern". -->
+  <g fill="#22d3ee">
+    <rect x="120" y="140" width="22"  height="232" rx="2"/>
+    <rect x="156" y="140" width="14"  height="232" rx="2"/>
+    <rect x="186" y="140" width="32"  height="232" rx="2"/>
+    <rect x="232" y="140" width="14"  height="232" rx="2"/>
+    <rect x="260" y="140" width="22"  height="232" rx="2"/>
+    <rect x="296" y="140" width="14"  height="232" rx="2"/>
+    <rect x="324" y="140" width="32"  height="232" rx="2"/>
+    <rect x="370" y="140" width="22"  height="232" rx="2"/>
+  </g>
+
+  <!-- Scan beam — sweeps across the full barcode width.
+       Subtle yellow glow on top + opaque core so it reads as "scanning". -->
+  <rect x="92" y="248" width="328" height="22" rx="11" fill="url(#beamG)" opacity="0.35"/>
+  <rect x="92" y="252" width="328" height="14" rx="7" fill="url(#beamG)"/>
+</svg>
