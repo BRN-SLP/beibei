@@ -89,8 +89,15 @@ async function main(): Promise<void> {
   // 1) Self-heal: any prior deployer submission that has fewer than 3
   //    verifications gets topped up before we add new ones. Keeps the
   //    script idempotent across crashes mid-cycle.
+  //
+  // We can't queryFilter from genesis on Celo Mainnet — forno.celo.org
+  // rejects unbounded scans (60M+ blocks). The proxy is freshly deployed
+  // so a recent-only window is sufficient. We use ~50k blocks (~1 day at
+  // 1-2s block time) which more than covers any post-deploy seeding run.
   const submittedFilter = v1.filters.PriceSubmitted();
-  const pastEvents = await v1.queryFilter(submittedFilter, 0, "latest");
+  const latestBlock = await ethers.provider.getBlockNumber();
+  const fromBlock = Math.max(0, latestBlock - 50_000);
+  const pastEvents = await v1.queryFilter(submittedFilter, fromBlock, "latest");
   const fromDeployer = pastEvents.filter(
     (e: any) =>
       (e.args?.submitter ?? "").toLowerCase() === deployerAddress.toLowerCase(),
