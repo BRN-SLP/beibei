@@ -11,6 +11,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 import { ConnectButton } from "@/components/connect-button"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 interface NavLink {
   name: string
@@ -61,7 +62,8 @@ export function Navbar() {
                     {link.external && <ExternalLink className="h-4 w-4" />}
                   </Link>
                 ))}
-                <div className="mt-6 pt-6 border-t">
+                <div className="mt-6 flex items-center gap-2 border-t pt-6">
+                  <ThemeToggle />
                   <ConnectButton />
                 </div>
               </nav>
@@ -96,7 +98,8 @@ export function Navbar() {
             </Link>
           ))}
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
             <ConnectButton />
           </div>
         </nav>
