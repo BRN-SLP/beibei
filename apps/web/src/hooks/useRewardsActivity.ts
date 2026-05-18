@@ -48,12 +48,22 @@ export function useRewardsActivity() {
       }
       setLoading(true);
       try {
+        // Same RPC-timeout safeguard as usePriceFeed: scanning from
+        // block 0 over Celo Mainnet exceeds Forno's single-call budget
+        // and the three calls below would all return empty, hiding the
+        // user's actual reward history. Bound to the last ~200k blocks
+        // (~11 days), which covers the realistic lifetime of a session
+        // in the V1 deployment.
+        const latestBlock = await publicClient.getBlockNumber();
+        const LOOKBACK = 200_000n;
+        const fromBlock =
+          latestBlock > LOOKBACK ? latestBlock - LOOKBACK : 0n;
         const [submittedLogs, verifiedLogs, claimedLogs] = await Promise.all([
           publicClient.getContractEvents({
             address: oracleAddress,
             abi: priceOracleAbi,
             eventName: "PriceSubmitted",
-            fromBlock: 0n,
+            fromBlock,
             toBlock: "latest",
           }),
           publicClient.getContractEvents({
@@ -61,7 +71,7 @@ export function useRewardsActivity() {
             abi: priceOracleAbi,
             eventName: "Verified",
             args: { verifier: address },
-            fromBlock: 0n,
+            fromBlock,
             toBlock: "latest",
           }),
           publicClient.getContractEvents({
@@ -69,7 +79,7 @@ export function useRewardsActivity() {
             abi: priceOracleAbi,
             eventName: "RewardsClaimed",
             args: { user: address },
-            fromBlock: 0n,
+            fromBlock,
             toBlock: "latest",
           }),
         ]);

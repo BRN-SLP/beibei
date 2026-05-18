@@ -57,27 +57,39 @@ export function usePriceFeed(
         return;
       }
       try {
+        // Forno (and most public Celo RPCs) timeout on `fromBlock: 0n` —
+        // scanning ~30M blocks of mainnet history is too expensive for
+        // a single eth_getLogs call, and the three calls below would
+        // all fail simultaneously, leaving the landing-page feed empty.
+        // Bound the window to the last ~200k blocks (~11 days at Celo's
+        // ~5s block time), which comfortably covers seeded submissions
+        // and recent organic activity. `useWatchContractEvent` below
+        // continues to pick up anything newer in real time.
+        const latestBlock = await publicClient.getBlockNumber();
+        const LOOKBACK = 200_000n;
+        const fromBlock =
+          latestBlock > LOOKBACK ? latestBlock - LOOKBACK : 0n;
         const [submittedLogs, verifiedLogs, finalizedLogs] = await Promise.all([
           publicClient.getContractEvents({
             address: oracleAddress,
             abi: priceOracleAbi,
             eventName: "PriceSubmitted",
             args: options.barcode ? { barcode: options.barcode } : undefined,
-            fromBlock: 0n,
+            fromBlock,
             toBlock: "latest",
           }),
           publicClient.getContractEvents({
             address: oracleAddress,
             abi: priceOracleAbi,
             eventName: "Verified",
-            fromBlock: 0n,
+            fromBlock,
             toBlock: "latest",
           }),
           publicClient.getContractEvents({
             address: oracleAddress,
             abi: priceOracleAbi,
             eventName: "SubmissionFinalized",
-            fromBlock: 0n,
+            fromBlock,
             toBlock: "latest",
           }),
         ]);
