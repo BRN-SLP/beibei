@@ -1,22 +1,10 @@
 import Link from "next/link";
-import {
-  BarChart3,
-  Camera,
-  Scan,
-  ShieldCheck,
-  Wallet,
-} from "lucide-react";
+import { Camera, Wallet } from "lucide-react";
 
 import { HeroStats } from "@/components/hero/HeroStats";
 import { RevealOnScroll } from "@/components/hero/RevealOnScroll";
 import { MercatoLogo } from "@/components/brand/MercatoLogo";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { CountryBasketPreview } from "@/components/landing/CountryBasketPreview";
 import { RecentSubmissions } from "@/components/feed/RecentSubmissions";
 import { UserBalance } from "@/components/user-balance";
@@ -116,67 +104,90 @@ export default function Home() {
         </div>
       </section>
 
-      {/* HOW IT WORKS — 3-step rail.
-          No side-stripe borders on cards — the premium-web-design
-          absolute ban applies. Hover lift + subtle ring is enough to
-          signal interactivity. */}
-      <section className="container mx-auto max-w-5xl px-4 py-20">
+      {/* HOW IT WORKS — editorial three-step.
+          Refactored away from "identical card grid" (premium-web-design
+          Pillar 2 + impeccable absolute ban). The visual anchor is now
+          an oversized serif numeral per step (01 / 02 / 03), the layout
+          alternates left/right so each step has its own rhythm, and the
+          old icon-from-library noise is gone — the brand serif IS the
+          decorative element. Mobile collapses to a single column with
+          the numeral above the copy. */}
+      <section className="container mx-auto max-w-5xl px-4 py-24">
         <RevealOnScroll>
           <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.2em] text-primary">
             How it works
           </p>
-          <h2 className="mb-12 font-serif text-3xl font-semibold tracking-tight md:text-4xl">
+          <h2 className="mb-16 font-serif text-3xl font-semibold tracking-tight md:text-4xl">
             Three picks. <span className="italic text-primary">One transaction.</span>
           </h2>
         </RevealOnScroll>
 
-        <div className="grid gap-6 md:grid-cols-3">
+        <ol className="space-y-16 md:space-y-20">
           <RevealOnScroll>
-            <Card className="h-full border-border/60 transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md hover:shadow-primary/10">
-              <CardHeader>
-                <Scan className="h-6 w-6 text-primary" />
-                <CardTitle className="mt-3 text-lg">
-                  01 · Pick + submit
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="text-sm text-muted-foreground">
-                Choose a product from the basket, choose your country,
-                type the price you paid. Optional receipt photo. One
-                on-chain transaction, with the network fee paid in cUSD
-                if your wallet supports it.
-              </CardContent>
-            </Card>
+            <li className="grid items-baseline gap-x-10 gap-y-4 md:grid-cols-[auto_1fr]">
+              <span
+                aria-hidden="true"
+                className="font-serif text-[5.5rem] font-bold leading-none text-primary/15 md:text-[7.5rem]"
+              >
+                01
+              </span>
+              <div className="space-y-3 md:pt-4">
+                <h3 className="font-serif text-2xl font-semibold tracking-tight md:text-3xl">
+                  Pick the product, type the price.
+                </h3>
+                <p className="max-w-prose text-sm leading-relaxed text-muted-foreground md:text-base">
+                  Choose a product from the basket, pick your country, type the
+                  price you actually paid. Receipt photo is optional. One
+                  on-chain transaction; the network fee is paid in cUSD if your
+                  wallet supports it.
+                </p>
+              </div>
+            </li>
           </RevealOnScroll>
 
-          <RevealOnScroll delay={0.08}>
-            <Card className="h-full border-border/60 transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md hover:shadow-primary/10">
-              <CardHeader>
-                <ShieldCheck className="h-6 w-6 text-primary" />
-                <CardTitle className="mt-3 text-lg">02 · Peers verify</CardTitle>
-              </CardHeader>
-              <CardContent className="text-sm text-muted-foreground">
-                Other contributors in the same country tap ✓ or ✗ on
-                pending submissions. Three matching positives finalize
-                the price and unlock rewards for everyone involved.
-              </CardContent>
-            </Card>
+          <RevealOnScroll delay={0.06}>
+            <li className="grid items-baseline gap-x-10 gap-y-4 md:grid-cols-[1fr_auto] md:text-right">
+              <div className="space-y-3 md:order-1 md:pt-4">
+                <h3 className="font-serif text-2xl font-semibold tracking-tight md:text-3xl">
+                  Three peers tap <span className="italic text-primary">yes.</span>
+                </h3>
+                <p className="ml-auto max-w-prose text-sm leading-relaxed text-muted-foreground md:text-base">
+                  Other contributors in the same country vote ✓ or ✗ on pending
+                  submissions. Three matching positives finalize the price and
+                  unlock rewards for everyone involved in the round.
+                </p>
+              </div>
+              <span
+                aria-hidden="true"
+                className="font-serif text-[5.5rem] font-bold leading-none text-primary/15 md:order-2 md:text-[7.5rem]"
+              >
+                02
+              </span>
+            </li>
           </RevealOnScroll>
 
-          <RevealOnScroll delay={0.16}>
-            <Card className="h-full border-border/60 transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md hover:shadow-primary/10">
-              <CardHeader>
-                <BarChart3 className="h-6 w-6 text-primary" />
-                <CardTitle className="mt-3 text-lg">03 · Earn cUSD</CardTitle>
-              </CardHeader>
-              <CardContent className="text-sm text-muted-foreground">
-                Micro-rewards for accepted submissions and for every
-                verification you cast on someone else&apos;s. Sweep your
-                balance to MiniPay or any Celo wallet — anytime, in one
-                claim.
-              </CardContent>
-            </Card>
+          <RevealOnScroll delay={0.12}>
+            <li className="grid items-baseline gap-x-10 gap-y-4 md:grid-cols-[auto_1fr]">
+              <span
+                aria-hidden="true"
+                className="font-serif text-[5.5rem] font-bold leading-none text-primary/15 md:text-[7.5rem]"
+              >
+                03
+              </span>
+              <div className="space-y-3 md:pt-4">
+                <h3 className="font-serif text-2xl font-semibold tracking-tight md:text-3xl">
+                  Sweep your rewards in cUSD.
+                </h3>
+                <p className="max-w-prose text-sm leading-relaxed text-muted-foreground md:text-base">
+                  Micro-rewards accumulate for every accepted submission and
+                  every verification you cast on someone else&apos;s. Sweep
+                  the balance to MiniPay or any Celo wallet in one claim —
+                  any time, no minimum.
+                </p>
+              </div>
+            </li>
           </RevealOnScroll>
-        </div>
+        </ol>
       </section>
 
       {/* COUNTRY BASKET PREVIEW — top countries by coverage.
