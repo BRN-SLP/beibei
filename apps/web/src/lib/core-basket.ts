@@ -46,7 +46,6 @@ export type CoreBasketSlug = (typeof CORE_BASKET_SLUGS)[number];
 export interface CoreBasketEntry {
   countryCode: string;
   countryName: string;
-  flag: string;
   /** Core basket sum in base-currency cents (USD or EUR per the
    *  `rates.base` of the FxRates the caller passed in). */
   baseCents: number;
@@ -98,7 +97,6 @@ export function rankCoreBasket(
     entries.push({
       countryCode: country.code,
       countryName: country.name,
-      flag: country.flag,
       baseCents,
       filled,
       complete: true,
