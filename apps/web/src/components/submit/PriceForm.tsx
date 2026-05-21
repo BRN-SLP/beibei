@@ -1,12 +1,17 @@
 "use client";
 
 import { Camera, MapPin, Upload, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Hex } from "viem";
 
 import { Button } from "@/components/ui/button";
 import { useGeolocation } from "@/hooks/useGeolocation";
 import { useSubmitPrice } from "@/hooks/useSubmitPrice";
+import {
+  ALL_CURRENCY_CODES,
+  CURRENCIES_BY_REGION,
+  detectDefaultCurrency,
+} from "@/lib/currencies";
 import {
   MAX_RECEIPT_BYTES,
   SUPPORTED_RECEIPT_TYPES,
@@ -20,11 +25,17 @@ interface PriceFormProps {
   onCancel: () => void;
 }
 
-const CURRENCIES = ["KES", "NGN", "GHS", "USD", "ZAR"] as const;
-type Currency = (typeof CURRENCIES)[number];
-
 const ZERO_RECEIPT_HASH =
   "0x0000000000000000000000000000000000000000000000000000000000000000" as Hex;
+
+/**
+ * Server-safe initial currency. The actual default is detected from the
+ * browser locale in a client-only effect (see useEffect below) — but
+ * since this component renders on the server first (Next.js App Router),
+ * we need a deterministic placeholder that won't cause hydration mismatch.
+ * USD is universally recognised and a safe fallback.
+ */
+const INITIAL_CURRENCY = "USD";
 
 export function PriceForm({ barcode, onCancel }: PriceFormProps) {
   const geo = useGeolocation();
@@ -32,10 +43,19 @@ export function PriceForm({ barcode, onCancel }: PriceFormProps) {
 
   const [priceWhole, setPriceWhole] = useState("");
   const [priceCents, setPriceCents] = useState("");
-  const [currency, setCurrency] = useState<Currency>("KES");
+  const [currency, setCurrency] = useState<string>(INITIAL_CURRENCY);
   const [receiptFile, setReceiptFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Detect the user's local currency from the browser locale and use
+  // it as the default. Client-only — running on the server would
+  // produce a different value than the first client render and trip
+  // React's hydration check.
+  useEffect(() => {
+    const detected = detectDefaultCurrency(INITIAL_CURRENCY);
+    if (detected !== INITIAL_CURRENCY) setCurrency(detected);
+  }, []);
 
   const busy =
     uploading ||
@@ -173,14 +193,28 @@ export function PriceForm({ barcode, onCancel }: PriceFormProps) {
           />
           <select
             value={currency}
-            onChange={(e) => setCurrency(e.target.value as Currency)}
+            onChange={(e) => {
+              const next = e.target.value;
+              // Guard against the user somehow selecting a code that's
+              // no longer in our catalog (browser-restored stale state
+              // after we trim the list, for example).
+              if (ALL_CURRENCY_CODES.includes(next)) setCurrency(next);
+            }}
             aria-label="Currency"
-            className="w-20 shrink-0 rounded-md border border-input bg-background px-2 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="w-24 shrink-0 rounded-md border border-input bg-background px-2 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
-            {CURRENCIES.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
+            {/* Grouped by region so the dropdown is navigable on
+                desktop (where `<optgroup>` renders bold separators)
+                and on mobile (where iOS / Android system pickers also
+                show optgroup labels as section headers). */}
+            {Object.entries(CURRENCIES_BY_REGION).map(([region, options]) => (
+              <optgroup key={region} label={region}>
+                {options.map((c) => (
+                  <option key={c.code} value={c.code}>
+                    {c.code} — {c.name}
+                  </option>
+                ))}
+              </optgroup>
             ))}
           </select>
         </div>
