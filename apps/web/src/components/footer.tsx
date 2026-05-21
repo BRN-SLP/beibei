@@ -6,7 +6,6 @@ import { useChainId } from "wagmi";
 import { celo, celoSepolia } from "wagmi/chains";
 
 import { Link } from "@/i18n/navigation";
-import { LanguageSwitcher } from "@/components/language-switcher";
 
 const VERSION = "0.2.0-alpha";
 const REPO_URL = "https://github.com/BRN-SLP/mercato";
@@ -53,9 +52,8 @@ export function Footer() {
           </a>
         </nav>
 
-        {/* Language + network + repo */}
+        {/* Network + repo */}
         <div className="flex flex-wrap items-center gap-4 font-mono text-[11px] uppercase tracking-[0.16em]">
-          <LanguageSwitcher />
           <span className="inline-flex items-center gap-2">
             <span
               aria-hidden="true"

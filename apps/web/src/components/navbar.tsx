@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/sheet";
 import { ConnectButton } from "@/components/connect-button";
 import { MercatoLogo } from "@/components/brand/MercatoLogo";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Link, usePathname } from "@/i18n/navigation";
 
@@ -67,9 +68,12 @@ export function Navbar() {
                     {link.external && <ExternalLink className="h-4 w-4" />}
                   </Link>
                 ))}
-                <div className="mt-6 flex items-center gap-2 border-t pt-6">
-                  <ThemeToggle />
-                  <ConnectButton />
+                <div className="mt-6 flex flex-col gap-4 border-t pt-6">
+                  <LanguageSwitcher />
+                  <div className="flex items-center gap-2">
+                    <ThemeToggle />
+                    <ConnectButton />
+                  </div>
                 </div>
               </nav>
             </SheetContent>
@@ -105,7 +109,8 @@ export function Navbar() {
             </Link>
           ))}
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
+            <LanguageSwitcher />
             <ThemeToggle />
             <ConnectButton />
           </div>
