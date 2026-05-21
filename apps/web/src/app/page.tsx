@@ -7,9 +7,9 @@ import {
   Wallet,
 } from "lucide-react";
 
-import { AnimatedBarcode } from "@/components/hero/AnimatedBarcode";
 import { HeroStats } from "@/components/hero/HeroStats";
 import { RevealOnScroll } from "@/components/hero/RevealOnScroll";
+import { MercatoLogo } from "@/components/brand/MercatoLogo";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -89,12 +89,23 @@ export default function Home() {
             <UserBalance />
           </div>
 
-          {/* Right — animated barcode panel */}
-          <div className="relative">
-            <AnimatedBarcode />
-            {/* Caption */}
-            <p className="mt-3 text-center font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-              barcode · 12-byte hex · 1.1km zone grid
+          {/* Right — Mercato basket mark.
+              Replaced the BeiBei AnimatedBarcode (canvas-rendered
+              scanner stripes) with the brand basket SVG. The mark is
+              the same one used in the favicon and OG image, scaled
+              up — keeping a single brand signal across the page. */}
+          <div className="relative flex items-center justify-center">
+            <div
+              aria-hidden="true"
+              className="absolute h-64 w-64 rounded-full bg-primary/15 blur-3xl"
+            />
+            <MercatoLogo
+              variant="icon"
+              className="relative h-56 w-56 text-primary md:h-64 md:w-64"
+              ariaLabel="Mercato — community-built consumer basket"
+            />
+            <p className="absolute -bottom-4 left-1/2 -translate-x-1/2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+              33 goods · 15 countries · 1 contract
             </p>
           </div>
         </div>
