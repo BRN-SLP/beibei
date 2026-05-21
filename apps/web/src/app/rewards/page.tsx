@@ -13,6 +13,7 @@ import {
 import { usePendingRewards } from "@/hooks/usePendingRewards";
 import { useRewardConstants } from "@/hooks/useRewardConstants";
 import { useRewardsActivity } from "@/hooks/useRewardsActivity";
+import { truncateAddress } from "@/lib/app-utils";
 
 function formatReward(wei: bigint | null): string {
   if (wei === null) return "—";
@@ -54,8 +55,11 @@ export default function RewardsPage() {
     <main className="container mx-auto max-w-3xl space-y-6 px-4 py-10">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Rewards</h1>
-        <p className="mt-1 font-mono text-xs text-muted-foreground">
-          {address}
+        <p
+          className="mt-1 font-mono text-xs text-muted-foreground"
+          title={address}
+        >
+          {truncateAddress(address)}
         </p>
       </div>
 
