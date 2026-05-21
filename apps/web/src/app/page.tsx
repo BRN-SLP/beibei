@@ -3,9 +3,9 @@ import { Camera, Wallet } from "lucide-react";
 
 import { HeroStats } from "@/components/hero/HeroStats";
 import { RevealOnScroll } from "@/components/hero/RevealOnScroll";
-import { MercatoLogo } from "@/components/brand/MercatoLogo";
 import { Button } from "@/components/ui/button";
 import { CountryBasketPreview } from "@/components/landing/CountryBasketPreview";
+import { HeroLiveRankingServer } from "@/components/landing/HeroLiveRankingServer";
 import { RecentSubmissions } from "@/components/feed/RecentSubmissions";
 import { UserBalance } from "@/components/user-balance";
 
@@ -82,22 +82,19 @@ export default function Home() {
             <UserBalance />
           </div>
 
-          {/* Right — Mercato basket mark.
-              Same SVG used in the favicon and OG image, scaled up
-              so the brand signal is consistent across the page. */}
-          <div className="relative flex items-center justify-center">
+          {/* Right — Live country ranking.
+              Replaced the static brand basket SVG with a real data
+              widget: cheapest → most expensive countries for a
+              comparable 3-product core basket (bread + milk +
+              transit), with a USD/EUR toggle. The brand signal is
+              already carried by the navbar logo + favicon + OG, so
+              hero-right is freed up for the actual product. */}
+          <div className="relative">
             <div
               aria-hidden="true"
-              className="absolute h-64 w-64 rounded-full bg-primary/15 blur-3xl"
+              className="absolute -inset-4 -z-10 rounded-2xl bg-primary/10 blur-3xl"
             />
-            <MercatoLogo
-              variant="icon"
-              className="relative h-56 w-56 text-primary md:h-64 md:w-64"
-              ariaLabel="Mercato — community-built consumer basket"
-            />
-            <p className="absolute -bottom-4 left-1/2 -translate-x-1/2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-              33 goods · 15 countries · 1 contract
-            </p>
+            <HeroLiveRankingServer />
           </div>
         </div>
       </section>
