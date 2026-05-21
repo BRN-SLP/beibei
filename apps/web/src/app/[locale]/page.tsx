@@ -2,7 +2,7 @@ import { Camera, Wallet } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 
-import { HeroStats } from "@/components/hero/HeroStats";
+import { HeroStatsServer } from "@/components/hero/HeroStatsServer";
 import { RevealOnScroll } from "@/components/hero/RevealOnScroll";
 import { Button } from "@/components/ui/button";
 import { CountryBasketPreview } from "@/components/landing/CountryBasketPreview";
@@ -52,7 +52,7 @@ function HomeContent() {
               {t("subtitle")}
             </p>
 
-            <HeroStats />
+            <HeroStatsServer />
 
             <div className="flex flex-col items-start gap-3 sm:flex-row">
               <Button asChild size="lg">
