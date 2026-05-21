@@ -7,6 +7,7 @@ import { RevealOnScroll } from "@/components/hero/RevealOnScroll";
 import { Button } from "@/components/ui/button";
 import { CountryBasketPreview } from "@/components/landing/CountryBasketPreview";
 import { HeroLiveRankingServer } from "@/components/landing/HeroLiveRankingServer";
+import { HowItWorks } from "@/components/landing/HowItWorks";
 import { RecentSubmissions } from "@/components/feed/RecentSubmissions";
 import { UserBalance } from "@/components/user-balance";
 import { Link } from "@/i18n/navigation";
@@ -23,7 +24,6 @@ export default async function Home({ params }: HomeProps) {
 
 function HomeContent() {
   const t = useTranslations("hero");
-  const tHow = useTranslations("howItWorks");
   const tFeed = useTranslations("feed");
 
   return (
@@ -79,80 +79,8 @@ function HomeContent() {
         </div>
       </section>
 
-      {/* HOW IT WORKS — editorial three-step. */}
-      <section className="container mx-auto max-w-5xl px-4 py-24">
-        <RevealOnScroll>
-          <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.2em] text-primary">
-            {tHow("section")}
-          </p>
-          <h2 className="mb-16 font-serif text-3xl font-semibold tracking-tight md:text-4xl">
-            {tHow("title1")}{" "}
-            <span className="italic text-primary">{tHow("title2")}</span>
-          </h2>
-        </RevealOnScroll>
-
-        <ol className="space-y-16 md:space-y-20">
-          <RevealOnScroll>
-            <li className="grid items-baseline gap-x-10 gap-y-4 md:grid-cols-[auto_1fr]">
-              <span
-                aria-hidden="true"
-                className="font-serif text-[5.5rem] font-bold leading-none text-primary/15 md:text-[7.5rem]"
-              >
-                01
-              </span>
-              <div className="space-y-3 md:pt-4">
-                <h3 className="font-serif text-2xl font-semibold tracking-tight md:text-3xl">
-                  {tHow("step1Title")}
-                </h3>
-                <p className="max-w-prose text-sm leading-relaxed text-muted-foreground md:text-base">
-                  {tHow("step1Body")}
-                </p>
-              </div>
-            </li>
-          </RevealOnScroll>
-
-          <RevealOnScroll delay={0.06}>
-            <li className="grid items-baseline gap-x-10 gap-y-4 md:grid-cols-[1fr_auto] md:text-right">
-              <div className="space-y-3 md:order-1 md:pt-4">
-                <h3 className="font-serif text-2xl font-semibold tracking-tight md:text-3xl">
-                  {tHow("step2Title")}{" "}
-                  <span className="italic text-primary">
-                    {tHow("step2TitleAccent")}
-                  </span>
-                </h3>
-                <p className="ml-auto max-w-prose text-sm leading-relaxed text-muted-foreground md:text-base">
-                  {tHow("step2Body")}
-                </p>
-              </div>
-              <span
-                aria-hidden="true"
-                className="font-serif text-[5.5rem] font-bold leading-none text-primary/15 md:order-2 md:text-[7.5rem]"
-              >
-                02
-              </span>
-            </li>
-          </RevealOnScroll>
-
-          <RevealOnScroll delay={0.12}>
-            <li className="grid items-baseline gap-x-10 gap-y-4 md:grid-cols-[auto_1fr]">
-              <span
-                aria-hidden="true"
-                className="font-serif text-[5.5rem] font-bold leading-none text-primary/15 md:text-[7.5rem]"
-              >
-                03
-              </span>
-              <div className="space-y-3 md:pt-4">
-                <h3 className="font-serif text-2xl font-semibold tracking-tight md:text-3xl">
-                  {tHow("step3Title")}
-                </h3>
-                <p className="max-w-prose text-sm leading-relaxed text-muted-foreground md:text-base">
-                  {tHow("step3Body")}
-                </p>
-              </div>
-            </li>
-          </RevealOnScroll>
-        </ol>
-      </section>
+      {/* HOW IT WORKS — editorial three-stage flow with artifact mocks. */}
+      <HowItWorks />
 
       <CountryBasketPreview />
 
