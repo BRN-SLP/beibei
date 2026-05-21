@@ -116,35 +116,53 @@ function FeedItem({ row }: { row: FeedRow }) {
     minimumFractionDigits: 0,
     maximumFractionDigits: 2,
   });
+  // Status — kept as plain mono caps. The earlier "✓ accepted" / "✗
+  // rejected" pseudo-icons read as emoji noise in this register, so
+  // we drop them and let the colored dot carry the semantic weight.
+  const status = row.finalized
+    ? row.accepted
+      ? { label: "accepted", tone: "bg-emerald-500/80" }
+      : { label: "rejected", tone: "bg-destructive/80" }
+    : { label: `pending · ${row.totalVotes}/3`, tone: "bg-amber-500/80" };
+
   return (
-    <li className="flex flex-col gap-2 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
-      <div className="min-w-0 space-y-1">
+    <li className="grid grid-cols-[auto_1fr_auto] items-center gap-x-4 px-5 py-4">
+      {/* Country code pill — replaces emoji flag */}
+      <Link
+        href={`/item/${row.barcode}`}
+        className="inline-flex h-8 w-11 items-center justify-center rounded-sm border border-border/60 bg-card/40 font-mono text-[11px] font-semibold tracking-[0.18em] text-foreground/80 transition-colors hover:border-primary/50 hover:text-primary"
+        aria-label={row.country.name}
+      >
+        {row.country.code}
+      </Link>
+
+      {/* Product + country meta */}
+      <div className="min-w-0">
         <Link
           href={`/item/${row.barcode}`}
-          className="flex items-center gap-2 font-medium hover:underline"
+          className="font-medium hover:underline"
         >
-          <span aria-hidden="true" className="text-base leading-none">
-            {row.country.flag}
-          </span>
           <span className="truncate">{row.product.label}</span>
         </Link>
         <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
           {row.country.name}
         </p>
       </div>
-      <div className="flex flex-row items-center gap-4 sm:flex-col sm:items-end sm:gap-0.5">
+
+      {/* Price + status */}
+      <div className="flex flex-col items-end gap-0.5">
         <p className="font-mono text-base font-semibold tabular-nums">
           {major}{" "}
           <span className="text-xs font-normal text-muted-foreground">
             {row.country.currency}
           </span>
         </p>
-        <p className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
-          {row.finalized
-            ? row.accepted
-              ? "✓ accepted"
-              : "✗ rejected"
-            : `pending · ${row.totalVotes}/3`}
+        <p className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+          <span
+            aria-hidden="true"
+            className={`inline-block h-1.5 w-1.5 rounded-full ${status.tone}`}
+          />
+          {status.label}
         </p>
       </div>
     </li>
