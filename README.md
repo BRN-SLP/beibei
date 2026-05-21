@@ -71,7 +71,10 @@ pnpm contracts:test                     # Hardhat tests: submit / verify / conse
 pnpm contracts:deploy:celo-sepolia      # deploy V2Rewards proxy to Celo Sepolia
 pnpm contracts:deploy:celo              # deploy V2Rewards proxy to Celo Mainnet (single tx)
 pnpm contracts:seed:celo                # transfer initial cUSD reward pool into the proxy
+pnpm contracts:seed-mercato:celo        # submit + verify the 15-row Mercato launch fixture
 ```
+
+`seed-mercato` reads `apps/contracts/seed/mercato.ts` — 15 curated submissions across UA, AR, KE, DE, US. Idempotent (re-runs skip already-submitted rows). Required env: `PRIVATE_KEY`, `DEPLOYER_MNEMONIC`, `PRICE_ORACLE_ADDRESS`.
 
 After deploy the script prints proxy + implementation addresses. Verify on Celoscan:
 
