@@ -17,7 +17,7 @@ const connectors = connectorsForWallets(
     },
   ],
   {
-    appName: "BeiBei",
+    appName: "Mercato",
     projectId: process.env.NEXT_PUBLIC_WC_PROJECT_ID ?? "",
   }
 );

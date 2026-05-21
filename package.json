@@ -1,7 +1,7 @@
 {
-  "name": "BeiBei",
-  "version": "0.1.0",
-  "description": "Crowdsourced product price tracker on Celo",
+  "name": "mercato",
+  "version": "0.2.0",
+  "description": "Mercato — crowdsourced consumer price basket on Celo. A community-built, on-chain cost-of-living index.",
   "private": true,
   "scripts": {
     "build": "turbo build",

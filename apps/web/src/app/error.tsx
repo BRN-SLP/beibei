@@ -27,7 +27,7 @@ export default function GlobalError({ error, reset }: ErrorBoundaryProps) {
     // report. In production Next.js strips the message and exposes only
     // `digest`; that's still useful for correlation.
     // eslint-disable-next-line no-console
-    console.error("[BeiBei] uncaught render error:", error);
+    console.error("[Mercato] uncaught render error:", error);
   }, [error]);
 
   return (

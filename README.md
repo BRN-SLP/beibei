@@ -1,21 +1,24 @@
-# BeiBei
+# Mercato
 
-> **The on-chain price index for everyday African goods.** Scan a barcode, type the price you paid, your zone verifies it — three matching votes finalize the median and pay micro-rewards in cUSD.
+> **Crowdsourced consumer price basket on Celo.** Pick a product, pick your country, type the price you paid. Verified peers earn cUSD micro-rewards. A daily, verifiable, country-by-country cost-of-living index — the open alternative to Numbeo.
 
-🟢 **Live:** https://beibei-rho.vercel.app
+🟢 **Live:** https://mercato-rho.vercel.app
 🧪 **Sepolia PriceOracle proxy:** [`0x9f3dc5C587415Dd551fA49fB0e3be47c66C9685B`](https://celo-sepolia.blockscout.com/address/0x9f3dc5C587415Dd551fA49fB0e3be47c66C9685B)
+🌐 **Mainnet PriceOracle proxy:** [`0x18DD82604a9439b3Cdb7E1078c355E460ED217Ed`](https://celoscan.io/address/0x18DD82604a9439b3Cdb7E1078c355E460ED217Ed)
 📖 **Talent App / Proof of Ship May edition** — eligible: MiniPay hook ✓, Celo contract ✓, OS repo ✓
 
 ---
 
-What does a 2 kg bag of Pembe maize flour cost this week in Westlands vs the CBD? What's the median price of cooking oil in Kisumu compared to Mombasa? Until now, that data lived in WhatsApp groups and personal memory. BeiBei moves it on-chain.
+What does a litre of milk cost this week in Kyiv vs Buenos Aires? What's the median rent for a one-bedroom in Lisbon vs Lagos? Until now, that data lived behind Numbeo paywalls and untraceable user submissions. Mercato moves it on-chain.
 
-A shopper scans a barcode in any kiosk, enters the price they paid (optionally a receipt photo), and their submission goes on-chain as a single transaction. Other users in the same 1.1 km zone tap ✓ or ✗. Three matching positives → consensus → the price is finalized and the submitter + three verifiers each earn a small cUSD micro-reward from the project's seed pool.
+Anyone in any country picks a product from our canonical basket of ~33 everyday goods — bread, milk, eggs, rent, transport, internet, utilities — enters the current local price, optionally attaches a photo proof, and their submission goes on-chain as a single transaction. Three other community members in the same country tap ✓ or ✗. Three matching positives → consensus → the price is finalized and the submitter + verifiers each earn a small cUSD micro-reward from the project's seed pool.
 
-- 📷 **Scan** any UPC/EAN-13 barcode from the camera. iOS Safari user-gesture compliant; falls back to manual entry if the camera is blocked.
+The result is an open, verifiable, daily cost-of-living index across countries — built by the people who actually pay those prices.
+
+- 🛒 **Pick** a product and a country. No barcode scanning required: aren't we tracking baskets, not SKUs.
 - 🗳️ **Verify** nearby pending submissions with a single tap. Consensus at three matching votes.
 - 💸 **Earn** cUSD micro-rewards per accepted submission and per verification of an accepted submission. Sweep accumulated rewards in one claim.
-- 📈 **Read** the daily weighted median price for any item over the last 30 days, per zone — useful for travel, budgeting, anti-overcharging.
+- 📈 **Read** the daily basket value for any country, normalized to USD for cross-country comparison — useful for inflation tracking, expat budgeting, anti-overcharging, journalism.
 
 ## Reward economics
 
@@ -27,29 +30,28 @@ The contract is **UUPS-upgradeable** — Sepolia has the same proxy upgraded to 
 
 | Layer | Tech |
 |---|---|
-| Web app | Next.js 14 (App Router), TypeScript, TailwindCSS, Radix UI, [@composer-kit/ui](https://www.composerkit.xyz/) |
+| Web app | Next.js 14 (App Router), TypeScript, TailwindCSS, Radix UI |
 | Web3 client | viem 2.x + wagmi 2.x + RainbowKit |
 | Smart contract | UUPS-upgradeable Solidity 0.8.28 on Celo, OpenZeppelin contracts-upgradeable 5.6 |
-| Barcode scanner | [@zxing/browser](https://github.com/zxing-js/browser) with user-gesture iOS Safari support |
+| Product encoding | `keccak256(productSlug)` truncated to bytes12 — 33 canonical items, room for thousands more |
+| Country encoding | ISO-3166-1 alpha-2 padded to bytes6 |
 | Receipt storage | Vercel Blob (photos), content-addressed by keccak256 |
-| Charts | recharts (median feed + zone coverage scatter) |
-| MiniPay | Auto-detect via `window.ethereum.isMiniPay` + UA; force `feeCurrency: cUSD` |
+| MiniPay | Auto-detect via `window.ethereum.isMiniPay`; fee-abstracted with `feeCurrency: cUSD` |
 | Monorepo | Turborepo |
 
-Submissions are identified by a monotonic `submissionId` from the contract. Locations are bucketed to a 2-decimal lat/lng grid (~1.1 km) packed as `bytes6`. Barcodes stored as `bytes12` (EAN-13/UPC check digit dropped to fit). Consensus is 3-of-3 verifications matching; mixed votes leave a submission in a locked-pending state (V3 adds a 7-day auto-finalize).
+The same `PriceOracle` contract from the BeiBei era is reused — it accepts a generic `bytes12 productId, bytes6 zoneKey, uint64 priceCents, bytes32 receiptHash`. The pivot from "barcode + GPS zone" to "product slug + country" is a pure client-side reinterpretation of those bytes; the contract didn't change. Currency is determined offchain from the country mapping (cUSD/cEUR/cREAL/cKES/eXOF/cGHS/cCOP/cPHP via Mento, or local fiat for non-Mento currencies).
 
 ## Why Celo
 
-cUSD as gas + stable unit-of-account means a shopper can scan, submit, verify, and claim — all in one currency they already understand. MiniPay's ~8M wallets in Africa preinstalled with cUSD make the distribution channel obvious. Sub-cent gas means a 0.01 cUSD verification reward is not eaten by the transaction itself.
+Mento stablecoins (cUSD, cEUR, cREAL, cKES, eXOF, cGHS, cCOP, cPHP) give native local-currency rails in the exact emerging markets where price volatility matters most. Sub-cent gas on Celo means a 0.001 cUSD micro-reward is economically meaningful. MiniPay distribution reaches mobile-first contributors across Africa, LATAM, SE Asia without the friction of a separate wallet app. Fee abstraction lets users pay gas in cUSD, removing the "buy CELO first" onboarding wall.
 
 ## Project Structure
 
 ```
-apps/web                Next.js application (landing, scan, item feed, rewards)
+apps/web                Next.js application (landing, submit, country index, rewards)
 apps/contracts          Hardhat: PriceOracle.sol + V2Rewards
-apps/contracts/seed     Curated launch product catalog (8 items across KE/NG/GH/ZA)
-apps/contracts/scripts  deploy.ts, upgrade-rewards.ts, seed-submissions.ts, seed-rewards.ts
-packages/sdk            @beibei/sdk — public read helpers (npm)
+apps/contracts/scripts  deploy.ts, upgrade-rewards.ts, seed-rewards.ts
+packages/sdk            @mercato/sdk — public read helpers (npm)
 ```
 
 ## Quick start
@@ -65,11 +67,10 @@ Copy `.env.example` to the appropriate `.env` files. The web app reads `apps/web
 
 ```bash
 pnpm contracts:compile                  # compile Solidity
-pnpm contracts:test                     # 17 Hardhat tests: submit / verify / consensus / claim / UUPS
+pnpm contracts:test                     # Hardhat tests: submit / verify / consensus / claim / UUPS
 pnpm contracts:deploy:celo-sepolia      # deploy V2Rewards proxy to Celo Sepolia
 pnpm contracts:deploy:celo              # deploy V2Rewards proxy to Celo Mainnet (single tx)
-pnpm contracts:seed-rewards:celo        # transfer initial cUSD reward pool into the proxy
-pnpm contracts:seed-submissions:celo    # seed 8 curated submissions + 3-of-3 verifications
+pnpm contracts:seed:celo                # transfer initial cUSD reward pool into the proxy
 ```
 
 After deploy the script prints proxy + implementation addresses. Verify on Celoscan:
@@ -82,7 +83,7 @@ pnpm hardhat verify --network celo-sepolia <implementation-address>
 ## Tests
 
 ```bash
-pnpm contracts:test                # 17 Hardhat tests, includes UUPS upgrade rehearsal
+pnpm contracts:test                # Hardhat tests, includes UUPS upgrade rehearsal
 pnpm --filter web test:e2e         # Playwright smoke tests against dev server
 ```
 

@@ -1,13 +1,15 @@
 {
-  "name": "BeiBei",
-  "short_name": "BeiBei",
-  "description": "Crowdsourced product price tracker on Celo",
+  "name": "Mercato",
+  "short_name": "Mercato",
+  "description": "Crowdsourced consumer price basket on Celo — a community-built cost-of-living index.",
   "icons": [
     { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" },
-    { "src": "/apple-touch-icon.svg", "sizes": "180x180", "type": "image/svg+xml" }
+    { "src": "/logo-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/logo-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
   ],
-  "theme_color": "#0b1220",
-  "background_color": "#0b1220",
+  "theme_color": "#0d2419",
+  "background_color": "#e7e5dd",
   "display": "standalone",
   "start_url": "/"
 }

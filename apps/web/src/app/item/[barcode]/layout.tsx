@@ -13,21 +13,21 @@ export async function generateMetadata({
     : barcode;
   const title = `Item ${short}`;
   const description =
-    "Median price, recent submissions, and pending verifications for this item across the BeiBei community.";
+    "Median price, recent submissions, and pending verifications for this item across the Mercato community.";
   return {
     title,
     description,
     openGraph: {
-      title: `${title} · BeiBei`,
+      title: `${title} · Mercato`,
       description,
       type: "article",
-      images: ["/og.svg"],
+      images: ["/og.png"],
     },
     twitter: {
       card: "summary_large_image",
-      title: `${title} · BeiBei`,
+      title: `${title} · Mercato`,
       description,
-      images: ["/og.svg"],
+      images: ["/og.png"],
     },
   };
 }

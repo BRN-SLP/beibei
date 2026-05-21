@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter, JetBrains_Mono } from 'next/font/google';
+import { Fraunces, Inter, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 
 import { Footer } from '@/components/footer';
@@ -12,6 +12,11 @@ const inter = Inter({
   subsets: ['latin'],
   variable: '--font-sans',
 });
+const fraunces = Fraunces({
+  subsets: ['latin'],
+  variable: '--font-serif',
+  weight: ['400', '500', '600', '700', '800'],
+});
 const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
   variable: '--font-mono',
@@ -19,53 +24,66 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://beibei-rho.vercel.app';
+  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://mercato-rho.vercel.app';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: 'BeiBei — crowdsourced product prices on Celo',
-    template: '%s · BeiBei',
+    default: 'Mercato — crowdsourced consumer price basket on Celo',
+    template: '%s · Mercato',
   },
   description:
-    'Scan a barcode. Type the price. Verify nearby submissions. Three matching votes finalize a median price and unlock cUSD micro-rewards for everyone involved.',
-  applicationName: 'BeiBei',
+    'A community-built cost-of-living index. Anyone, anywhere, submits a local price for bread, rent, transport, utilities. Peers verify on-chain and earn cUSD micro-rewards. The open alternative to Numbeo.',
+  applicationName: 'Mercato',
   keywords: [
     'Celo',
     'cUSD',
+    'Mento',
     'MiniPay',
     'price oracle',
-    'barcode',
+    'cost of living',
+    'consumer prices',
+    'inflation',
     'crowdsourced',
-    'micro-rewards',
+    'public good',
+    'stablecoins',
+    'emerging markets',
   ],
-  authors: [{ name: 'BeiBei' }],
+  authors: [{ name: 'Mercato' }],
   icons: {
-    icon: [{ url: '/favicon.svg', type: 'image/svg+xml' }],
-    apple: [{ url: '/apple-touch-icon.svg', sizes: '180x180', type: 'image/svg+xml' }],
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/logo-192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/logo-512.png', sizes: '512x512', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+      { url: '/apple-touch-icon.svg', sizes: '180x180', type: 'image/svg+xml' },
+    ],
   },
   manifest: '/site.webmanifest',
   openGraph: {
     type: 'website',
-    siteName: 'BeiBei',
+    siteName: 'Mercato',
     url: SITE_URL,
-    title: 'BeiBei — crowdsourced product prices on Celo',
+    title: 'Mercato — crowdsourced consumer price basket on Celo',
     description:
-      'Scan, verify, earn. The on-chain price index for everyday goods.',
+      'A daily, verifiable, country-by-country cost-of-living index. Submit a price, earn cUSD, build a public good.',
     images: [
       {
-        url: '/og.svg',
+        url: '/og.png',
         width: 1200,
         height: 630,
-        alt: 'BeiBei — crowdsourced price tracker on Celo',
+        alt: 'Mercato — crowdsourced cost-of-living index on Celo',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'BeiBei — crowdsourced product prices on Celo',
-    description: 'Scan a barcode → submit a price → earn cUSD. Built on Celo.',
-    images: ['/og.svg'],
+    title: 'Mercato — crowdsourced consumer price basket on Celo',
+    description:
+      'A daily, verifiable, country-by-country cost-of-living index — open data, on-chain, paid in cUSD.',
+    images: ['/og.png'],
   },
   robots: { index: true, follow: true },
   // Talent App domain ownership verification (Proof of Ship S2 submission).
@@ -80,8 +98,7 @@ export const metadata: Metadata = {
 /**
  * Viewport metadata. Split from the `metadata` export because Next.js
  * 14 moved theme-color / color-scheme / viewport-width into a dedicated
- * `Viewport` type — the older nested form on `metadata` is deprecated
- * and produces a build warning.
+ * `Viewport` type — the older nested form on `metadata` is deprecated.
  *
  * Why two themeColor entries:
  *   The mobile browser chrome (Safari/Chrome address bar, Android task
@@ -91,14 +108,17 @@ export const metadata: Metadata = {
  *   pick the right one automatically when the system or user toggle
  *   flips the preference.
  *
- * `colorScheme: 'light dark'` tells the UA both modes are supported,
- * which enables built-in form widgets, scrollbars, and any
- * `color-scheme:` CSS query to react correctly.
+ *   Light → cream surface (#e7e5dd) so the iOS Safari bar blends into
+ *   the page top.
+ *   Dark → deep green surface (#0d2419, the same hsl(155 38% 8%) used
+ *   in globals.css) so the address bar matches the page.
+ *
+ * `colorScheme: 'light dark'` tells the UA both modes are supported.
  */
 export const viewport: Viewport = {
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#fbf8f4' },
-    { media: '(prefers-color-scheme: dark)', color: '#0b1220' },
+    { media: '(prefers-color-scheme: light)', color: '#e7e5dd' },
+    { media: '(prefers-color-scheme: dark)', color: '#0d2419' },
   ],
   colorScheme: 'light dark',
 };
@@ -111,7 +131,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${jetbrainsMono.variable}`}
+      className={`${inter.variable} ${fraunces.variable} ${jetbrainsMono.variable}`}
       suppressHydrationWarning
     >
       <body className="font-sans">

@@ -5,8 +5,8 @@ import { Github } from "lucide-react";
 import { useChainId } from "wagmi";
 import { celo, celoSepolia } from "wagmi/chains";
 
-const VERSION = "0.1.0-alpha";
-const REPO_URL = "https://github.com/BRN-SLP/beibei";
+const VERSION = "0.2.0-alpha";
+const REPO_URL = "https://github.com/BRN-SLP/mercato";
 
 export function Footer() {
   const chainId = useChainId();
@@ -21,9 +21,9 @@ export function Footer() {
     <footer className="border-t bg-background/60 backdrop-blur">
       <div className="container mx-auto flex max-w-screen-2xl flex-col gap-3 px-4 py-6 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-col gap-1 font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
-          <span className="font-semibold text-foreground">BeiBei</span>
+          <span className="font-semibold text-foreground">Mercato</span>
           <span>
-            v{VERSION} · mit · crowdsourced prices · celo
+            v{VERSION} · mit · cost-of-living index · celo
           </span>
         </div>
 

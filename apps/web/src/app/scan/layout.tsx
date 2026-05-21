@@ -5,10 +5,10 @@ export const metadata: Metadata = {
   description:
     "Point your camera at any UPC/EAN-13 barcode, enter the price you paid, optionally attach a receipt photo. Submission goes on-chain in one transaction.",
   openGraph: {
-    title: "Scan a price · BeiBei",
+    title: "Submit a price · Mercato",
     description:
-      "Crowdsourced price submission from your phone — camera + GPS-derived zone + on-chain receipt hash.",
-    images: ["/og.svg"],
+      "Pick a product, pick your country, enter the price you paid. Verified peers earn cUSD. Open cost-of-living index, on-chain.",
+    images: ["/og.png"],
   },
 };
 
