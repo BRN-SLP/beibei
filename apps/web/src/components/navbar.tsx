@@ -20,12 +20,14 @@ interface NavLink {
   external?: boolean
 }
 
-// Routes — `/scan` is the existing submit-a-price page; we keep the
-// URL stable for now and only rename the label. The full route rename
-// (`/scan` → `/submit`) plus the new `/basket` country index land in
-// PR #2 alongside the new submit form and aggregation dashboard.
+// Routes — `/scan` is the legacy submit-a-price URL kept stable so
+// existing deep links continue to resolve; the label is "Submit"
+// since the foundation PR. `/basket` is the new cost-of-living index
+// dashboard. Order: Home, Basket (read), Submit (write), Rewards
+// (claim) — follows the user journey arc.
 const navLinks: NavLink[] = [
   { name: "Home", href: "/" },
+  { name: "Basket", href: "/basket" },
   { name: "Submit", href: "/scan" },
   { name: "Rewards", href: "/rewards" },
 ]
