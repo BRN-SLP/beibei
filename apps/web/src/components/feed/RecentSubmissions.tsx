@@ -1,81 +1,24 @@
-"use client";
-
 import Link from "next/link";
-import { useChainId } from "wagmi";
 
 import { Card, CardContent } from "@/components/ui/card";
-import { usePriceFeed } from "@/hooks/usePriceFeed";
-import { getCountryByCode } from "@/lib/countries";
-import { productSlugToBarcode, zoneKeyToCountry } from "@/lib/encode";
-import { PRODUCTS, type Product } from "@/lib/products";
+import { getRecentFeed, type FeedRow } from "@/lib/recent-feed";
 
+const ROW_HEIGHT_CLASS = "min-h-[68px]";
 const MAX_ROWS = 8;
 
 /**
- * Resolve a bytes12 barcode (as hex) back to a canonical Mercato
- * product. Built once at module load so subsequent lookups are O(1).
- */
-const PRODUCT_BY_BARCODE: ReadonlyMap<string, Product> = new Map(
-  PRODUCTS.map((p) => [productSlugToBarcode(p.slug).toLowerCase(), p]),
-);
-
-interface FeedRow {
-  submissionId: number;
-  barcode: `0x${string}`;
-  product: Product;
-  country: NonNullable<ReturnType<typeof getCountryByCode>>;
-  priceCents: number;
-  finalized: boolean;
-  accepted: boolean;
-  totalVotes: number;
-}
-
-/**
- * Live feed of Mercato submissions, hydrated from on-chain events
- * via `usePriceFeed`. Legacy non-Mercato submissions (EAN-13 barcodes,
- * GPS-encoded zoneKeys from earlier experiments on the same contract)
- * are filtered out — we only surface rows that resolve cleanly to a
- * (product, country) pair.
+ * Live feed of Mercato submissions, server-rendered from on-chain
+ * events via `getRecentFeed`. Used to be a client component that
+ * mounted empty and swapped to filled rows after RPC, which was the
+ * landing page's biggest CLS contributor — the swap moved ~500px
+ * of content. Now the HTML ships pre-filled and there's nothing to
+ * reflow after hydration.
  *
  * Empty state ships a "be the first" message that bottoms out the
- * landing page's narrative arc: read about the index, look at the
- * country preview, see the feed is hungry, jump to /scan.
+ * landing page's narrative arc.
  */
-export function RecentSubmissions() {
-  const chainId = useChainId();
-  const { records, loading } = usePriceFeed(chainId);
-
-  // Filter + reshape — drop anything that doesn't look like Mercato.
-  const rows: FeedRow[] = [];
-  for (const r of records) {
-    const product = PRODUCT_BY_BARCODE.get(r.barcode.toLowerCase());
-    if (!product) continue;
-    const countryCode = zoneKeyToCountry(r.zoneKey);
-    if (!countryCode) continue;
-    const country = getCountryByCode(countryCode);
-    if (!country) continue;
-    rows.push({
-      submissionId: r.submissionId,
-      barcode: r.barcode,
-      product,
-      country,
-      priceCents: r.priceCents,
-      finalized: r.finalized,
-      accepted: r.accepted,
-      totalVotes: r.totalVotes,
-    });
-    if (rows.length >= MAX_ROWS) break;
-  }
-
-  if (loading && rows.length === 0) {
-    return (
-      <Card className="border-border/60">
-        <CardContent className="py-10 text-center text-sm text-muted-foreground">
-          Loading the feed…
-        </CardContent>
-      </Card>
-    );
-  }
+export async function RecentSubmissions() {
+  const rows = await getRecentFeed(MAX_ROWS);
 
   if (rows.length === 0) {
     return (
@@ -126,7 +69,9 @@ function FeedItem({ row }: { row: FeedRow }) {
     : { label: `pending · ${row.totalVotes}/3`, tone: "bg-amber-500/80" };
 
   return (
-    <li className="grid grid-cols-[auto_1fr_auto] items-center gap-x-4 px-5 py-4">
+    <li
+      className={`grid grid-cols-[auto_1fr_auto] items-center gap-x-4 px-5 py-4 ${ROW_HEIGHT_CLASS}`}
+    >
       {/* Country code pill — replaces emoji flag */}
       <Link
         href={`/item/${row.barcode}`}
