@@ -48,11 +48,10 @@ const INITIAL_COUNTRY: Country = getCountryByCode("US") ?? COUNTRIES[0];
 /**
  * Submit form for Mercato's canonical basket.
  *
- * Replaces the legacy BeiBei flow (camera barcode scan + GPS zone) with
- * an explicit two-dropdown pick: which product, which country. The
- * underlying contract call is unchanged — see lib/encode.ts for how the
- * product slug is hashed to bytes12 and the country code is packed to
- * bytes6 before going on-chain.
+ * An explicit two-dropdown pick: which product, which country. The
+ * underlying contract call serialises the product slug to bytes12 via
+ * keccak256 and the country code to bytes6 via padded ASCII — see
+ * lib/encode.ts for the exact wire format.
  */
 export function PriceForm({ onCancel }: PriceFormProps) {
   const submit = useSubmitPrice();

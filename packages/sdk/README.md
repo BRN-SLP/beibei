@@ -1,13 +1,13 @@
-# @beibei/sdk
+# @mercato/sdk
 
-Read crowdsourced product prices from the [BeiBei](../../) on-chain oracle on Celo.
+Read crowdsourced consumer-basket prices from the [Mercato](../../) on-chain oracle on Celo.
 
 The contract is event-driven — `PriceSubmitted` + `Verified` + `SubmissionFinalized` are the source of truth. This SDK aggregates them into a single "current weighted-median price" view that any dapp can drop into their UI.
 
 ## Install
 
 ```bash
-pnpm add @beibei/sdk viem
+pnpm add @mercato/sdk viem
 ```
 
 `viem` is a peer dependency.
@@ -21,13 +21,13 @@ import {
   getMedianPrice,
   barcodeStringToHex,
   gpsToZoneKey,
-} from "@beibei/sdk";
+} from "@mercato/sdk";
 
 const client = createPublicClient({ chain: celo, transport: http() });
 
 const median = await getMedianPrice({
   publicClient: client,
-  oracleAddress: "0x...", // BeiBei proxy address
+  oracleAddress: "0x...", // Mercato proxy address
   barcode: barcodeStringToHex("0123456789012"),
   zoneKey: gpsToZoneKey(0.31, 32.58), // optional; omit for global median
 });

@@ -32,9 +32,10 @@ interface FeedRow {
 
 /**
  * Live feed of Mercato submissions, hydrated from on-chain events
- * via `usePriceFeed`. Legacy BeiBei submissions (EAN-13 barcodes,
- * GPS-encoded zoneKeys) are filtered out — we only surface rows that
- * resolve cleanly to (product, country).
+ * via `usePriceFeed`. Legacy non-Mercato submissions (EAN-13 barcodes,
+ * GPS-encoded zoneKeys from earlier experiments on the same contract)
+ * are filtered out — we only surface rows that resolve cleanly to a
+ * (product, country) pair.
  *
  * Empty state ships a "be the first" message that bottoms out the
  * landing page's narrative arc: read about the index, look at the

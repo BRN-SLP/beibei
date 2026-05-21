@@ -1,5 +1,5 @@
 /**
- * @beibei/sdk — public read helpers for the BeiBei price oracle on Celo.
+ * @mercato/sdk — public read helpers for the Mercato price oracle on Celo.
  *
  * The contract is event-driven: PriceSubmitted + Verified + SubmissionFinalized
  * events are the source of truth. This SDK aggregates them into a single
@@ -11,7 +11,7 @@
  * ```ts
  * import { createPublicClient, http } from "viem";
  * import { celo } from "viem/chains";
- * import { getMedianPrice, barcodeStringToHex, gpsToZoneKey } from "@beibei/sdk";
+ * import { getMedianPrice, barcodeStringToHex, gpsToZoneKey } from "@mercato/sdk";
  *
  * const client = createPublicClient({ chain: celo, transport: http() });
  * const median = await getMedianPrice({

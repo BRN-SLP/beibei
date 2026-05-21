@@ -8,10 +8,10 @@ import { PriceForm } from "@/components/submit/PriceForm";
 /**
  * Submit-a-price page.
  *
- * Lives at `/scan` for backwards compatibility with existing Talent App
- * + bookmark links from the BeiBei era. The route name will be aliased
- * to `/submit` in a follow-up middleware pass; the user-facing label in
- * the navbar already says "Submit" since the foundation PR.
+ * Lives at `/scan` for backwards compatibility with existing bookmark
+ * links from earlier versions of the project. The route name will be
+ * aliased to `/submit` in a follow-up middleware pass; the user-facing
+ * label in the navbar already says "Submit" since the foundation PR.
  *
  * The legacy camera-based BarcodeScanner is dropped — Mercato uses a
  * canonical product dropdown instead. The scanner component is kept in

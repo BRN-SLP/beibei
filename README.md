@@ -5,7 +5,6 @@
 🟢 **Live:** https://mercato-rho.vercel.app
 🧪 **Sepolia PriceOracle proxy:** [`0x9f3dc5C587415Dd551fA49fB0e3be47c66C9685B`](https://celo-sepolia.blockscout.com/address/0x9f3dc5C587415Dd551fA49fB0e3be47c66C9685B)
 🌐 **Mainnet PriceOracle proxy:** [`0x18DD82604a9439b3Cdb7E1078c355E460ED217Ed`](https://celoscan.io/address/0x18DD82604a9439b3Cdb7E1078c355E460ED217Ed)
-📖 **Talent App / Proof of Ship May edition** — eligible: MiniPay hook ✓, Celo contract ✓, OS repo ✓
 
 ---
 
@@ -22,7 +21,7 @@ The result is an open, verifiable, daily cost-of-living index across countries �
 
 ## Reward economics
 
-Mainnet launches with conservative bytecode constants: `SUBMITTER_REWARD = 0.001 cUSD`, `VERIFIER_REWARD = 0.0002 cUSD`. A 10 cUSD seed pool covers roughly 6 250 full consensus cycles — more than enough for May edition bootstrap. The numbers are deliberately small because the project bootstraps from the founder's wallet with no external revenue stream yet, and anti-Sybil gates aren't shipped, so a finite pool ceiling is the de-facto cap.
+Mainnet launches with conservative bytecode constants: `SUBMITTER_REWARD = 0.001 cUSD`, `VERIFIER_REWARD = 0.0002 cUSD`. A 10 cUSD seed pool covers roughly 6 250 full consensus cycles — enough headroom for the launch period. The numbers are deliberately small because the project bootstraps from the founder's wallet with no external revenue stream yet, and anti-Sybil gates aren't shipped, so a finite pool ceiling is the de-facto cap.
 
 The contract is **UUPS-upgradeable** — Sepolia has the same proxy upgraded to `PriceOracleV2Rewards` (50× bump, impl `0xc429cDDce1143B1AFd3040AE8E1FFb81c2e0A5D2`) as a rehearsal proving the mechanism works. Future V3 will add Sybil-mitigation gates (wallet-age threshold, daily cap, optional bond) via the same `upgradeProxy` pattern reusing the V1 storage gap — no redeploy, no data migration.
 
@@ -39,7 +38,7 @@ The contract is **UUPS-upgradeable** — Sepolia has the same proxy upgraded to 
 | MiniPay | Auto-detect via `window.ethereum.isMiniPay`; fee-abstracted with `feeCurrency: cUSD` |
 | Monorepo | Turborepo |
 
-The same `PriceOracle` contract from the BeiBei era is reused — it accepts a generic `bytes12 productId, bytes6 zoneKey, uint64 priceCents, bytes32 receiptHash`. The pivot from "barcode + GPS zone" to "product slug + country" is a pure client-side reinterpretation of those bytes; the contract didn't change. Currency is determined offchain from the country mapping (cUSD/cEUR/cREAL/cKES/eXOF/cGHS/cCOP/cPHP via Mento, or local fiat for non-Mento currencies).
+The on-chain contract is a generic `(bytes12 productId, bytes6 zoneKey, uint64 priceCents, bytes32 receiptHash)` price submitter — neutral to whatever the client encodes into those slots. Mercato encodes the product as `keccak256(productSlug)` truncated to 12 bytes and the country as ISO-3166-1 alpha-2 padded ASCII. The encoding is pure off-chain, so the same contract can host other consumer-price experiments without redeployment. Currency is determined offchain from the country mapping (cUSD/cEUR/cREAL/cKES/eXOF/cGHS/cCOP/cPHP via Mento, or local fiat for non-Mento currencies).
 
 ## Why Celo
 

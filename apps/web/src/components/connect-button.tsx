@@ -6,12 +6,12 @@ import { AlertTriangle, Plug } from "lucide-react";
 import { useEffect, useState } from "react";
 
 /**
- * BeiBei-branded connect button.
+ * Mercato-branded connect button.
  *
- * Terminal / dashboard aesthetic: square corners, mono labels, cyan
- * accents with a pulsing amber status dot to mirror the AnimatedBarcode
- * hero. Built on RainbowKit's `ConnectButton.Custom` for full visual
- * control with their modal flow intact.
+ * Terminal / dashboard aesthetic: square corners, mono labels, primary
+ * accents with a pulsing status dot. Built on RainbowKit's
+ * `ConnectButton.Custom` for full visual control with their modal flow
+ * intact.
  *
  * States:
  *   1. Disconnected — outlined cyan rectangle with "[ connect ]" mono

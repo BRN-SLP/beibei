@@ -1,7 +1,7 @@
 {
-  "name": "@beibei/sdk",
+  "name": "@mercato/sdk",
   "version": "0.0.1-alpha.0",
-  "description": "Read crowdsourced product prices from the BeiBei on-chain oracle on Celo",
+  "description": "Read crowdsourced consumer-basket prices from the Mercato on-chain oracle on Celo",
   "license": "MIT",
   "type": "module",
   "main": "./dist/index.js",
@@ -35,8 +35,8 @@
     "celo",
     "cusd",
     "price-oracle",
-    "barcode",
+    "cost-of-living",
     "minipay",
-    "beibei"
+    "mercato"
   ]
 }

@@ -1,6 +1,6 @@
-# BeiBei - Smart Contracts
+# Mercato — Smart Contracts
 
-This directory contains the smart contracts for BeiBei, built with Hardhat and optimized for the Celo blockchain.
+This directory contains the smart contracts for Mercato, built with Hardhat and optimized for the Celo blockchain.
 
 ## 🚀 Quick Start
 

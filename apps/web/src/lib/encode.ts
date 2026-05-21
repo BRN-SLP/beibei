@@ -1,8 +1,8 @@
 /**
  * Mercato on-chain encoders.
  *
- * The existing PriceOracle contract is reused unchanged from the
- * BeiBei era — it accepts:
+ * The PriceOracle contract is a generic price submitter — the on-chain
+ * signature is intentionally neutral:
  *
  *   submitPrice(
  *     bytes12 barcode,
@@ -11,7 +11,7 @@
  *     bytes32 receiptHash,
  *   )
  *
- * In Mercato's new shape:
+ * Mercato encodes those slots as follows:
  *
  *   barcode   = keccak256(productSlug) truncated to 12 bytes
  *               (96-bit identifier; collision probability ~3e-19
@@ -98,8 +98,8 @@ export function countryToZoneKey(countryCode: string): Hex {
 /**
  * Decode a bytes6 zoneKey back to its ISO-3166-1 alpha-2 country
  * code. Returns undefined if the zoneKey doesn't look like a Mercato
- * country zone (e.g. legacy BeiBei GPS-encoded zones still sitting in
- * the contract's history).
+ * country zone (e.g. legacy GPS-encoded zones from earlier experiments
+ * on the same contract).
  */
 export function zoneKeyToCountry(zoneKey: Hex): string | undefined {
   const hex = zoneKey.startsWith("0x") ? zoneKey.slice(2) : zoneKey;

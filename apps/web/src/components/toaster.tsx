@@ -3,10 +3,10 @@
 import { Toaster as SonnerToaster } from "sonner";
 
 /**
- * App-wide toast surface for BeiBei. Terminal aesthetic: bottom-right
- * placement (closer to the camera/submit interaction zone on mobile),
- * mono font, sharp corners, no rich-color tints to keep the cyan/amber
- * brand consistent.
+ * App-wide toast surface for Mercato. Terminal aesthetic: bottom-right
+ * placement (closer to the submit interaction zone on mobile), mono
+ * font, sharp corners, no rich-color tints so the cream + deep-green
+ * brand stays consistent.
  */
 export function Toaster() {
   return (

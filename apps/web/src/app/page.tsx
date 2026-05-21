@@ -83,10 +83,8 @@ export default function Home() {
           </div>
 
           {/* Right — Mercato basket mark.
-              Replaced the BeiBei AnimatedBarcode (canvas-rendered
-              scanner stripes) with the brand basket SVG. The mark is
-              the same one used in the favicon and OG image, scaled
-              up — keeping a single brand signal across the page. */}
+              Same SVG used in the favicon and OG image, scaled up
+              so the brand signal is consistent across the page. */}
           <div className="relative flex items-center justify-center">
             <div
               aria-hidden="true"

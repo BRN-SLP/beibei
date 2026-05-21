@@ -11,10 +11,10 @@
  *      `eth_getLogs` covers this comfortably on Forno.
  *   3. Filter:
  *        - drop submissions whose barcode doesn't match any canonical
- *          Mercato product (legacy BeiBei EAN-13 submissions live in
- *          the same event log)
+ *          Mercato product (legacy non-Mercato EAN-13 submissions from
+ *          earlier experiments live in the same event log)
  *        - drop submissions whose zoneKey isn't Mercato-format
- *          (legacy GPS-encoded zones)
+ *          (legacy GPS-encoded zones from earlier experiments)
  *   4. Group by (country, product) and compute the median priceCents.
  *      Median > mean here because the launch sample is small and a
  *      single outlier (mistyped digit, currency confusion) would

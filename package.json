@@ -18,7 +18,7 @@
     "contracts:seed:celo": "turbo run seed:celo --filter=hardhat",
     "contracts:seed-mercato:celo-sepolia": "turbo run seed-mercato:celo-sepolia --filter=hardhat",
     "contracts:seed-mercato:celo": "turbo run seed-mercato:celo --filter=hardhat",
-    "sdk:build": "pnpm --filter @beibei/sdk build"
+    "sdk:build": "pnpm --filter @mercato/sdk build"
   },
   "devDependencies": {
     "@types/node": "^20.8.0",
