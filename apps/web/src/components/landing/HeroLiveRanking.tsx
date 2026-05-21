@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { useState } from "react";
@@ -66,12 +65,7 @@ export function HeroLiveRanking({
   const maxCents = Math.max(...data.map((e) => e.baseCents));
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.55, ease: "easeOut" }}
-      className="rounded-md border border-border/60 bg-card/60 p-5 backdrop-blur"
-    >
+    <div className="rounded-md border border-border/60 bg-card/60 p-5 backdrop-blur">
       {/* Header — title + base-currency toggle */}
       <div className="mb-4 flex items-baseline justify-between gap-3">
         <div>
@@ -172,6 +166,6 @@ export function HeroLiveRanking({
           <ArrowRight className="h-3 w-3" aria-hidden="true" />
         </Link>
       </div>
-    </motion.div>
+    </div>
   );
 }
