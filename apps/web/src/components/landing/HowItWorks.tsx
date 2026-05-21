@@ -1,310 +1,306 @@
+"use client";
+
+import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 
-import { RevealOnScroll } from "@/components/hero/RevealOnScroll";
-
 /**
- * "How it works" — three-stage editorial flow with miniature UI
- * artifacts.
+ * "How it works" — paper-folder tabbed flow.
  *
- * Replaces the previous alternating-left/right text-only layout.
- * That layout wasn't a card grid (good — would have hit the
- * impeccable absolute ban) but it was three paragraphs of body
- * copy and nothing else.
+ * Earlier attempts at this section converged on identical three-card
+ * grids and tripped the impeccable absolute ban no matter how the
+ * cards were tuned. User feedback: "сделать как три вкладки в папке,
+ * листаем страничку и по очереди". Same three stages, but only one
+ * is on screen at a time, in a much larger panel — no grid, no
+ * forced symmetry, room for the artifact to breathe.
  *
- * The new layout keeps the editorial spine — serif stage numerals,
- * mono-caps tags, prose body — and adds a small visual artifact
- * per stage that demonstrates what that stage actually looks
- * like:
+ * Folder visual:
  *
- *   01 · scan    →  a submission ticket (country + product + price)
- *   02 · verify  →  a vote tally (3-dot progress + verifier count)
- *   03 · earn    →  a reward receipt (cUSD micro-amount + tx hash)
+ *     ┌───────┐ ┌───────┐ ┌───────┐
+ *     │ 01    │ │ 02    │ │ 03    │
+ *     │  SCAN │ │ VERIFY│ │ EARN  │
+ *     └───────┘─└───────┘─└───────┘  ← active tab keeps its bottom
+ *                                       open into the panel below
+ *     ┌─────────────────────────────────┐
+ *     │                                 │
+ *     │   [artifact]   [copy]           │
+ *     │                                 │
+ *     └─────────────────────────────────┘
  *
- * Artifact rhythm (every artifact, same skeleton — that's what
- * keeps the three from reading as 'three different cards'):
- *
- *   [tiny metadata strip — left + right]
- *   [big mono metric]
- *   [2 detail rows]
- *   [solid bottom border]
- *   [mono caps footer line]
- *
- * Height is locked with `min-h` so the stage copy under each
- * artifact starts at the same baseline across columns. A thin
- * horizontal rail connects the three stage markers on desktop so
- * the section reads as 'submission → vote → reward', not as
- * three independent ideas.
- *
- * Layout note: artifacts ARE card-shaped — they have a border and
- * a label. But there are only three of them, the labels differ in
- * shape (corner stamp), and each artifact has a distinct internal
- * composition. So they don't read as 'identical card grid' (the
- * absolute ban). They read as three stamped tickets from one
- * printer.
+ * Auto-advances every 7s until the user clicks (then stays manual).
+ * Keyboard arrows work too — left/right cycle stages.
  */
 export function HowItWorks() {
   const t = useTranslations("howItWorks");
+  const [active, setActive] = useState(0);
+  const [auto, setAuto] = useState(true);
+
+  const stages = [
+    {
+      tag: "scan",
+      title: t("step1Title"),
+      body: t("step1Body"),
+      Artifact: SubmissionArtifact,
+    },
+    {
+      tag: "verify",
+      titleNode: (
+        <>
+          {t("step2Title")}{" "}
+          <span className="italic text-primary">{t("step2TitleAccent")}</span>
+        </>
+      ),
+      title: t("step2Title"),
+      body: t("step2Body"),
+      Artifact: VoteArtifact,
+    },
+    {
+      tag: "earn",
+      title: t("step3Title"),
+      body: t("step3Body"),
+      Artifact: RewardArtifact,
+    },
+  ] as const;
+
+  // Auto-rotate until the user takes manual control.
+  useEffect(() => {
+    if (!auto) return;
+    const id = setInterval(() => {
+      setActive((prev) => (prev + 1) % stages.length);
+    }, 7000);
+    return () => clearInterval(id);
+  }, [auto, stages.length]);
+
+  const selectStage = useCallback((i: number) => {
+    setActive(i);
+    setAuto(false);
+  }, []);
+
+  const onKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLDivElement>) => {
+      if (e.key === "ArrowRight") {
+        e.preventDefault();
+        selectStage((active + 1) % stages.length);
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        selectStage((active - 1 + stages.length) % stages.length);
+      }
+    },
+    [active, selectStage, stages.length],
+  );
+
+  const current = stages[active];
 
   return (
-    <section className="container mx-auto max-w-6xl px-4 py-24">
-      <RevealOnScroll>
-        <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.2em] text-primary">
-          {t("section")}
+    <section className="container mx-auto max-w-5xl px-4 py-24">
+      <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.2em] text-primary">
+        {t("section")}
+      </p>
+      <h2 className="mb-10 font-serif text-3xl font-semibold tracking-tight md:text-4xl">
+        {t("title1")}{" "}
+        <span className="italic text-primary">{t("title2")}</span>
+      </h2>
+
+      {/* Tab strip — three folder tabs sitting on a horizontal rule. */}
+      <div
+        role="tablist"
+        aria-label="How it works stages"
+        onKeyDown={onKeyDown}
+        className="relative flex items-end gap-1 sm:gap-2"
+      >
+        {stages.map((s, i) => {
+          const isActive = i === active;
+          return (
+            <button
+              key={s.tag}
+              type="button"
+              role="tab"
+              aria-selected={isActive}
+              aria-controls={`stage-panel-${s.tag}`}
+              id={`stage-tab-${s.tag}`}
+              onClick={() => selectStage(i)}
+              className={`relative flex flex-1 items-baseline gap-2 rounded-t-md border border-b-0 px-4 py-3 text-left transition-colors sm:flex-initial sm:px-6 sm:py-4 ${
+                isActive
+                  ? "border-border bg-card/60 text-foreground"
+                  : "border-transparent bg-transparent text-muted-foreground hover:bg-card/30"
+              }`}
+            >
+              <span
+                className={`font-serif text-2xl font-bold leading-none transition-colors sm:text-3xl ${
+                  isActive ? "text-primary" : "text-foreground/40"
+                }`}
+              >
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <span className="font-mono text-[10px] uppercase tracking-[0.18em]">
+                · {s.tag}
+              </span>
+              {/* Bottom-edge masking strip — extends 1px below the
+                  tab to cover the panel's top border under the
+                  active tab, so the folder visual really reads as
+                  "this tab opens into the panel". */}
+              {isActive && (
+                <span
+                  aria-hidden="true"
+                  className="absolute -bottom-px left-0 right-0 h-px bg-card/60"
+                />
+              )}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Panel — content area for the active stage. */}
+      <div
+        role="tabpanel"
+        id={`stage-panel-${current.tag}`}
+        aria-labelledby={`stage-tab-${current.tag}`}
+        className="rounded-md rounded-tl-none border border-border bg-card/60 p-6 backdrop-blur md:p-10"
+      >
+        <div className="grid items-center gap-10 md:grid-cols-[1fr_1fr]">
+          <div className="space-y-4 md:order-2">
+            <h3 className="font-serif text-2xl font-semibold tracking-tight md:text-3xl">
+              {"titleNode" in current && current.titleNode
+                ? current.titleNode
+                : current.title}
+            </h3>
+            <p className="max-w-prose text-sm leading-relaxed text-muted-foreground md:text-base">
+              {current.body}
+            </p>
+          </div>
+          <div className="md:order-1">
+            <current.Artifact />
+          </div>
+        </div>
+      </div>
+
+      {/* Pagination dots — stage indicator. Click also navigates. */}
+      <div className="mt-6 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          {stages.map((s, i) => (
+            <button
+              key={s.tag}
+              type="button"
+              aria-label={`Go to stage ${i + 1} · ${s.tag}`}
+              onClick={() => selectStage(i)}
+              className={`h-1.5 rounded-full transition-all ${
+                i === active
+                  ? "w-8 bg-primary"
+                  : "w-3 bg-border hover:bg-primary/50"
+              }`}
+            />
+          ))}
+        </div>
+        <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+          stage {active + 1} of {stages.length}
         </p>
-        <h2 className="mb-14 font-serif text-3xl font-semibold tracking-tight md:text-4xl">
-          {t("title1")}{" "}
-          <span className="italic text-primary">{t("title2")}</span>
-        </h2>
-      </RevealOnScroll>
-
-      {/* Three-stage editorial flow. */}
-      <div className="relative">
-        {/* Connecting rail — desktop only. Anchors the eye
-            horizontally so the section reads as a sequence. */}
-        <div
-          aria-hidden="true"
-          className="absolute left-0 right-0 top-[3.25rem] hidden h-px bg-border md:block"
-        />
-
-        <ol className="relative grid gap-12 md:grid-cols-3 md:gap-8">
-          <RevealOnScroll>
-            <Stage index={1} tag="scan">
-              <SubmissionTicket />
-              <StageCopy
-                title={t("step1Title")}
-                body={t("step1Body")}
-              />
-            </Stage>
-          </RevealOnScroll>
-
-          <RevealOnScroll delay={0.08}>
-            <Stage index={2} tag="verify">
-              <VoteTally />
-              <StageCopy
-                title={
-                  <>
-                    {t("step2Title")}{" "}
-                    <span className="italic text-primary">
-                      {t("step2TitleAccent")}
-                    </span>
-                  </>
-                }
-                body={t("step2Body")}
-              />
-            </Stage>
-          </RevealOnScroll>
-
-          <RevealOnScroll delay={0.16}>
-            <Stage index={3} tag="earn">
-              <RewardChip />
-              <StageCopy
-                title={t("step3Title")}
-                body={t("step3Body")}
-              />
-            </Stage>
-          </RevealOnScroll>
-        </ol>
       </div>
     </section>
   );
 }
 
-interface StageProps {
-  index: number;
-  tag: string;
-  children: React.ReactNode;
-}
+/* ──────────────────────────────────────────────────────────────
+ * Artifacts — bigger, more breathing room now that only one shows
+ * at a time. No fixed heights, no shared skeleton needed.
+ * ────────────────────────────────────────────────────────────── */
 
-function Stage({ index, tag, children }: StageProps) {
+function SubmissionArtifact() {
   return (
-    <li className="relative flex h-full flex-col gap-5">
-      {/* Stage marker — sits at the same y across columns so the
-          rail line passes through all three dots in a straight
-          horizontal. */}
-      <div className="flex h-12 items-center gap-3">
-        <span
-          aria-hidden="true"
-          className="font-serif text-5xl font-bold leading-none text-primary"
-        >
-          {String(index).padStart(2, "0")}
-        </span>
-        <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-          · {tag}
-        </span>
-        <span
-          aria-hidden="true"
-          className="ml-auto hidden h-2 w-2 rounded-full bg-primary md:block"
-        />
-      </div>
-      {children}
-    </li>
-  );
-}
-
-function StageCopy({
-  title,
-  body,
-}: {
-  title: React.ReactNode;
-  body: React.ReactNode;
-}) {
-  return (
-    <div className="space-y-2">
-      <h3 className="font-serif text-xl font-semibold tracking-tight md:text-2xl">
-        {title}
-      </h3>
-      <p className="max-w-prose text-sm leading-relaxed text-muted-foreground md:text-base">
-        {body}
+    <div className="font-mono">
+      <p className="mb-3 text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+        submission · example
       </p>
+      <div className="flex items-center justify-between border-b border-border/60 pb-3">
+        <span className="inline-flex h-8 w-12 items-center justify-center rounded-sm border border-border bg-card font-mono text-xs font-semibold tracking-[0.2em] text-foreground/80">
+          UA
+        </span>
+        <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
+          14:42 utc
+        </span>
+      </div>
+      <div className="py-5">
+        <p className="text-xs text-muted-foreground">milk · 1 L</p>
+        <p className="mt-1 text-4xl font-semibold tabular-nums text-foreground md:text-5xl">
+          18.00{" "}
+          <span className="text-base font-normal text-muted-foreground">
+            UAH
+          </span>
+        </p>
+      </div>
+      <div className="border-t border-border/60 pt-3 text-[10px] uppercase tracking-wider text-muted-foreground">
+        one tx · cUSD fee · receipt optional
+      </div>
     </div>
   );
 }
 
-/* ──────────────────────────────────────────────────────────────
- * Artifacts.
- *
- * All three share the same skeleton — see `Artifact` below — so
- * the eye reads them as 'three tickets stamped from the same
- * printer' rather than three different cards. Height is locked
- * so the StageCopy underneath aligns across columns.
- * ────────────────────────────────────────────────────────────── */
-
-interface ArtifactProps {
-  label: string;
-  topLeft: React.ReactNode;
-  topRight: React.ReactNode;
-  metric: React.ReactNode;
-  metricUnit?: React.ReactNode;
-  rows: { left: React.ReactNode; right: React.ReactNode; muted?: boolean }[];
-  footer: React.ReactNode;
-}
-
-function Artifact({
-  label,
-  topLeft,
-  topRight,
-  metric,
-  metricUnit,
-  rows,
-  footer,
-}: ArtifactProps) {
+function VoteArtifact() {
   return (
-    <figure className="relative flex min-h-[15rem] flex-col rounded-md border border-border/60 bg-card/60 p-4 backdrop-blur">
-      {/* Corner stamp — mono caps category tag, anchored top-left.
-          Sits across the card frame so the artifact reads as a
-          stamped ticket. */}
-      <figcaption className="absolute -top-2 left-3 bg-background px-1.5 font-mono text-[9px] uppercase tracking-[0.2em] text-muted-foreground">
-        {label}
-      </figcaption>
-
-      {/* Top metadata strip — left + right slots. */}
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          {topLeft}
-        </div>
-        <div className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
-          {topRight}
-        </div>
-      </div>
-
-      {/* Big mono metric — the focal value of the stage. */}
-      <div className="mt-3 flex items-baseline gap-2">
-        <span className="font-mono text-2xl font-semibold tabular-nums text-foreground">
-          {metric}
-        </span>
-        {metricUnit !== undefined && (
-          <span className="font-mono text-xs font-normal text-muted-foreground">
-            {metricUnit}
-          </span>
-        )}
-      </div>
-
-      {/* Detail rows — always two rows of mono caps so the column
-          rhythm matches across artifacts. */}
-      <div className="mt-3 space-y-1">
-        {rows.map((row, i) => (
-          <div
-            key={i}
-            className={`flex items-center justify-between font-mono text-[10px] uppercase tracking-wider ${
-              row.muted ? "text-muted-foreground/60" : "text-muted-foreground"
-            }`}
-          >
-            <span>{row.left}</span>
-            <span>{row.right}</span>
-          </div>
-        ))}
-      </div>
-
-      {/* Footer caption — pinned to the bottom of the artifact so
-          all three column footers sit at the same y. */}
-      <div className="mt-auto border-t border-border/60 pt-2 font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
-        {footer}
-      </div>
-    </figure>
-  );
-}
-
-function SubmissionTicket() {
-  return (
-    <Artifact
-      label="submission · example"
-      topLeft={
-        <span
-          aria-hidden="true"
-          className="inline-flex h-6 w-9 items-center justify-center rounded-sm border border-border bg-card font-mono text-[10px] font-semibold tracking-[0.18em] text-foreground/80"
-        >
-          UA
-        </span>
-      }
-      topRight="14:42 utc"
-      metric="18.00"
-      metricUnit="UAH"
-      rows={[
-        { left: "product", right: "milk · 1 L" },
-        { left: "receipt", right: "optional · ipfs", muted: true },
-      ]}
-      footer="one tx · cUSD fee"
-    />
-  );
-}
-
-function VoteTally() {
-  return (
-    <Artifact
-      label="vote tally · in progress"
-      topLeft={
-        <span className="flex items-center gap-2">
+    <div className="font-mono">
+      <p className="mb-3 text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+        vote tally · in progress
+      </p>
+      <div className="flex items-center justify-between border-b border-border/60 pb-3">
+        <span className="flex items-center gap-2.5">
           <Dot tone="filled" />
           <Dot tone="filled" />
           <Dot tone="empty" />
         </span>
-      }
-      topRight="4h window"
-      metric="2/3"
-      metricUnit="peers · UA"
-      rows={[
-        { left: "0x9a…21", right: "yes" },
-        { left: "0x4c…7e", right: "yes" },
-      ]}
-      footer="1 more to finalize"
-    />
+        <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
+          4h window
+        </span>
+      </div>
+      <div className="py-5">
+        <p className="text-xs text-muted-foreground">peers in UA</p>
+        <p className="mt-1 text-4xl font-semibold tabular-nums text-foreground md:text-5xl">
+          2/3
+        </p>
+      </div>
+      <div className="space-y-1.5 border-t border-border/60 pt-3 text-[10px] uppercase tracking-wider text-muted-foreground">
+        <div className="flex justify-between">
+          <span>0x9a…21</span>
+          <span className="text-foreground/80">yes</span>
+        </div>
+        <div className="flex justify-between">
+          <span>0x4c…7e</span>
+          <span className="text-foreground/80">yes</span>
+        </div>
+      </div>
+    </div>
   );
 }
 
-function RewardChip() {
+function RewardArtifact() {
   return (
-    <Artifact
-      label="settled · just now"
-      topLeft={<span>net to wallet</span>}
-      topRight="↗ tx 0xab…1c"
-      metric="+ 0.05"
-      metricUnit="cUSD"
-      rows={[
-        { left: "submitter share", right: "+ 0.05" },
-        { left: "3 × verifiers", right: "+ 0.05" },
-      ]}
-      footer="sweep any time · no minimum"
-    />
+    <div className="font-mono">
+      <p className="mb-3 text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+        settled · just now
+      </p>
+      <div className="flex items-center justify-between border-b border-border/60 pb-3">
+        <span className="text-xs text-muted-foreground">net to wallet</span>
+        <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
+          ↗ tx 0xab…1c
+        </span>
+      </div>
+      <div className="py-5">
+        <p className="text-xs text-muted-foreground">submitter share · 50%</p>
+        <p className="mt-1 text-4xl font-semibold tabular-nums text-primary md:text-5xl">
+          + 0.05{" "}
+          <span className="text-base font-normal text-muted-foreground">
+            cUSD
+          </span>
+        </p>
+      </div>
+      <div className="space-y-1.5 border-t border-border/60 pt-3 text-[10px] uppercase tracking-wider text-muted-foreground">
+        <div className="flex justify-between">
+          <span>3 × verifiers</span>
+          <span className="text-foreground/80">+ 0.05 each</span>
+        </div>
+        <div className="flex justify-between">
+          <span>sweep</span>
+          <span className="text-foreground/80">any time · no min</span>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -314,8 +310,8 @@ function Dot({ tone }: { tone: "filled" | "empty" }) {
       aria-hidden="true"
       className={
         tone === "filled"
-          ? "inline-block h-2 w-2 rounded-full bg-primary"
-          : "inline-block h-2 w-2 rounded-full border border-border bg-transparent"
+          ? "inline-block h-2.5 w-2.5 rounded-full bg-primary"
+          : "inline-block h-2.5 w-2.5 rounded-full border border-border bg-transparent"
       }
     />
   );
