@@ -42,6 +42,7 @@ const VERIFIER_DERIVATIONS = [
 ];
 
 const VERIFIER_GAS_FUNDING_WEI = 10n ** 17n; // 0.1 CELO per verifier — covers >= MERCATO_SEED.length verify txs
+const VERIFIER_GAS_TOPUP_THRESHOLD_WEI = 10n ** 17n; // top up mid-loop if balance dips under 0.1 CELO
 
 /** Encode a product slug → bytes12 hex string. Mirrors apps/web/src/lib/encode.ts. */
 function productSlugToBarcode(slug: string): `0x${string}` {
@@ -91,7 +92,8 @@ async function main(): Promise<void> {
   const oracle = await ethers.getContractAt("PriceOracle", proxyAddress, deployer);
 
   // Discover which entries already exist (idempotent re-runs).
-  const existingByKey = new Set<string>();
+  // Map: "barcode|zoneKey" → submissionId so re-runs can finish half-verified state.
+  const existingById = new Map<string, bigint>();
   try {
     const filter = oracle.filters.PriceSubmitted(undefined, undefined, undefined);
     const events = await oracle.queryFilter(filter, -1_000_000);
@@ -101,12 +103,19 @@ async function main(): Promise<void> {
       const submitter = (args as unknown as { submitter?: string }).submitter;
       const barcode = (args as unknown as { barcode?: string }).barcode;
       const zoneKey = (args as unknown as { zoneKey?: string }).zoneKey;
+      const submissionId = (
+        args as unknown as { submissionId?: bigint }
+      ).submissionId;
       if (
         submitter?.toLowerCase() === deployerAddress.toLowerCase() &&
         typeof barcode === "string" &&
-        typeof zoneKey === "string"
+        typeof zoneKey === "string" &&
+        typeof submissionId === "bigint"
       ) {
-        existingByKey.add(`${barcode.toLowerCase()}|${zoneKey.toLowerCase()}`);
+        existingById.set(
+          `${barcode.toLowerCase()}|${zoneKey.toLowerCase()}`,
+          submissionId,
+        );
       }
     }
   } catch (err) {
@@ -135,57 +144,128 @@ async function main(): Promise<void> {
   }
 
   let submitted = 0;
+  let verifiedOnly = 0;
   let skipped = 0;
   for (const row of MERCATO_SEED) {
     const barcode = productSlugToBarcode(row.productSlug);
     const zoneKey = countryToZoneKey(row.countryCode);
     const key = `${barcode.toLowerCase()}|${zoneKey.toLowerCase()}`;
-    if (existingByKey.has(key)) {
+
+    let submissionId = existingById.get(key);
+
+    if (submissionId === undefined) {
+      // Fresh row — submit it.
+      const priceCents = majorUnitsToCents(row.priceMajor);
+      const zeroHash = `0x${"0".repeat(64)}`;
+      const tx = await oracle.submitPrice(barcode, zoneKey, priceCents, zeroHash);
+      const receipt = await tx.wait();
+      if (!receipt) throw new Error("no receipt for submitPrice");
+
+      for (const log of receipt.logs ?? []) {
+        try {
+          const parsed = oracle.interface.parseLog({
+            topics: log.topics as string[],
+            data: log.data,
+          });
+          if (parsed?.name === "PriceSubmitted") {
+            submissionId = BigInt(parsed.args.submissionId.toString());
+            break;
+          }
+        } catch {
+          // not our event; skip
+        }
+      }
+      if (submissionId === undefined) {
+        throw new Error("could not parse submissionId from PriceSubmitted log");
+      }
+      // eslint-disable-next-line no-console
+      console.log(
+        `[seed-mercato] submitted #${submissionId} ${row.productSlug} ${row.countryCode} ${row.priceMajor} ${row.currency}`,
+      );
+      submitted++;
+    } else {
+      // eslint-disable-next-line no-console
+      console.log(
+        `[seed-mercato] found existing #${submissionId} ${row.productSlug} ${row.countryCode}`,
+      );
+    }
+
+    // Check current state; only verify with wallets that haven't already voted.
+    const sub = (await oracle.submissions(submissionId)) as unknown as unknown[];
+    const finalized = sub[8] as boolean;
+    if (finalized) {
+      // eslint-disable-next-line no-console
+      console.log(`[seed-mercato]   #${submissionId} already finalized — skip`);
       skipped++;
       continue;
     }
-    const priceCents = majorUnitsToCents(row.priceMajor);
-    const zeroHash = `0x${"0".repeat(64)}`;
-    const tx = await oracle.submitPrice(barcode, zoneKey, priceCents, zeroHash);
-    const receipt = await tx.wait();
-    if (!receipt) throw new Error("no receipt for submitPrice");
 
-    // Pull the submissionId out of the PriceSubmitted log.
-    let submissionId: bigint | undefined;
-    for (const log of receipt.logs ?? []) {
-      try {
-        const parsed = oracle.interface.parseLog({
-          topics: log.topics as string[],
-          data: log.data,
-        });
-        if (parsed?.name === "PriceSubmitted") {
-          submissionId = BigInt(parsed.args.submissionId.toString());
-          break;
-        }
-      } catch {
-        // not our event; skip
-      }
-    }
-    if (submissionId === undefined) {
-      throw new Error("could not parse submissionId from PriceSubmitted log");
-    }
-    // eslint-disable-next-line no-console
-    console.log(
-      `[seed-mercato] #${submissionId} ${row.productSlug} ${row.countryCode} ${row.priceMajor} ${row.currency}`,
-    );
-
-    // Three verifiers approve.
+    let voted = 0;
     for (const vw of verifierWallets) {
+      const already = await oracle.hasVerified(submissionId, vw.address);
+      if (already) continue;
+
+      // Dynamic top-up: Celo gas spikes mid-loop, so re-check balance before
+      // each verify and refill if low. Otherwise the verifier with the
+      // shortest funding margin reverts with "insufficient funds for gas".
+      const bal = await provider.getBalance(vw.address);
+      if (bal < VERIFIER_GAS_TOPUP_THRESHOLD_WEI) {
+        // eslint-disable-next-line no-console
+        console.log(
+          `[seed-mercato]   topping up ${vw.address} (bal=${bal})`,
+        );
+        const topup = await deployer.sendTransaction({
+          to: vw.address,
+          value: VERIFIER_GAS_FUNDING_WEI,
+        });
+        await topup.wait();
+      }
+
       const vOracle = oracle.connect(vw) as typeof oracle;
-      const vtx = await vOracle.verify(submissionId, true);
-      await vtx.wait();
+      // Celo RPC occasionally throws "execution reverted" during gas estimation
+      // even when staticCall confirms the tx is valid. Retry a handful of times
+      // before giving up.
+      let lastErr: unknown;
+      let success = false;
+      for (let attempt = 1; attempt <= 4; attempt++) {
+        try {
+          const vtx = await vOracle.verify(submissionId, true);
+          await vtx.wait();
+          success = true;
+          break;
+        } catch (err) {
+          lastErr = err;
+          // eslint-disable-next-line no-console
+          console.warn(
+            `[seed-mercato]   verify(${submissionId}) attempt ${attempt} from ${vw.address} failed: ${
+              err instanceof Error ? err.message.split("\n")[0] : String(err)
+            }`,
+          );
+          // Confirm via staticCall that the tx would still succeed; if it
+          // wouldn't, fail fast (no point retrying a real revert).
+          try {
+            await vOracle.verify.staticCall(submissionId, true);
+          } catch (staticErr) {
+            // eslint-disable-next-line no-console
+            console.warn(
+              `[seed-mercato]   staticCall also reverts — giving up: ${
+                staticErr instanceof Error ? staticErr.message.split("\n")[0] : String(staticErr)
+              }`,
+            );
+            throw staticErr;
+          }
+          await new Promise((r) => setTimeout(r, 2000 * attempt));
+        }
+      }
+      if (!success) throw lastErr;
+      voted++;
     }
-    submitted++;
+    if (voted > 0) verifiedOnly++;
   }
 
   // eslint-disable-next-line no-console
   console.log(
-    `[seed-mercato] done. submitted=${submitted} skipped=${skipped} total_in_fixture=${MERCATO_SEED.length}`,
+    `[seed-mercato] done. submitted=${submitted} verified_existing=${verifiedOnly} already_final=${skipped} total_in_fixture=${MERCATO_SEED.length}`,
   );
 }
 
