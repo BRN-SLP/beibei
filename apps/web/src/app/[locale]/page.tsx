@@ -72,8 +72,11 @@ function HomeContent() {
             <UserBalance />
           </div>
 
-          {/* Right — Live country ranking. */}
-          <div className="relative">
+          {/* Right — Live country ranking as a quiet right-rail.
+              Editorial divider on lg+ visually connects the columns
+              into one composition; on mobile the columns stack and
+              the divider drops out cleanly. */}
+          <div className="relative lg:border-l lg:border-border/40 lg:pl-10">
             <HeroLiveRankingServer />
           </div>
         </div>

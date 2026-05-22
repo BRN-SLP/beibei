@@ -61,7 +61,7 @@ export function HeroLiveRanking({
   const maxCents = Math.max(...data.map((e) => e.baseCents));
 
   return (
-    <div className="rounded-md border border-border/60 bg-card/60 p-5 backdrop-blur">
+    <div>
       {/* Header — title + base-currency toggle */}
       <div className="mb-4 flex items-baseline justify-between gap-3">
         <div>
@@ -170,7 +170,7 @@ export function HeroLiveRanking({
 function EmptyState({ partial }: { partial: CorePartialEntry[] }) {
   const hasPartial = partial.length > 0;
   return (
-    <div className="flex h-full flex-col rounded-md border border-border/60 bg-card/40 px-5 py-6">
+    <div className="flex flex-col">
       <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-primary">
         Closest to ranking
       </p>
@@ -217,7 +217,7 @@ function EmptyState({ partial }: { partial: CorePartialEntry[] }) {
               );
             })}
           </ol>
-          <div className="mt-auto pt-4 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+          <div className="mt-6 border-t border-border/60 pt-3 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
             ranking unlocks at 3/3
           </div>
         </>
@@ -227,7 +227,7 @@ function EmptyState({ partial }: { partial: CorePartialEntry[] }) {
             Add the first price for bread, milk, or transit. The ranking
             seeds itself from there.
           </p>
-          <div className="mt-auto pt-4">
+          <div className="mt-6 border-t border-border/60 pt-3">
             <Link
               href="/scan"
               className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-primary hover:underline"
