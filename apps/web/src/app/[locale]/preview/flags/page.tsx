@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import {
   ColorSvgFlag,
   CodeWithStripe,
-  Desaturated75Flag,
+  DesaturatedFlag,
   IsoCodeOnly,
   MonoSvgFlag,
 } from "@/components/preview/FlagStyles";
@@ -32,10 +32,10 @@ const STYLES = [
     Render: MonoSvgFlag,
   },
   {
-    key: "desat75",
-    label: "Desat 75%",
-    blurb: "Real flag, 25% chroma left. Identity hints, calm against the palette.",
-    Render: Desaturated75Flag,
+    key: "desat44",
+    label: "Desat 44%",
+    blurb: "Real flag, 56% chroma left. Identity reads cleanly, still sits in the palette.",
+    Render: DesaturatedFlag,
   },
   {
     key: "color",
