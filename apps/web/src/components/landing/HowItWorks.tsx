@@ -91,7 +91,7 @@ export function HowItWorks() {
   const current = stages[active];
 
   return (
-    <section className="container mx-auto max-w-5xl px-4 py-24">
+    <section className="container mx-auto max-w-5xl px-4 pb-24 pt-14 md:pt-16">
       <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.2em] text-primary">
         {t("section")}
       </p>

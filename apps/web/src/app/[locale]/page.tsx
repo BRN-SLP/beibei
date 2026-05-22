@@ -30,9 +30,14 @@ function HomeContent() {
     <main className="flex-1">
       {/* HERO — split dashboard layout.
           MINIMAL §UX — "Zero decorative elements": no grid backdrop,
-          no blob glow. Page leans on type + content rhythm. */}
-      <section className="relative border-b">
-        <div className="container mx-auto grid max-w-6xl gap-12 px-4 py-16 lg:grid-cols-[1.1fr_1fr] lg:items-center lg:py-20">
+          no blob glow. Page leans on type + content rhythm.
+
+          No section border-b — it was reading as an orphan horizontal
+          line in the negative space between hero and HowItWorks. The
+          composition now flows one section into the next without
+          hard rules. */}
+      <section className="relative">
+        <div className="container mx-auto grid max-w-6xl gap-12 px-4 pt-16 pb-10 lg:grid-cols-[1.1fr_1fr] lg:items-center lg:pt-20 lg:pb-14">
           {/* Left — copy + live stats */}
           <div className="space-y-7">
             <div className="inline-flex items-center gap-2 rounded-sm border border-primary/30 bg-primary/5 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-primary">
