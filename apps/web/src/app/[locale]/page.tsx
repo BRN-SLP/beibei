@@ -37,7 +37,7 @@ function HomeContent() {
           composition now flows one section into the next without
           hard rules. */}
       <section className="relative">
-        <div className="container mx-auto grid max-w-6xl gap-12 px-4 pt-16 pb-10 lg:grid-cols-[1.1fr_1fr] lg:items-center lg:pt-20 lg:pb-14">
+        <div className="container mx-auto grid max-w-6xl gap-12 px-4 pt-16 pb-10 lg:grid-cols-[3fr_2fr] lg:items-start lg:gap-16 lg:pt-20 lg:pb-14">
           {/* Left — copy + live stats */}
           <div className="space-y-7">
             <div className="inline-flex items-center gap-2 rounded-sm border border-primary/30 bg-primary/5 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-primary">
@@ -77,11 +77,12 @@ function HomeContent() {
             <UserBalance />
           </div>
 
-          {/* Right — Live country ranking as a quiet right-rail.
-              Editorial divider on lg+ visually connects the columns
-              into one composition; on mobile the columns stack and
-              the divider drops out cleanly. */}
-          <div className="relative lg:border-l lg:border-border/40 lg:pl-10">
+          {/* Right — Live country ranking.
+              No border-l divider — with items-start the right column
+              ends where its content ends and a half-height vertical
+              line just reads as an artefact. The gap-16 between
+              columns + the column proportions carry the separation. */}
+          <div className="relative">
             <HeroLiveRankingServer />
           </div>
         </div>
