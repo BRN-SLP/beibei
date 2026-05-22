@@ -100,12 +100,16 @@ export function HowItWorks() {
         <span className="italic text-primary">{t("title2")}</span>
       </h2>
 
-      {/* Tab strip — three folder tabs sitting on a horizontal rule. */}
+      {/* Tab strip — editorial underlined nav resting on a single
+          horizontal rule. Active stage gets a primary-colored 2px
+          underline that overlaps the rule. Earlier folder-tab chrome
+          (border + bg-card on the active tab + panel) produced
+          visible card-on-card stacking; gone. */}
       <div
         role="tablist"
         aria-label="How it works stages"
         onKeyDown={onKeyDown}
-        className="relative flex items-end gap-1 sm:gap-2"
+        className="relative flex items-end gap-1 border-b border-border/60 sm:gap-2"
       >
         {stages.map((s, i) => {
           const isActive = i === active;
@@ -118,10 +122,10 @@ export function HowItWorks() {
               aria-controls={`stage-panel-${s.tag}`}
               id={`stage-tab-${s.tag}`}
               onClick={() => selectStage(i)}
-              className={`relative flex flex-1 flex-col items-start gap-1 rounded-t-md border border-b-0 px-3 py-3 text-left transition-colors sm:flex-row sm:flex-initial sm:items-baseline sm:gap-2 sm:px-6 sm:py-4 ${
+              className={`relative flex flex-1 flex-col items-start gap-1 px-3 py-3 text-left transition-colors sm:flex-row sm:flex-initial sm:items-baseline sm:gap-2 sm:px-6 sm:py-4 ${
                 isActive
-                  ? "border-border bg-card/60 text-foreground"
-                  : "border-transparent bg-transparent text-muted-foreground hover:bg-card/30"
+                  ? "text-foreground"
+                  : "text-muted-foreground hover:text-foreground/80"
               }`}
             >
               <span
@@ -135,14 +139,12 @@ export function HowItWorks() {
                 <span aria-hidden="true" className="hidden sm:inline">· </span>
                 {s.tag}
               </span>
-              {/* Bottom-edge masking strip — extends 1px below the
-                  tab to cover the panel's top border under the
-                  active tab, so the folder visual really reads as
-                  "this tab opens into the panel". */}
+              {/* Active indicator — 2px primary underline overlapping
+                  the tablist's bottom border. */}
               {isActive && (
                 <span
                   aria-hidden="true"
-                  className="absolute -bottom-px left-0 right-0 h-px bg-card/60"
+                  className="absolute -bottom-px left-0 right-0 h-[2px] bg-primary"
                 />
               )}
             </button>
@@ -150,14 +152,17 @@ export function HowItWorks() {
         })}
       </div>
 
-      {/* Panel — content area for the active stage. */}
+      {/* Panel — naked content for the active stage. No card chrome
+          to avoid box-in-box stacking with the tab strip. min-h
+          locks the height across all three artifacts so switching
+          tabs doesn't pop the page geometry. */}
       <div
         role="tabpanel"
         id={`stage-panel-${current.tag}`}
         aria-labelledby={`stage-tab-${current.tag}`}
-        className="rounded-md rounded-tl-none border border-border bg-card/60 p-6 backdrop-blur md:p-10"
+        className="min-h-[340px] pt-10 md:min-h-[300px] md:pt-14"
       >
-        <div className="grid items-center gap-10 md:grid-cols-[1fr_1fr]">
+        <div className="grid items-start gap-10 md:grid-cols-[1fr_1fr]">
           <div className="space-y-4 md:order-2">
             <h3 className="font-serif text-2xl font-semibold tracking-tight md:text-3xl">
               {"titleNode" in current && current.titleNode
