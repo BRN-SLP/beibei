@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import {
   ColorSvgFlag,
   CodeWithStripe,
+  Desaturated75Flag,
   IsoCodeOnly,
   MonoSvgFlag,
 } from "@/components/preview/FlagStyles";
@@ -27,13 +28,19 @@ const STYLES = [
   {
     key: "mono",
     label: "Mono SVG",
-    blurb: "Real flag, desaturated via CSS filter. Sits in the editorial register.",
+    blurb: "Real flag, fully desaturated. Sits in the editorial register.",
     Render: MonoSvgFlag,
+  },
+  {
+    key: "desat75",
+    label: "Desat 75%",
+    blurb: "Real flag, 25% chroma left. Identity hints, calm against the palette.",
+    Render: Desaturated75Flag,
   },
   {
     key: "color",
     label: "Color SVG",
-    blurb: "Real flag, small (16×12). Most recognisable but breaks palette.",
+    blurb: "Real flag, full chroma. Most recognisable but breaks palette.",
     Render: ColorSvgFlag,
   },
   {
@@ -61,8 +68,8 @@ export default function FlagPreviewPage() {
           Flag style preview
         </h1>
         <p className="max-w-2xl text-sm text-muted-foreground">
-          Four candidate treatments for country identity across the site,
-          rendered across the 15 launch countries. Pick one — the
+          Five candidate treatments for country identity across the site,
+          rendered across the 15 launch countries. Pick one. The
           chosen style replaces the current ISO-only pill in
           CountryBasketPreview, RecentSubmissions, HeroLiveRanking,
           the /basket pages, and the submit dropdown.
@@ -70,7 +77,7 @@ export default function FlagPreviewPage() {
       </header>
 
       {/* Style legend strip — four headers above the rows. */}
-      <div className="mb-3 grid grid-cols-[6rem_repeat(4,1fr)] items-end gap-x-6 px-3">
+      <div className="mb-3 grid grid-cols-[6rem_repeat(5,1fr)] items-end gap-x-6 px-3">
         <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
           Country
         </span>
@@ -85,7 +92,7 @@ export default function FlagPreviewPage() {
       </div>
 
       {/* Per-style blurb row */}
-      <div className="mb-6 grid grid-cols-[6rem_repeat(4,1fr)] items-start gap-x-6 px-3">
+      <div className="mb-6 grid grid-cols-[6rem_repeat(5,1fr)] items-start gap-x-6 px-3">
         <span aria-hidden="true" />
         {STYLES.map((s) => (
           <p
@@ -101,7 +108,7 @@ export default function FlagPreviewPage() {
         {COUNTRIES.map((country) => (
           <li
             key={country.code}
-            className="grid grid-cols-[6rem_repeat(4,1fr)] items-center gap-x-6 px-3 py-5"
+            className="grid grid-cols-[6rem_repeat(5,1fr)] items-center gap-x-6 px-3 py-5"
           >
             <div className="font-mono text-xs uppercase tracking-wider text-muted-foreground">
               {country.name}

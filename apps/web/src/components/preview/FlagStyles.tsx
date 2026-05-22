@@ -81,6 +81,32 @@ export function MonoSvgFlag({ code }: FlagStyleProps) {
 }
 
 /**
+ * Style 1b — 75% desaturated SVG flag.
+ *
+ * Half-step between full mono and full colour: keeps about 25% of the
+ * flag's chroma so a few key hues (UA blue, BR green) still read as
+ * identity, but the saturation is low enough that the row of flags
+ * doesn't shout against the editorial palette.
+ */
+export function Desaturated75Flag({ code }: FlagStyleProps) {
+  const Flag = FlagsByCode[code as FlagCode];
+  if (!Flag) return <FallbackCode code={code} />;
+  return (
+    <span className="inline-flex items-center gap-2">
+      <span
+        aria-hidden="true"
+        className="inline-flex h-4 w-6 overflow-hidden rounded-[1px] ring-1 ring-border/40 [filter:grayscale(0.75)_contrast(1.05)_brightness(0.95)]"
+      >
+        <Flag />
+      </span>
+      <span className="inline-flex h-7 w-10 items-center justify-center rounded-sm border border-border/60 bg-card/40 font-mono text-[10px] font-semibold tracking-[0.18em] text-foreground/80">
+        {code}
+      </span>
+    </span>
+  );
+}
+
+/**
  * Style 2 — Small colour SVG flag next to ISO code.
  */
 export function ColorSvgFlag({ code }: FlagStyleProps) {
