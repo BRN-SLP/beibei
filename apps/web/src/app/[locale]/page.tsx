@@ -36,7 +36,7 @@ function HomeContent() {
           composition now flows one section into the next without
           hard rules. */}
       <section className="relative">
-        <div className="container mx-auto grid max-w-6xl gap-12 px-4 pt-16 pb-10 lg:grid-cols-[3fr_2fr] lg:items-start lg:gap-16 lg:pt-20 lg:pb-12">
+        <div className="container mx-auto grid max-w-6xl gap-12 px-4 pt-16 pb-10 lg:grid-cols-[3fr_2fr] lg:items-center lg:gap-16 lg:pt-20 lg:pb-12">
           {/* Left — copy + CTAs. Stats moved out into their own
               full-width strip below so growing numbers don't reflow
               the hero, and UserBalance was removed entirely — it's a
@@ -48,7 +48,7 @@ function HomeContent() {
               <span>{t("liveBadge")}</span>
             </div>
 
-            <h1 className="font-serif text-4xl font-bold leading-[1.05] tracking-tight md:text-6xl">
+            <h1 className="font-serif text-4xl font-bold leading-[1.05] tracking-tight md:text-5xl">
               {t("title1")}
               <br />
               <span className="italic text-primary">{t("title2")}</span>
