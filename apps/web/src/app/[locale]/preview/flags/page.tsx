@@ -33,8 +33,8 @@ const STYLES = [
   },
   {
     key: "desat44",
-    label: "Desat 44%",
-    blurb: "Real flag, 56% chroma left. Identity reads cleanly, still sits in the palette.",
+    label: "Desat 40% · chosen",
+    blurb: "Production canonical. 60% chroma left, identity hues read, palette stays calm.",
     Render: DesaturatedFlag,
   },
   {

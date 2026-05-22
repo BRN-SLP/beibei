@@ -81,12 +81,14 @@ export function MonoSvgFlag({ code }: FlagStyleProps) {
 }
 
 /**
- * Style 1b — 44% desaturated SVG flag.
+ * Style 1b — 40% desaturated SVG flag.
  *
- * Half-step between full mono and full colour: keeps about 56% of the
- * flag's chroma so identity hues read clearly (UA blue, BR green, JP
- * red) but the row of flags still sits inside the cream/deep-green
- * palette rather than fighting it.
+ * Production canonical (mirrored by the shared `<CountryMark>`
+ * component used across the site). Half-step between full mono and
+ * full colour: `grayscale(0.40)` keeps about 60% of the flag's
+ * chroma so identity hues read clearly (UA blue, BR green, JP red)
+ * but the row still sits inside the cream/deep-green palette rather
+ * than fighting it.
  */
 export function DesaturatedFlag({ code }: FlagStyleProps) {
   const Flag = FlagsByCode[code as FlagCode];
@@ -95,7 +97,7 @@ export function DesaturatedFlag({ code }: FlagStyleProps) {
     <span className="inline-flex items-center gap-2">
       <span
         aria-hidden="true"
-        className="inline-flex h-4 w-6 overflow-hidden rounded-[1px] ring-1 ring-border/40 [filter:grayscale(0.44)_contrast(1.05)_brightness(0.97)]"
+        className="inline-flex h-4 w-6 overflow-hidden rounded-[1px] ring-1 ring-border/40 [filter:grayscale(0.40)_contrast(1.05)_brightness(0.97)]"
       >
         <Flag />
       </span>
