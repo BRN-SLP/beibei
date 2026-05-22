@@ -31,7 +31,20 @@
     "step2TitleAccent": "ja.",
     "step2Body": "Andere Beitragende aus dem gleichen Land stimmen ✓ oder ✗ über offene Einreichungen ab. Drei übereinstimmende Ja-Stimmen finalisieren den Preis und schalten Belohnungen für alle Beteiligten frei.",
     "step3Title": "Belohnungen in cUSD abholen.",
-    "step3Body": "Mikro-Belohnungen sammeln sich für jede angenommene Einreichung und jede Bestätigung, die du auf eine andere abgibst. Hole das Guthaben in einer Transaktion auf MiniPay oder eine beliebige Celo-Wallet. Jederzeit, ohne Mindestbetrag."
+    "step3Body": "Mikro-Belohnungen sammeln sich für jede angenommene Einreichung und jede Bestätigung, die du auf eine andere abgibst. Hole das Guthaben in einer Transaktion auf MiniPay oder eine beliebige Celo-Wallet. Jederzeit, ohne Mindestbetrag.",
+    "artifacts": {
+      "submissionStamp": "einreichung · beispiel",
+      "submissionFooter": "1 tx · cUSD-gebühr · beleg optional",
+      "voteStamp": "abstimmung · läuft",
+      "voteWindow": "4-h-fenster",
+      "votePeersIn": "mitwirkende in {country}",
+      "rewardStamp": "abgerechnet · gerade eben",
+      "rewardNetToWallet": "netto an wallet",
+      "rewardSubmitterShare": "anteil einreichende · 50%",
+      "rewardVerifiersRow": "3 × prüfer",
+      "rewardSweepRow": "abheben",
+      "rewardSweepValue": "jederzeit · ohne mindest"
+    }
   },
   "basketPreview": {
     "section": "Der Warenkorb bislang",

@@ -31,7 +31,20 @@
     "step2TitleAccent": "sí.",
     "step2Body": "Otros contribuyentes del mismo país votan ✓ o ✗ sobre las aportaciones pendientes. Tres síes coincidentes finalizan el precio y desbloquean recompensas para todos los involucrados.",
     "step3Title": "Retira tus recompensas en cUSD.",
-    "step3Body": "Las micro-recompensas se acumulan por cada aportación aceptada y cada verificación que emitas sobre la de otra persona. Retira el saldo a MiniPay o cualquier billetera Celo en una sola operación. Cuando quieras, sin mínimo."
+    "step3Body": "Las micro-recompensas se acumulan por cada aportación aceptada y cada verificación que emitas sobre la de otra persona. Retira el saldo a MiniPay o cualquier billetera Celo en una sola operación. Cuando quieras, sin mínimo.",
+    "artifacts": {
+      "submissionStamp": "envío · ejemplo",
+      "submissionFooter": "1 tx · tarifa cUSD · recibo opcional",
+      "voteStamp": "votación · en curso",
+      "voteWindow": "ventana 4h",
+      "votePeersIn": "pares en {country}",
+      "rewardStamp": "liquidado · ahora mismo",
+      "rewardNetToWallet": "neto al monedero",
+      "rewardSubmitterShare": "parte del aportante · 50%",
+      "rewardVerifiersRow": "3 × verificadores",
+      "rewardSweepRow": "retirar",
+      "rewardSweepValue": "cuando quieras · sin mínimo"
+    }
   },
   "basketPreview": {
     "section": "La canasta hasta ahora",

@@ -31,7 +31,20 @@
     "step2TitleAccent": "yes.",
     "step2Body": "Other contributors in the same country vote ✓ or ✗ on pending submissions. Three matching positives finalize the price and unlock rewards for everyone involved in the round.",
     "step3Title": "Sweep your rewards in cUSD.",
-    "step3Body": "Micro-rewards accumulate for every accepted submission and every verification you cast on someone else's. Sweep the balance to MiniPay or any Celo wallet in one claim. Any time, no minimum."
+    "step3Body": "Micro-rewards accumulate for every accepted submission and every verification you cast on someone else's. Sweep the balance to MiniPay or any Celo wallet in one claim. Any time, no minimum.",
+    "artifacts": {
+      "submissionStamp": "submission · example",
+      "submissionFooter": "one tx · cUSD fee · receipt optional",
+      "voteStamp": "vote tally · in progress",
+      "voteWindow": "4h window",
+      "votePeersIn": "peers in {country}",
+      "rewardStamp": "settled · just now",
+      "rewardNetToWallet": "net to wallet",
+      "rewardSubmitterShare": "submitter share · 50%",
+      "rewardVerifiersRow": "3 × verifiers",
+      "rewardSweepRow": "sweep",
+      "rewardSweepValue": "any time · no min"
+    }
   },
   "basketPreview": {
     "section": "The basket so far",

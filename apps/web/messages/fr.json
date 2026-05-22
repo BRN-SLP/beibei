@@ -31,7 +31,20 @@
     "step2TitleAccent": "oui.",
     "step2Body": "D'autres contributeurs du même pays votent ✓ ou ✗ sur les soumissions en attente. Trois oui concordants finalisent le prix et débloquent les récompenses pour toutes les personnes impliquées.",
     "step3Title": "Récupère tes récompenses en cUSD.",
-    "step3Body": "Les micro-récompenses s'accumulent pour chaque soumission acceptée et chaque vérification que tu fais sur celle d'une autre personne. Transfère le solde sur MiniPay ou n'importe quel portefeuille Celo en une seule opération. Quand tu veux, sans minimum."
+    "step3Body": "Les micro-récompenses s'accumulent pour chaque soumission acceptée et chaque vérification que tu fais sur celle d'une autre personne. Transfère le solde sur MiniPay ou n'importe quel portefeuille Celo en une seule opération. Quand tu veux, sans minimum.",
+    "artifacts": {
+      "submissionStamp": "soumission · exemple",
+      "submissionFooter": "1 tx · frais cUSD · ticket facultatif",
+      "voteStamp": "vote · en cours",
+      "voteWindow": "fenêtre 4h",
+      "votePeersIn": "pairs en {country}",
+      "rewardStamp": "réglé · à l'instant",
+      "rewardNetToWallet": "net au portefeuille",
+      "rewardSubmitterShare": "part du soumis · 50%",
+      "rewardVerifiersRow": "3 × vérificateurs",
+      "rewardSweepRow": "retirer",
+      "rewardSweepValue": "à tout moment · sans minimum"
+    }
   },
   "basketPreview": {
     "section": "Le panier à ce jour",
