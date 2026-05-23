@@ -326,6 +326,16 @@
       }
     }
   },
+  "verifyCard": {
+    "title": "Заявка #{id}",
+    "zoneLabel": "зона {lat}, {lng}",
+    "votesLabel": "голоси: {accept} за / {reject} проти з 3",
+    "accept": "Виглядає правильно",
+    "reject": "Не те",
+    "groupAria": "Перевірити заявку #{id}",
+    "acceptAria": "Прийняти заявку #{id}",
+    "rejectAria": "Відхилити заявку #{id}"
+  },
   "languageSwitcher": {
     "label": "Мова",
     "english": "English",

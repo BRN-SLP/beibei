@@ -326,6 +326,16 @@
       }
     }
   },
+  "verifyCard": {
+    "title": "Soumission #{id}",
+    "zoneLabel": "zone {lat}, {lng}",
+    "votesLabel": "votes : {accept} pour, {reject} contre sur 3",
+    "accept": "Ça a l'air bon",
+    "reject": "À côté",
+    "groupAria": "Vérifier la soumission #{id}",
+    "acceptAria": "Accepter la soumission #{id}",
+    "rejectAria": "Rejeter la soumission #{id}"
+  },
   "languageSwitcher": {
     "label": "Langue",
     "english": "English",

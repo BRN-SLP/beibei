@@ -326,6 +326,16 @@
       }
     }
   },
+  "verifyCard": {
+    "title": "Aportación #{id}",
+    "zoneLabel": "zona {lat}, {lng}",
+    "votesLabel": "votos: {accept} a favor, {reject} en contra de 3",
+    "accept": "Se ve bien",
+    "reject": "Fuera",
+    "groupAria": "Verificar aportación #{id}",
+    "acceptAria": "Aceptar aportación #{id}",
+    "rejectAria": "Rechazar aportación #{id}"
+  },
   "languageSwitcher": {
     "label": "Idioma",
     "english": "English",

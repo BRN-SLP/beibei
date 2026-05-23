@@ -326,6 +326,16 @@
       }
     }
   },
+  "verifyCard": {
+    "title": "Envio #{id}",
+    "zoneLabel": "zona {lat}, {lng}",
+    "votesLabel": "votos: {accept} a favor, {reject} contra de 3",
+    "accept": "Parece certo",
+    "reject": "Fora",
+    "groupAria": "Verificar envio #{id}",
+    "acceptAria": "Aceitar envio #{id}",
+    "rejectAria": "Rejeitar envio #{id}"
+  },
   "languageSwitcher": {
     "label": "Idioma",
     "english": "English",
