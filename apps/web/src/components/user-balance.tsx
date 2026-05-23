@@ -27,7 +27,7 @@ function BalanceDisplay({
       <span className="text-muted-foreground">{symbol}</span>
       <span className="font-medium">
         {isLoading
-          ? "—"
+          ? "·"
           : parseFloat(data?.formatted || "0").toFixed(4)}
       </span>
     </div>
