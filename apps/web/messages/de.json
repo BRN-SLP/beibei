@@ -70,9 +70,9 @@
     "emptyTitle": "Der Feed ist still",
     "emptyBody": "Noch keine Mercato-Einreichungen.",
     "emptyCta": "Ersten Preis hinzufügen →",
-    "accepted": "✓ angenommen",
-    "rejected": "✗ abgelehnt",
-    "pending": "ausstehend · {votes}/3"
+    "accepted": "angenommen",
+    "rejected": "abgelehnt",
+    "pending": "offen · {votes}/3"
   },
   "heroRanking": {
     "section": "Live-Länder-Ranking",

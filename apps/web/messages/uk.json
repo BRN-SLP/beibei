@@ -70,8 +70,8 @@
     "emptyTitle": "У стрічці тихо",
     "emptyBody": "Ще немає заявок Mercato.",
     "emptyCta": "Додати першу ціну →",
-    "accepted": "✓ прийнято",
-    "rejected": "✗ відхилено",
+    "accepted": "прийнято",
+    "rejected": "відхилено",
     "pending": "очікує · {votes}/3"
   },
   "heroRanking": {

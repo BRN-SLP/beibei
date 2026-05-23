@@ -70,8 +70,8 @@
     "emptyTitle": "Atividade em silêncio",
     "emptyBody": "Ainda não há envios ao Mercato.",
     "emptyCta": "Enviar o primeiro preço →",
-    "accepted": "✓ aceito",
-    "rejected": "✗ rejeitado",
+    "accepted": "aceito",
+    "rejected": "rejeitado",
     "pending": "pendente · {votes}/3"
   },
   "heroRanking": {

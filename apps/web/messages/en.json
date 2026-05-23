@@ -70,8 +70,8 @@
     "emptyTitle": "The feed is quiet",
     "emptyBody": "No Mercato submissions yet.",
     "emptyCta": "Add the first price →",
-    "accepted": "✓ accepted",
-    "rejected": "✗ rejected",
+    "accepted": "accepted",
+    "rejected": "rejected",
     "pending": "pending · {votes}/3"
   },
   "heroRanking": {

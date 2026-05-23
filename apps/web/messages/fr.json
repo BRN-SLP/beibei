@@ -70,8 +70,8 @@
     "emptyTitle": "Le flux est silencieux",
     "emptyBody": "Aucune soumission Mercato pour le moment.",
     "emptyCta": "Ajouter le premier prix →",
-    "accepted": "✓ accepté",
-    "rejected": "✗ rejeté",
+    "accepted": "accepté",
+    "rejected": "rejeté",
     "pending": "en attente · {votes}/3"
   },
   "heroRanking": {

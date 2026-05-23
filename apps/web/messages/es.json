@@ -70,8 +70,8 @@
     "emptyTitle": "Actividad en silencio",
     "emptyBody": "Aún no hay aportaciones a Mercato.",
     "emptyCta": "Aportar el primer precio →",
-    "accepted": "✓ aceptado",
-    "rejected": "✗ rechazado",
+    "accepted": "aceptado",
+    "rejected": "rechazado",
     "pending": "pendiente · {votes}/3"
   },
   "heroRanking": {
