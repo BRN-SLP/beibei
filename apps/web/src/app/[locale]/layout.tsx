@@ -63,7 +63,7 @@ export const metadata: Metadata = {
     type: 'website',
     siteName: 'Mercato',
     url: SITE_URL,
-    title: 'Mercato — crowdsourced consumer price basket on Celo',
+    title: 'Mercato · crowdsourced consumer price basket on Celo',
     description:
       'A daily, verifiable, country-by-country cost-of-living index. Submit a price, earn cUSD, build a public good.',
     images: [
@@ -71,15 +71,15 @@ export const metadata: Metadata = {
         url: '/og.png',
         width: 1200,
         height: 630,
-        alt: 'Mercato — crowdsourced cost-of-living index on Celo',
+        alt: 'Mercato · crowdsourced cost-of-living index on Celo',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Mercato — crowdsourced consumer price basket on Celo',
+    title: 'Mercato · crowdsourced consumer price basket on Celo',
     description:
-      'A daily, verifiable, country-by-country cost-of-living index — open data, on-chain, paid in cUSD.',
+      'A daily, verifiable, country-by-country cost-of-living index: open data, on-chain, paid in cUSD.',
     images: ['/og.png'],
   },
   robots: { index: true, follow: true },

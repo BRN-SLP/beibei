@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Rewards · Mercato",
     description:
-      "Submitter and verifier micro-rewards in cUSD — claim anytime.",
+      "Submitter and verifier micro-rewards in cUSD, claim anytime.",
     images: ["/og.png"],
   },
   robots: { index: false, follow: false },
