@@ -246,6 +246,46 @@
       "confirming": "Waiting for confirmation…"
     }
   },
+  "legal": {
+    "kicker": "Legal",
+    "lastUpdated": "Last updated: May 2026.",
+    "privacy": {
+      "metaTitle": "Privacy Policy",
+      "metaDescription": "Mercato privacy policy: what we collect, what we don't, and what's permanent on-chain.",
+      "h1": "Privacy Policy",
+      "collect": {
+        "h2": "What we collect",
+        "body": "We do not run any user accounts, email lists, analytics trackers, or third-party advertising scripts. We do not ask for your name, phone number, location, or any other personal identifier. The web app is a thin client over the on-chain contract."
+      },
+      "onchain": {
+        "h2": "What is public on-chain",
+        "intro": "Two things become permanent, public, and unalterable the moment you submit a transaction:",
+        "wallet": "<strong>Your wallet address.</strong> Every blockchain transaction includes it by design. If your wallet is otherwise linked to your real-world identity, that link applies here too.",
+        "submissions": "<strong>Your submitted price observations and votes.</strong> Product slug, country code, price in cents, optional receipt-image hash, timestamp, and which submissions you verified. This is the project's whole point: open data for an open cost-of-living index.",
+        "outro": "We cannot delete on-chain data on your behalf. No one can. Treat anything you submit as permanent and public."
+      },
+      "hosting": {
+        "h2": "Hosting infrastructure",
+        "body": "The site is hosted on Vercel, which (like every web host) processes request metadata such as IP address, user agent, and request path to deliver the page. We do not read, export, or otherwise process those logs ourselves. See <link>Vercel's privacy policy</link> for their handling."
+      },
+      "cookies": {
+        "h2": "Cookies",
+        "body": "Mercato does not set its own cookies. Your wallet provider (e.g. MiniPay, MetaMask, Rainbow) may store state in your browser as part of normal wallet operation; that storage is controlled by your wallet, not by us."
+      },
+      "rpc": {
+        "h2": "RPC and explorer queries",
+        "body": "The site reads on-chain data through public RPC endpoints (Celo Forno) and may link to public block explorers (Celoscan, Blockscout). Those services see standard request metadata; the same disclosure as Vercel above applies."
+      },
+      "receipts": {
+        "h2": "Receipt photos",
+        "body": "When a user attaches a receipt photo to a submission, the image is stored on Vercel Blob storage and content-addressed by hash; the hash is also stored on-chain. Photos are only fetched when someone views that specific submission. Photos can't be removed once the on-chain hash exists."
+      },
+      "contact": {
+        "h2": "Contact",
+        "body": "For privacy questions, security disclosures, or removal requests for off-chain content (the receipt photos mentioned above), open an issue on the <link>project repository</link>."
+      }
+    }
+  },
   "languageSwitcher": {
     "label": "Language",
     "english": "English",

@@ -246,6 +246,46 @@
       "confirming": "Warten auf Bestätigung…"
     }
   },
+  "legal": {
+    "kicker": "Rechtliches",
+    "lastUpdated": "Zuletzt aktualisiert: Mai 2026.",
+    "privacy": {
+      "metaTitle": "Datenschutzerklärung",
+      "metaDescription": "Datenschutzerklärung von Mercato: was wir erfassen, was nicht, und was on-chain dauerhaft öffentlich ist.",
+      "h1": "Datenschutzerklärung",
+      "collect": {
+        "h2": "Was wir erfassen",
+        "body": "Wir betreiben keine Nutzerkonten, E-Mail-Listen, Analyse-Tracker oder Werbe-Skripte Dritter. Wir fragen weder nach deinem Namen, deiner Telefonnummer, deinem Standort noch nach irgendeiner anderen persönlichen Kennung. Die Web-App ist ein dünner Client über dem On-Chain-Vertrag."
+      },
+      "onchain": {
+        "h2": "Was on-chain öffentlich ist",
+        "intro": "Zwei Dinge werden in dem Moment, in dem du eine Transaktion signierst, dauerhaft, öffentlich und unveränderlich:",
+        "wallet": "<strong>Deine Wallet-Adresse.</strong> Jede Blockchain-Transaktion enthält sie systemisch. Wenn deine Wallet auf andere Weise mit deiner realen Identität verknüpft ist, gilt diese Verknüpfung auch hier.",
+        "submissions": "<strong>Deine eingereichten Preisbeobachtungen und Stimmen.</strong> Produkt-Slug, Ländercode, Preis in Cent, optionaler Hash des Belegfotos, Zeitstempel und welche Einreichungen du verifiziert hast. Genau das ist der Sinn des Projekts: offene Daten für einen offenen Lebenshaltungskosten-Index.",
+        "outro": "Wir können on-chain Daten nicht in deinem Namen löschen. Niemand kann das. Behandle alles, was du einreichst, als dauerhaft und öffentlich."
+      },
+      "hosting": {
+        "h2": "Hosting-Infrastruktur",
+        "body": "Die Seite wird auf Vercel gehostet. Vercel verarbeitet (wie jeder Web-Host) Request-Metadaten wie IP-Adresse, User Agent und Request-Pfad, um die Seite auszuliefern. Wir selbst lesen, exportieren oder verarbeiten diese Logs nicht. Siehe <link>die Datenschutzerklärung von Vercel</link> für deren Handhabung."
+      },
+      "cookies": {
+        "h2": "Cookies",
+        "body": "Mercato setzt keine eigenen Cookies. Dein Wallet-Provider (z.B. MiniPay, MetaMask, Rainbow) speichert ggf. State in deinem Browser als Teil seines normalen Betriebs; dieser Speicher wird von deiner Wallet kontrolliert, nicht von uns."
+      },
+      "rpc": {
+        "h2": "RPC- und Explorer-Anfragen",
+        "body": "Die Seite liest On-Chain-Daten über öffentliche RPC-Endpoints (Celo Forno) und verlinkt ggf. auf öffentliche Block-Explorer (Celoscan, Blockscout). Diese Dienste sehen Standard-Request-Metadaten; es gilt dieselbe Offenlegung wie bei Vercel oben."
+      },
+      "receipts": {
+        "h2": "Belegfotos",
+        "body": "Wenn eine Nutzerin ein Belegfoto an eine Einreichung anhängt, wird das Bild in Vercel Blob Storage gespeichert und per Hash adressiert; der Hash wird ebenfalls on-chain abgelegt. Fotos werden nur geladen, wenn jemand diese konkrete Einreichung ansieht. Fotos können nicht entfernt werden, sobald der on-chain Hash existiert."
+      },
+      "contact": {
+        "h2": "Kontakt",
+        "body": "Für Datenschutzanfragen, Security Disclosures oder Anträge auf Entfernung von Off-Chain-Inhalten (siehe Belegfotos oben) öffne ein Issue im <link>Projekt-Repository</link>."
+      }
+    }
+  },
   "languageSwitcher": {
     "label": "Sprache",
     "english": "English",

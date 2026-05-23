@@ -246,6 +246,46 @@
       "confirming": "Esperando confirmación…"
     }
   },
+  "legal": {
+    "kicker": "Legal",
+    "lastUpdated": "Última actualización: mayo de 2026.",
+    "privacy": {
+      "metaTitle": "Política de Privacidad",
+      "metaDescription": "Política de privacidad de Mercato: qué recopilamos, qué no, y qué queda permanente on-chain.",
+      "h1": "Política de Privacidad",
+      "collect": {
+        "h2": "Qué recopilamos",
+        "body": "No tenemos cuentas de usuario, listas de correo, rastreadores analíticos ni scripts publicitarios de terceros. No pedimos tu nombre, teléfono, ubicación ni ningún otro identificador personal. La web es un cliente delgado sobre el contrato on-chain."
+      },
+      "onchain": {
+        "h2": "Qué es público on-chain",
+        "intro": "Dos cosas se vuelven permanentes, públicas e inalterables en el momento en que firmas una transacción:",
+        "wallet": "<strong>La dirección de tu billetera.</strong> Toda transacción blockchain la incluye por diseño. Si tu billetera está vinculada de alguna otra forma a tu identidad real, ese vínculo también aplica aquí.",
+        "submissions": "<strong>Las aportaciones y votos que envías.</strong> Slug del producto, código de país, precio en céntimos, hash opcional de la foto del ticket, marca de tiempo y qué aportaciones verificaste. Ese es el punto entero del proyecto: datos abiertos para un índice abierto de costo de vida.",
+        "outro": "No podemos borrar datos on-chain por ti. Nadie puede. Trata lo que envíes como permanente y público."
+      },
+      "hosting": {
+        "h2": "Infraestructura de hosting",
+        "body": "El sitio está alojado en Vercel que (como cualquier hosting) procesa metadatos del request, como IP, user agent y ruta, para servir la página. Nosotros no leemos, exportamos ni procesamos esos logs. Más detalle en <link>la política de privacidad de Vercel</link>."
+      },
+      "cookies": {
+        "h2": "Cookies",
+        "body": "Mercato no instala cookies propias. Tu proveedor de billetera (por ejemplo MiniPay, MetaMask, Rainbow) puede guardar estado en tu navegador como parte de su operación normal; ese almacenamiento lo controla tu billetera, no nosotros."
+      },
+      "rpc": {
+        "h2": "Consultas a RPC y explorers",
+        "body": "El sitio lee datos on-chain mediante endpoints RPC públicos (Celo Forno) y puede enlazar a explorers públicos (Celoscan, Blockscout). Esos servicios ven metadatos estándar; aplica la misma divulgación que para Vercel arriba."
+      },
+      "receipts": {
+        "h2": "Fotos de tickets",
+        "body": "Cuando un usuario adjunta una foto del ticket a una aportación, la imagen se guarda en Vercel Blob y se direcciona por hash; el hash también se guarda on-chain. La foto sólo se descarga cuando alguien abre esa aportación. No se puede borrar una vez que el hash existe on-chain."
+      },
+      "contact": {
+        "h2": "Contacto",
+        "body": "Para dudas de privacidad, divulgaciones de seguridad o solicitudes de eliminación de contenido off-chain (fotos de tickets), abre un issue en el <link>repositorio del proyecto</link>."
+      }
+    }
+  },
   "languageSwitcher": {
     "label": "Idioma",
     "english": "English",
