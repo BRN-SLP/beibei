@@ -1,6 +1,7 @@
 "use client";
 
 import { notFound } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useChainId } from "wagmi";
 import type { Hex } from "viem";
 import { use } from "react";
@@ -24,6 +25,7 @@ interface ItemPageProps {
 export default function ItemPage({ params }: ItemPageProps) {
   const { barcode } = use(params);
   const chainId = useChainId();
+  const t = useTranslations("item");
   const hexBarcode = normalizeBarcode(barcode);
 
   // Malformed barcode → render the item-specific 404 instead of an
@@ -52,20 +54,20 @@ export default function ItemPage({ params }: ItemPageProps) {
       <header>
         <p className="text-xs text-muted-foreground font-mono">{hexBarcode}</p>
         <h1 className="mt-1 text-2xl font-semibold tracking-tight">
-          Item feed
+          {t("feedTitle")}
         </h1>
       </header>
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Median price</CardTitle>
+          <CardTitle className="text-lg">{t("median.title")}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-3xl font-semibold tracking-tight">
             {median !== null ? (median / 100).toFixed(2) : "—"}
           </div>
           <p className="mt-1 text-xs text-muted-foreground">
-            From {accepted.length} accepted submissions • last 30 days
+            {t("median.subtitle", { count: accepted.length })}
           </p>
           <div className="mt-4">
             <MedianChart submissions={records} />
@@ -75,14 +77,16 @@ export default function ItemPage({ params }: ItemPageProps) {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Help verify</CardTitle>
+          <CardTitle className="text-lg">{t("verify.title")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           {loading ? (
-            <p className="text-sm text-muted-foreground">Loading…</p>
+            <p className="text-sm text-muted-foreground">
+              {t("verify.loading")}
+            </p>
           ) : pending.length === 0 ? (
             <p className="text-sm text-muted-foreground">
-              No pending submissions right now.
+              {t("verify.empty")}
             </p>
           ) : (
             pending
@@ -99,12 +103,12 @@ export default function ItemPage({ params }: ItemPageProps) {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Recent submissions</CardTitle>
+          <CardTitle className="text-lg">{t("recent.title")}</CardTitle>
         </CardHeader>
         <CardContent>
           {records.length === 0 ? (
             <p className="text-sm text-muted-foreground">
-              No submissions yet for this barcode.
+              {t("recent.empty")}
             </p>
           ) : (
             <ul className="divide-y text-sm">
@@ -120,11 +124,11 @@ export default function ItemPage({ params }: ItemPageProps) {
                   <span className="text-xs text-muted-foreground">
                     {r.finalized
                       ? r.accepted
-                        ? "accepted"
-                        : "rejected"
+                        ? t("recent.status.accepted")
+                        : t("recent.status.rejected")
                       : r.totalVotes >= 3
-                        ? "locked (mixed)"
-                        : `pending (${r.totalVotes}/3)`}
+                        ? t("recent.status.locked")
+                        : t("recent.status.pending", { votes: r.totalVotes })}
                   </span>
                 </li>
               ))}
