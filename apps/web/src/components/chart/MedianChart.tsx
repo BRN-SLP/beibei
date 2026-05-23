@@ -10,6 +10,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { useTranslations } from "next-intl";
 
 import { dailyMedianSeries } from "@/lib/median";
 import type { SubmissionRecord } from "@/hooks/usePriceFeed";
@@ -19,6 +20,7 @@ interface MedianChartProps {
 }
 
 export function MedianChart({ submissions }: MedianChartProps) {
+  const t = useTranslations("medianChart");
   const observations = submissions
     .filter((s) => s.finalized && s.accepted)
     .map((s) => ({
@@ -30,7 +32,7 @@ export function MedianChart({ submissions }: MedianChartProps) {
   if (series.length === 0) {
     return (
       <p className="rounded-md border border-dashed border-input p-6 text-center text-xs text-muted-foreground">
-        No accepted submissions in the last 30 days yet.
+        {t("empty")}
       </p>
     );
   }
@@ -102,6 +104,7 @@ function MedianTooltip({
   payload,
   label,
 }: TooltipProps<number, string>) {
+  const t = useTranslations("medianChart");
   if (!active || !payload || payload.length === 0) return null;
   const data = payload[0]?.payload as MedianTooltipPayload | undefined;
   const price = data?.price;
@@ -116,7 +119,7 @@ function MedianTooltip({
       </p>
       {typeof sampleSize === "number" && (
         <p className="mt-0.5 text-[10px] text-muted-foreground">
-          n = {sampleSize}
+          {t("sampleSize", { count: sampleSize })}
         </p>
       )}
     </div>
