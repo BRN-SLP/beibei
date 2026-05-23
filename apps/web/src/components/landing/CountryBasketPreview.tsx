@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, ShoppingBasket } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 
 import { CountryMark } from "@/components/brand/CountryMark";
 import { getBasketSnapshot, type CountryBasket } from "@/lib/aggregate";
@@ -25,9 +26,10 @@ const LIMIT = 8;
 
 export async function CountryBasketPreview() {
   const snapshot = await getBasketSnapshot();
+  const t = await getTranslations("basketPreview");
   // Rank by coverage descending, tie-break by totalLocalCents
   // (mostly stable since totals across different currencies aren't
-  // directly comparable — the tie-break is more about determinism
+  // directly comparable, the tie-break is more about determinism
   // than meaning).
   const ranked = [...snapshot.countries]
     .filter((b) => b.coverage > 0)
@@ -41,7 +43,7 @@ export async function CountryBasketPreview() {
     return <BasketEmptyState />;
   }
 
-  // Bars are scaled against TOTAL_PRODUCTS — the absolute coverage
+  // Bars are scaled against TOTAL_PRODUCTS, the absolute coverage
   // ceiling. That way a 3/33 country looks like 3/33, not like 100%
   // because it happens to lead the list.
   const denominator = TOTAL_PRODUCTS;
@@ -51,23 +53,21 @@ export async function CountryBasketPreview() {
       <div className="mb-12 flex items-end justify-between gap-4">
         <div>
           <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.2em] text-primary">
-            The basket so far
+            {t("section")}
           </p>
           <h2 className="font-serif text-3xl font-semibold tracking-tight md:text-4xl">
-            Where the index is{" "}
-            <span className="italic text-primary">already alive.</span>
+            {t("title1")}{" "}
+            <span className="italic text-primary">{t("titleAccent")}</span>
           </h2>
           <p className="mt-3 max-w-prose text-sm text-muted-foreground">
-            Each bar measures how much of the {denominator}-product basket
-            has at least one verified price in that country. Tap a row
-            for the full country breakdown.
+            {t("subtitle", { total: denominator })}
           </p>
         </div>
         <Link
           href="/basket"
           className="hidden items-center gap-1.5 whitespace-nowrap text-sm font-medium text-primary hover:underline sm:inline-flex"
         >
-          See full index
+          {t("seeFull")}
           <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
         </Link>
       </div>
@@ -78,6 +78,12 @@ export async function CountryBasketPreview() {
             key={basket.country.code}
             basket={basket}
             denominator={denominator}
+            ariaLabel={t("rowAria", {
+              country: basket.country.name,
+              coverage: basket.coverage,
+              total: denominator,
+            })}
+            sumLabel={t("basketSum")}
           />
         ))}
       </ol>
@@ -87,7 +93,7 @@ export async function CountryBasketPreview() {
           href="/basket"
           className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
         >
-          See full index
+          {t("seeFull")}
           <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
         </Link>
       </div>
@@ -98,6 +104,8 @@ export async function CountryBasketPreview() {
 interface CoverageRowProps {
   basket: CountryBasket;
   denominator: number;
+  ariaLabel: string;
+  sumLabel: string;
 }
 
 /**
@@ -108,10 +116,10 @@ interface CoverageRowProps {
  *
  * Mobile collapses to a tighter two-row layout: country header at
  * top, bar + numbers underneath. The bar itself uses an absolute
- * span overlay so the X/33 label reads cleanly even at 1% fill — a
+ * span overlay so the X/33 label reads cleanly even at 1% fill, a
  * 0.2-wide bar would have no room for inline text.
  */
-function CoverageRow({ basket, denominator }: CoverageRowProps) {
+function CoverageRow({ basket, denominator, ariaLabel, sumLabel }: CoverageRowProps) {
   const widthPct = Math.max(2, (basket.coverage / denominator) * 100);
   const totalMajor = formatMajor(basket.totalLocalCents);
 
@@ -120,7 +128,7 @@ function CoverageRow({ basket, denominator }: CoverageRowProps) {
       <Link
         href={`/basket?country=${basket.country.code}`}
         className="grid items-center gap-x-6 gap-y-1 px-2 py-5 transition hover:bg-primary/[0.04] focus-visible:bg-primary/[0.06] focus-visible:outline-none md:grid-cols-[auto_1fr_auto] md:py-6"
-        aria-label={`${basket.country.name}: ${basket.coverage} of ${denominator} products priced`}
+        aria-label={ariaLabel}
       >
         {/* Country mark — desaturated SVG flag + mono caps ISO code.
             Production canonical; see components/brand/CountryMark. */}
@@ -156,7 +164,7 @@ function CoverageRow({ basket, denominator }: CoverageRowProps) {
             </span>
           </p>
           <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
-            basket sum
+            {sumLabel}
           </p>
         </div>
       </Link>
@@ -164,7 +172,8 @@ function CoverageRow({ basket, denominator }: CoverageRowProps) {
   );
 }
 
-function BasketEmptyState() {
+async function BasketEmptyState() {
+  const t = await getTranslations("basketPreview.empty");
   return (
     <section className="container mx-auto max-w-3xl px-4 py-20">
       <div className="rounded-md border border-dashed border-border/80 bg-card/40 px-6 py-12 text-center">
@@ -175,19 +184,18 @@ function BasketEmptyState() {
           <ShoppingBasket className="h-6 w-6" />
         </div>
         <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.2em] text-primary">
-          The basket is empty
+          {t("section")}
         </p>
         <h2 className="font-serif text-2xl font-semibold tracking-tight md:text-3xl">
-          No country has been priced{" "}
-          <span className="italic text-primary">yet.</span>
+          {t("title1")}{" "}
+          <span className="italic text-primary">{t("titleAccent")}</span>
         </h2>
         <p className="mx-auto mt-4 max-w-md text-sm text-muted-foreground">
-          Mercato launches at zero submissions. Be the first to add a price
-          in your country — the rest of the basket builds itself.
+          {t("body")}
         </p>
         <div className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-primary">
           <Link href="/scan" className="inline-flex items-center gap-1.5 hover:underline">
-            Add a price
+            {t("cta")}
             <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
           </Link>
         </div>
