@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowLeft, ShoppingBasket } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 
 import { CountryMark } from "@/components/brand/CountryMark";
 import {
@@ -61,7 +62,8 @@ export default async function BasketPage({ searchParams }: BasketPageProps) {
   return <CountryIndex baskets={snapshot.countries} />;
 }
 
-function CountryIndex({ baskets }: { baskets: readonly CountryBasket[] }) {
+async function CountryIndex({ baskets }: { baskets: readonly CountryBasket[] }) {
+  const t = await getTranslations("basket.index");
   // Show all countries — including zero-coverage ones at the bottom —
   // so contributors see what's missing and can fill gaps.
   const ranked = [...baskets].sort((a, b) => {
@@ -73,17 +75,14 @@ function CountryIndex({ baskets }: { baskets: readonly CountryBasket[] }) {
     <main className="container mx-auto max-w-5xl px-4 py-12">
       <header className="mb-10">
         <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.2em] text-primary">
-          Cost-of-living index
+          {t("kicker")}
         </p>
         <h1 className="font-serif text-4xl font-bold tracking-tight md:text-5xl">
-          The Mercato basket,{" "}
-          <span className="italic text-primary">country by country.</span>
+          {t("title1")}{" "}
+          <span className="italic text-primary">{t("titleAccent")}</span>
         </h1>
         <p className="mt-4 max-w-2xl text-sm text-muted-foreground md:text-base">
-          Daily median prices submitted and verified by the community. Each
-          basket sums the median price for {PRODUCTS.length} canonical goods —
-          bread, rent, transport, utilities — in local currency. Click a row
-          for the per-product breakdown.
+          {t("body", { count: PRODUCTS.length })}
         </p>
       </header>
 
@@ -92,9 +91,9 @@ function CountryIndex({ baskets }: { baskets: readonly CountryBasket[] }) {
           table-in-a-box. */}
       <div className="grid grid-cols-[3rem_1fr_8rem_auto] items-baseline gap-x-6 border-b border-border/60 px-3 pb-3 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
         <span aria-hidden="true">№</span>
-        <span>Country</span>
-        <span className="text-right">Coverage</span>
-        <span className="text-right">Basket total</span>
+        <span>{t("columns.country")}</span>
+        <span className="text-right">{t("columns.coverage")}</span>
+        <span className="text-right">{t("columns.basketTotal")}</span>
       </div>
 
       <ol className="divide-y divide-border/60 border-b border-border/60">
@@ -110,13 +109,14 @@ function CountryIndex({ baskets }: { baskets: readonly CountryBasket[] }) {
   );
 }
 
-function CountryRow({
+async function CountryRow({
   basket,
   rank,
 }: {
   basket: CountryBasket;
   rank: number;
 }) {
+  const t = await getTranslations("basket.index");
   const hasData = basket.coverage > 0;
   const total = formatMajor(basket.totalLocalCents);
   const coveragePct = Math.max(
@@ -129,7 +129,11 @@ function CountryRow({
       <Link
         href={`/basket?country=${basket.country.code}`}
         className="grid grid-cols-[3rem_1fr_8rem_auto] items-center gap-x-6 px-3 py-4 transition hover:bg-primary/[0.04] focus-visible:bg-primary/[0.06] focus-visible:outline-none"
-        aria-label={`${basket.country.name}: ${basket.coverage} of ${PRODUCTS.length} products priced`}
+        aria-label={t("rowAria", {
+          country: basket.country.name,
+          coverage: basket.coverage,
+          total: PRODUCTS.length,
+        })}
       >
         {/* Rank */}
         <span className="font-mono text-[11px] tabular-nums text-muted-foreground">
@@ -169,14 +173,14 @@ function CountryRow({
                 </span>
               </span>
               <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                view →
+                {t("viewAfford")}
               </span>
             </>
           ) : (
             <>
               <span className="text-sm text-muted-foreground">—</span>
               <span className="text-[10px] uppercase tracking-wider text-primary/80">
-                be first →
+                {t("beFirstAfford")}
               </span>
             </>
           )}
@@ -186,7 +190,8 @@ function CountryRow({
   );
 }
 
-function CountryDetail({ basket }: { basket: CountryBasket }) {
+async function CountryDetail({ basket }: { basket: CountryBasket }) {
+  const t = await getTranslations("basket.detail");
   // Group products by category for the breakdown table.
   const byCategory = new Map<ProductCategory, ProductPriceSummary[]>();
   for (const p of basket.prices) {
@@ -202,7 +207,7 @@ function CountryDetail({ basket }: { basket: CountryBasket }) {
         className="mb-6 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition hover:text-foreground"
       >
         <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
-        Back to index
+        {t("back")}
       </Link>
 
       <header className="mb-10 space-y-4">
@@ -211,18 +216,20 @@ function CountryDetail({ basket }: { basket: CountryBasket }) {
               so the country reads as the page identity. */}
           <CountryMark code={basket.country.code} size="lg" />
           <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-primary">
-            {basket.country.currency} · cost-of-living
+            {t("kicker", { currency: basket.country.currency })}
           </p>
         </div>
         <h1 className="font-serif text-4xl font-bold tracking-tight md:text-5xl">
           {basket.country.nameLocal ?? basket.country.name}
         </h1>
         <p className="max-w-2xl text-sm text-muted-foreground">
-          Median basket total of{" "}
-          <strong>
-            {formatMajor(basket.totalLocalCents)} {basket.country.currency}
-          </strong>{" "}
-          across {basket.coverage} of {PRODUCTS.length} canonical products.
+          {t.rich("summary", {
+            value: formatMajor(basket.totalLocalCents),
+            currency: basket.country.currency,
+            filled: basket.coverage,
+            total: PRODUCTS.length,
+            strong: (chunks) => <strong>{chunks}</strong>,
+          })}
         </p>
       </header>
 
@@ -236,20 +243,21 @@ function CountryDetail({ basket }: { basket: CountryBasket }) {
               <ShoppingBasket className="h-6 w-6" />
             </div>
             <h2 className="font-serif text-2xl font-semibold">
-              No prices in{" "}
-              <span className="italic text-primary">
-                {basket.country.name}
-              </span>{" "}
-              yet
+              {t.rich("emptyTitle", {
+                country: basket.country.name,
+                accent: (chunks) => (
+                  <span className="italic text-primary">{chunks}</span>
+                ),
+              })}
             </h2>
             <p className="mx-auto mt-3 max-w-md text-sm text-muted-foreground">
-              The basket here is empty. Be the first to add a price.
+              {t("emptyBody")}
             </p>
             <Link
               href="/scan"
               className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
             >
-              Add a price →
+              {t("emptyCta")}
             </Link>
           </CardContent>
         </Card>
@@ -275,7 +283,7 @@ function CountryDetail({ basket }: { basket: CountryBasket }) {
   );
 }
 
-function CategorySection({
+async function CategorySection({
   label,
   products,
   currency,
@@ -284,6 +292,7 @@ function CategorySection({
   products: ProductPriceSummary[];
   currency: string;
 }) {
+  const t = await getTranslations("basket.detail");
   return (
     <Card>
       <CardHeader>
@@ -322,9 +331,7 @@ function CategorySection({
                     )}
                   </td>
                   <td className="px-6 py-3 text-right font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
-                    {hasData
-                      ? `${p.sampleSize} ${p.sampleSize === 1 ? "sub" : "subs"}`
-                      : ""}
+                    {hasData ? t("subsCount", { count: p.sampleSize }) : ""}
                   </td>
                 </tr>
               );
@@ -336,7 +343,8 @@ function CategorySection({
   );
 }
 
-function EmptyState() {
+async function EmptyState() {
+  const t = await getTranslations("basket.empty");
   return (
     <main className="container mx-auto max-w-3xl px-4 py-24">
       <div className="rounded-md border border-dashed border-border/80 bg-card/40 px-6 py-16 text-center">
@@ -347,25 +355,22 @@ function EmptyState() {
           <ShoppingBasket className="h-7 w-7" />
         </div>
         <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.2em] text-primary">
-          The basket is empty
+          {t("kicker")}
         </p>
         <h1 className="font-serif text-3xl font-bold tracking-tight md:text-4xl">
-          No prices have been submitted{" "}
-          <span className="italic text-primary">yet.</span>
+          {t("title1")}{" "}
+          <span className="italic text-primary">{t("titleAccent")}</span>
         </h1>
         <p className="mx-auto mt-4 max-w-md text-sm text-muted-foreground">
-          Mercato launches at zero submissions in every country. Pick a
-          product, pick your country, type a price — the index starts
-          building itself.
+          {t("body")}
         </p>
         <Link
           href="/scan"
           className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
         >
-          Add the first price →
+          {t("cta")}
         </Link>
       </div>
     </main>
   );
 }
-
