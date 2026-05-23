@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 import { CountryMark } from "@/components/brand/CountryMark";
 import type {
@@ -49,6 +50,7 @@ export function HeroLiveRanking({
   asOfEur,
   partial,
 }: HeroLiveRankingProps) {
+  const t = useTranslations("heroRanking");
   const [base, setBase] = useState<"USD" | "EUR">("USD");
   const data = base === "USD" ? usd : eur;
   const asOf = base === "USD" ? asOfUsd : asOfEur;
@@ -66,15 +68,15 @@ export function HeroLiveRanking({
       <div className="mb-4 flex items-baseline justify-between gap-3">
         <div>
           <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-primary">
-            Live country ranking
+            {t("section")}
           </p>
           <h3 className="mt-1 font-serif text-lg font-semibold tracking-tight">
-            Bread · milk · transit
+            {t("title")}
           </h3>
         </div>
         <div
           role="tablist"
-          aria-label="Base currency"
+          aria-label={t("baseToggleAria")}
           className="inline-flex overflow-hidden rounded-sm border border-border/60 font-mono text-[10px] uppercase tracking-[0.16em]"
         >
           {(["USD", "EUR"] as const).map((code) => {
@@ -109,7 +111,12 @@ export function HeroLiveRanking({
               <Link
                 href={`/basket?country=${entry.countryCode}`}
                 className="group block focus-visible:outline-none"
-                aria-label={`${entry.countryName}: ${symbol}${major} ${base} core basket`}
+                aria-label={t("itemAria", {
+                  country: entry.countryName,
+                  symbol,
+                  amount: major,
+                  base,
+                })}
               >
                 <div className="flex items-center justify-between gap-3 text-xs">
                   <span className="flex items-center gap-2.5 truncate">
@@ -146,14 +153,12 @@ export function HeroLiveRanking({
 
       {/* Footer — provenance */}
       <div className="mt-4 flex items-center justify-between border-t border-border/60 pt-3 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
-        <span>
-          fx · ecb · {asOf ?? "—"}
-        </span>
+        <span>{t("fxFooter", { date: asOf ?? "·" })}</span>
         <Link
           href="/basket"
           className="inline-flex items-center gap-1 hover:text-foreground"
         >
-          Full index
+          {t("fullIndex")}
           <ArrowRight className="h-3 w-3" aria-hidden="true" />
         </Link>
       </div>
@@ -168,19 +173,20 @@ export function HeroLiveRanking({
  * and which slot is missing.
  */
 function EmptyState({ partial }: { partial: CorePartialEntry[] }) {
+  const t = useTranslations("heroRanking");
   const hasPartial = partial.length > 0;
   return (
     <div className="flex flex-col">
       <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-primary">
-        Closest to ranking
+        {t("partialTitle")}
       </p>
       <h3 className="mt-1 font-serif text-lg font-semibold tracking-tight">
-        Bread · milk · transit
+        {t("title")}
       </h3>
       {hasPartial ? (
         <>
           <p className="mt-2 text-xs text-muted-foreground">
-            One more product, one more country into the ranking.
+            {t("partialBody")}
           </p>
           <ol className="mt-4 space-y-2.5">
             {partial.slice(0, 5).map((entry) => {
@@ -190,7 +196,11 @@ function EmptyState({ partial }: { partial: CorePartialEntry[] }) {
                   <Link
                     href={`/basket?country=${entry.countryCode}`}
                     className="group block focus-visible:outline-none"
-                    aria-label={`${entry.countryName}: ${entry.filled} of ${entry.total} core products priced`}
+                    aria-label={t("partialItemAria", {
+                      country: entry.countryName,
+                      filled: entry.filled,
+                      total: entry.total,
+                    })}
                   >
                     <div className="flex items-center justify-between gap-3 text-xs">
                       <span className="flex items-center gap-2.5 truncate">
@@ -218,21 +228,20 @@ function EmptyState({ partial }: { partial: CorePartialEntry[] }) {
             })}
           </ol>
           <div className="mt-6 border-t border-border/60 pt-3 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
-            ranking unlocks at 3/3
+            {t("partialFooter")}
           </div>
         </>
       ) : (
         <>
           <p className="mt-3 max-w-xs text-sm text-muted-foreground">
-            Add the first price for bread, milk, or transit. The ranking
-            seeds itself from there.
+            {t("emptyBody")}
           </p>
           <div className="mt-6 border-t border-border/60 pt-3">
             <Link
               href="/scan"
               className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-primary hover:underline"
             >
-              Add a price
+              {t("emptyAddCta")}
               <ArrowRight className="h-3 w-3" aria-hidden="true" />
             </Link>
           </div>
