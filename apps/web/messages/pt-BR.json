@@ -94,6 +94,38 @@
   "balance": {
     "title": "Seus saldos"
   },
+  "item": {
+    "feedTitle": "Feed do produto",
+    "median": {
+      "title": "Preço mediano",
+      "subtitle": "De {count} envios aceitos • últimos 30 dias"
+    },
+    "verify": {
+      "title": "Ajude a verificar",
+      "loading": "Carregando…",
+      "empty": "Agora não há envios pendentes."
+    },
+    "recent": {
+      "title": "Envios recentes",
+      "empty": "Ainda não há envios para este código.",
+      "status": {
+        "accepted": "aceito",
+        "rejected": "rejeitado",
+        "locked": "bloqueado (votos mistos)",
+        "pending": "pendente ({votes}/3)"
+      }
+    },
+    "notFound": {
+      "kicker": "404 · Produto",
+      "title": "Não foi possível abrir este produto.",
+      "body": "Ou o código de barras na URL está malformado (esperamos 12 bytes de hex com prefixo 0x), ou ninguém enviou um preço ainda. Escaneie você mesmo para iniciar o feed.",
+      "cta": {
+        "scan": "Escanear um preço",
+        "home": "Voltar ao início"
+      },
+      "metaTitle": "Produto não encontrado"
+    }
+  },
   "rewards": {
     "h1": "Recompensas",
     "notConnected": "Conecte sua carteira para ver as recompensas pendentes e o histórico de retiradas.",

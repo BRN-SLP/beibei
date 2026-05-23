@@ -94,6 +94,38 @@
   "balance": {
     "title": "Deine Guthaben"
   },
+  "item": {
+    "feedTitle": "Produkt-Feed",
+    "median": {
+      "title": "Median-Preis",
+      "subtitle": "Aus {count} angenommenen Einreichungen • letzte 30 Tage"
+    },
+    "verify": {
+      "title": "Hilf bei der Verifizierung",
+      "loading": "Lade…",
+      "empty": "Im Moment keine offenen Einreichungen."
+    },
+    "recent": {
+      "title": "Aktuelle Einreichungen",
+      "empty": "Noch keine Einreichungen für diesen Code.",
+      "status": {
+        "accepted": "angenommen",
+        "rejected": "abgelehnt",
+        "locked": "gesperrt (gemischt)",
+        "pending": "ausstehend ({votes}/3)"
+      }
+    },
+    "notFound": {
+      "kicker": "404 · Produkt",
+      "title": "Dieses Produkt konnte nicht geöffnet werden.",
+      "body": "Entweder ist der Barcode in der URL fehlerhaft (wir erwarten 12 Bytes Hex mit 0x-Präfix), oder es hat noch niemand einen Preis dafür eingereicht. Scanne ihn selbst, um den Feed zu starten.",
+      "cta": {
+        "scan": "Preis scannen",
+        "home": "Zurück zur Startseite"
+      },
+      "metaTitle": "Produkt nicht gefunden"
+    }
+  },
   "rewards": {
     "h1": "Belohnungen",
     "notConnected": "Verbinde dein Wallet, um ausstehende Belohnungen und den Auszahlungsverlauf zu sehen.",

@@ -94,6 +94,38 @@
   "balance": {
     "title": "Your balances"
   },
+  "item": {
+    "feedTitle": "Item feed",
+    "median": {
+      "title": "Median price",
+      "subtitle": "From {count} accepted submissions • last 30 days"
+    },
+    "verify": {
+      "title": "Help verify",
+      "loading": "Loading…",
+      "empty": "No pending submissions right now."
+    },
+    "recent": {
+      "title": "Recent submissions",
+      "empty": "No submissions yet for this barcode.",
+      "status": {
+        "accepted": "accepted",
+        "rejected": "rejected",
+        "locked": "locked (mixed)",
+        "pending": "pending ({votes}/3)"
+      }
+    },
+    "notFound": {
+      "kicker": "404 · Item",
+      "title": "Couldn't open this item.",
+      "body": "Either the barcode in the URL is malformed (we expect 12 bytes of hex with a 0x prefix), or no one has submitted a price for it yet. Scan it yourself to start the feed.",
+      "cta": {
+        "scan": "Scan a price",
+        "home": "Back to home"
+      },
+      "metaTitle": "Item not found"
+    }
+  },
   "rewards": {
     "h1": "Rewards",
     "notConnected": "Connect your wallet to see pending rewards and claim history.",

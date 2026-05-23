@@ -94,6 +94,38 @@
   "balance": {
     "title": "Tus saldos"
   },
+  "item": {
+    "feedTitle": "Feed del producto",
+    "median": {
+      "title": "Precio mediano",
+      "subtitle": "De {count} aportaciones aceptadas • últimos 30 días"
+    },
+    "verify": {
+      "title": "Ayuda a verificar",
+      "loading": "Cargando…",
+      "empty": "Ahora mismo no hay aportaciones pendientes."
+    },
+    "recent": {
+      "title": "Aportaciones recientes",
+      "empty": "Aún no hay aportaciones para este código.",
+      "status": {
+        "accepted": "aceptado",
+        "rejected": "rechazado",
+        "locked": "bloqueado (votos mixtos)",
+        "pending": "pendiente ({votes}/3)"
+      }
+    },
+    "notFound": {
+      "kicker": "404 · Producto",
+      "title": "No se pudo abrir este producto.",
+      "body": "O bien el código de barras en la URL está mal formado (esperamos 12 bytes de hex con prefijo 0x), o nadie ha aportado un precio aún. Escanéalo tú para iniciar el feed.",
+      "cta": {
+        "scan": "Escanear un precio",
+        "home": "Volver al inicio"
+      },
+      "metaTitle": "Producto no encontrado"
+    }
+  },
   "rewards": {
     "h1": "Recompensas",
     "notConnected": "Conecta tu billetera para ver las recompensas pendientes y el historial de retiros.",

@@ -94,6 +94,38 @@
   "balance": {
     "title": "Vos soldes"
   },
+  "item": {
+    "feedTitle": "Flux du produit",
+    "median": {
+      "title": "Prix médian",
+      "subtitle": "Sur {count} soumissions acceptées • 30 derniers jours"
+    },
+    "verify": {
+      "title": "Aide à vérifier",
+      "loading": "Chargement…",
+      "empty": "Pas de soumissions en attente pour le moment."
+    },
+    "recent": {
+      "title": "Soumissions récentes",
+      "empty": "Aucune soumission pour ce code pour l'instant.",
+      "status": {
+        "accepted": "acceptée",
+        "rejected": "rejetée",
+        "locked": "verrouillée (votes mixtes)",
+        "pending": "en attente ({votes}/3)"
+      }
+    },
+    "notFound": {
+      "kicker": "404 · Produit",
+      "title": "Impossible d'ouvrir ce produit.",
+      "body": "Soit le code-barres dans l'URL est mal formé (12 octets hex avec préfixe 0x attendus), soit personne n'a encore soumis de prix. Scanne-le toi-même pour démarrer le flux.",
+      "cta": {
+        "scan": "Scanner un prix",
+        "home": "Retour à l'accueil"
+      },
+      "metaTitle": "Produit non trouvé"
+    }
+  },
   "rewards": {
     "h1": "Récompenses",
     "notConnected": "Connecte ton portefeuille pour voir les récompenses en attente et l'historique des retraits.",
