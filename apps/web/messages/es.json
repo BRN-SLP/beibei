@@ -59,7 +59,8 @@
       "titleAccent": "todavía.",
       "body": "Mercato arranca en cero. Sé el primero en aportar un precio en tu país, el resto de la canasta se construye sola.",
       "cta": "Aportar un precio"
-    }
+    },
+    "rowAria": "{country}: {coverage} de {total} productos con precio"
   },
   "feed": {
     "section": "Actividad",

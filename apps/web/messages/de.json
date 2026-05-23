@@ -59,7 +59,8 @@
       "titleAccent": "erfasst.",
       "body": "Mercato startet bei null. Sei der/die Erste, der einen Preis in deinem Land einträgt, der Rest des Warenkorbs füllt sich von selbst.",
       "cta": "Preis hinzufügen"
-    }
+    },
+    "rowAria": "{country}: {coverage} von {total} Produkten mit Preis"
   },
   "feed": {
     "section": "Live-Feed",

@@ -59,7 +59,8 @@
       "titleAccent": "de prix.",
       "body": "Mercato démarre à zéro. Sois le premier à ajouter un prix dans ton pays, le reste du panier se construit tout seul.",
       "cta": "Ajouter un prix"
-    }
+    },
+    "rowAria": "{country} : {coverage} sur {total} produits avec prix"
   },
   "feed": {
     "section": "Activité",

@@ -59,7 +59,8 @@
       "titleAccent": "yet.",
       "body": "Mercato launches at zero submissions. Be the first to add a price in your country, and the rest of the basket builds itself.",
       "cta": "Add a price"
-    }
+    },
+    "rowAria": "{country}: {coverage} of {total} products priced"
   },
   "feed": {
     "section": "Live feed",

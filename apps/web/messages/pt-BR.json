@@ -59,7 +59,8 @@
       "titleAccent": "ainda.",
       "body": "O Mercato começa do zero. Seja o primeiro a enviar um preço no seu país, o resto da cesta se monta sozinho.",
       "cta": "Enviar um preço"
-    }
+    },
+    "rowAria": "{country}: {coverage} de {total} produtos com preço"
   },
   "feed": {
     "section": "Atividade",
