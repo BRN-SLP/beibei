@@ -18,7 +18,8 @@
     "stats": {
       "verified": "preços verificados",
       "countries": "países ativos",
-      "pending": "aguardando voto"
+      "pending": "aguardando voto",
+      "ariaLabel": "Estatísticas da rede ao vivo"
     }
   },
   "howItWorks": {

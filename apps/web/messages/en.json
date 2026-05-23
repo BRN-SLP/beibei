@@ -18,7 +18,8 @@
     "stats": {
       "verified": "prices verified",
       "countries": "countries live",
-      "pending": "awaiting peer vote"
+      "pending": "awaiting peer vote",
+      "ariaLabel": "Live network stats"
     }
   },
   "howItWorks": {

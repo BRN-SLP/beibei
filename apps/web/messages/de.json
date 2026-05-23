@@ -18,7 +18,8 @@
     "stats": {
       "verified": "Preise verifiziert",
       "countries": "Länder aktiv",
-      "pending": "warten auf Stimme"
+      "pending": "warten auf Stimme",
+      "ariaLabel": "Live-Netzwerkstatistik"
     }
   },
   "howItWorks": {
