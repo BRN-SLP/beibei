@@ -44,7 +44,8 @@
       "rewardVerifiersRow": "3 × verifiers",
       "rewardSweepRow": "sweep",
       "rewardSweepValue": "any time · no min"
-    }
+    },
+    "tabsAria": "How it works stages"
   },
   "basketPreview": {
     "section": "The basket so far",

@@ -44,7 +44,8 @@
       "rewardVerifiersRow": "3 × vérificateurs",
       "rewardSweepRow": "retirer",
       "rewardSweepValue": "à tout moment · sans minimum"
-    }
+    },
+    "tabsAria": "Étapes : comment ça marche"
   },
   "basketPreview": {
     "section": "Le panier à ce jour",

@@ -44,7 +44,8 @@
       "rewardVerifiersRow": "3 × валідатори",
       "rewardSweepRow": "забрати",
       "rewardSweepValue": "будь-коли · без мінімуму"
-    }
+    },
+    "tabsAria": "Етапи: як це працює"
   },
   "basketPreview": {
     "section": "Кошик на сьогодні",
