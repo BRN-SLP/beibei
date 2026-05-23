@@ -2,6 +2,7 @@
 
 import { Camera, Upload, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import type { Hex } from "viem";
 
 import { Button } from "@/components/ui/button";
@@ -50,10 +51,11 @@ const INITIAL_COUNTRY: Country = getCountryByCode("US") ?? COUNTRIES[0];
  *
  * An explicit two-dropdown pick: which product, which country. The
  * underlying contract call serialises the product slug to bytes12 via
- * keccak256 and the country code to bytes6 via padded ASCII — see
+ * keccak256 and the country code to bytes6 via padded ASCII, see
  * lib/encode.ts for the exact wire format.
  */
 export function PriceForm({ onCancel }: PriceFormProps) {
+  const t = useTranslations("scan");
   const submit = useSubmitPrice();
 
   const [productSlug, setProductSlug] = useState<string>(DEFAULT_PRODUCT_SLUG);
@@ -97,12 +99,15 @@ export function PriceForm({ onCancel }: PriceFormProps) {
       return;
     }
     if (!SUPPORTED_RECEIPT_TYPES.includes(file.type as never)) {
-      setError(`Unsupported file type ${file.type}. Use JPEG / PNG / WebP.`);
+      setError(t("errors.unsupportedFile", { type: file.type }));
       return;
     }
     if (file.size > MAX_RECEIPT_BYTES) {
       setError(
-        `Receipt too large (${file.size} bytes, max ${MAX_RECEIPT_BYTES}).`,
+        t("errors.fileTooLarge", {
+          size: file.size,
+          max: MAX_RECEIPT_BYTES,
+        }),
       );
       return;
     }
@@ -123,7 +128,9 @@ export function PriceForm({ onCancel }: PriceFormProps) {
         const errBody = (await res.json().catch(() => ({}))) as {
           error?: string;
         };
-        throw new Error(errBody.error ?? `upload failed (${res.status})`);
+        throw new Error(
+          errBody.error ?? t("errors.uploadFailed", { status: res.status }),
+        );
       }
       const json = (await res.json()) as SubmitReceiptResponse;
       return json.receiptHash as Hex;
@@ -145,7 +152,7 @@ export function PriceForm({ onCancel }: PriceFormProps) {
         receiptHash,
       });
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "unknown error");
+      setError(err instanceof Error ? err.message : t("errors.unknown"));
     }
   }
 
@@ -153,15 +160,14 @@ export function PriceForm({ onCancel }: PriceFormProps) {
     return (
       <div className="rounded-md border border-primary/30 bg-primary/5 p-4 text-sm">
         <p className="font-semibold text-primary">
-          Submission #{submit.state.submissionId.toString()} accepted on-chain.
+          {t("success.title", { id: submit.state.submissionId.toString() })}
         </p>
         <p className="mt-1 text-xs text-muted-foreground">
-          Waiting for community verification (3 votes needed). Reward will
-          appear on your /rewards page once finalized.
+          {t("success.body")}
         </p>
         <div className="mt-3 flex gap-2">
           <Button onClick={onCancel} size="sm">
-            Submit another
+            {t("success.again")}
           </Button>
         </div>
       </div>
@@ -176,13 +182,18 @@ export function PriceForm({ onCancel }: PriceFormProps) {
       <div className="flex items-start justify-between">
         <div>
           <h2 className="font-serif text-xl font-semibold">
-            Add a price to the basket
+            {t("form.title")}
           </h2>
           <p className="text-xs text-muted-foreground">
-            Pick a product, your country, the price you paid.
+            {t("form.subtitle")}
           </p>
         </div>
-        <Button variant="ghost" size="sm" onClick={onCancel} aria-label="Cancel">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onCancel}
+          aria-label={t("form.cancel")}
+        >
           <X className="h-4 w-4" />
         </Button>
       </div>
@@ -190,13 +201,13 @@ export function PriceForm({ onCancel }: PriceFormProps) {
       {/* Product */}
       <div className="space-y-1.5">
         <label htmlFor="mercato-product" className="text-sm font-medium">
-          Product
+          {t("form.product.label")}
         </label>
         <select
           id="mercato-product"
           value={productSlug}
           onChange={(e) => setProductSlug(e.target.value)}
-          aria-label="Choose a product"
+          aria-label={t("form.product.aria")}
           className="block w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           {productGroups.map((group) => (
@@ -215,7 +226,7 @@ export function PriceForm({ onCancel }: PriceFormProps) {
       {/* Country */}
       <div className="space-y-1.5">
         <label htmlFor="mercato-country" className="text-sm font-medium">
-          Country
+          {t("form.country.label")}
         </label>
         <select
           id="mercato-country"
@@ -224,7 +235,7 @@ export function PriceForm({ onCancel }: PriceFormProps) {
             const next = getCountryByCode(e.target.value);
             if (next) setCountry(next);
           }}
-          aria-label="Choose your country"
+          aria-label={t("form.country.aria")}
           className="block w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           {countryGroups.map((group) => (
@@ -238,14 +249,14 @@ export function PriceForm({ onCancel }: PriceFormProps) {
           ))}
         </select>
         <p className="text-xs text-muted-foreground">
-          Currency follows your country: prices in <strong>{country.currency}</strong>.
+          {t("form.country.currencyHint", { currency: country.currency })}
         </p>
       </div>
 
       {/* Price */}
       <div className="space-y-1.5">
         <label htmlFor="mercato-price-whole" className="text-sm font-medium">
-          Price you paid
+          {t("form.price.label")}
         </label>
         <div className="flex items-center gap-2">
           <input
@@ -254,7 +265,7 @@ export function PriceForm({ onCancel }: PriceFormProps) {
             onChange={(e) => setPriceWhole(e.target.value.replace(/\D/g, ""))}
             placeholder="0"
             inputMode="numeric"
-            aria-label="Whole units"
+            aria-label={t("form.price.wholeAria")}
             className="min-w-0 flex-1 rounded-md border border-input bg-background px-3 py-2.5 text-right font-mono text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           />
           <span aria-hidden="true" className="text-muted-foreground">
@@ -267,7 +278,7 @@ export function PriceForm({ onCancel }: PriceFormProps) {
             }
             placeholder="00"
             inputMode="numeric"
-            aria-label="Cents or fractional units"
+            aria-label={t("form.price.centsAria")}
             className="w-14 shrink-0 rounded-md border border-input bg-background px-3 py-2.5 font-mono text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           />
           <span className="w-12 shrink-0 text-right font-mono text-sm text-muted-foreground">
@@ -278,7 +289,7 @@ export function PriceForm({ onCancel }: PriceFormProps) {
 
       {/* Receipt (optional) */}
       <div className="space-y-1.5">
-        <label className="text-sm font-medium">Receipt photo (optional)</label>
+        <label className="text-sm font-medium">{t("form.receipt.label")}</label>
         <input
           type="file"
           accept={SUPPORTED_RECEIPT_TYPES.join(",")}
@@ -288,7 +299,10 @@ export function PriceForm({ onCancel }: PriceFormProps) {
         {receiptFile && (
           <p className="text-xs text-muted-foreground">
             <Upload className="mr-1 inline h-3 w-3" />
-            {receiptFile.name} ({Math.round(receiptFile.size / 1024)} KB)
+            {t("form.receipt.fileSize", {
+              name: receiptFile.name,
+              kb: Math.round(receiptFile.size / 1024),
+            })}
           </p>
         )}
       </div>
@@ -306,7 +320,9 @@ export function PriceForm({ onCancel }: PriceFormProps) {
           className="w-full sm:w-auto"
         >
           <Camera className="mr-2 h-4 w-4" aria-hidden="true" />
-          {busy ? "Submitting…" : `Submit ${product.label.toLowerCase()}`}
+          {busy
+            ? t("form.submit.busy")
+            : t("form.submit.idle", { product: product.label.toLowerCase() })}
         </Button>
       </div>
     </div>
@@ -345,23 +361,22 @@ function SubmitStatus({
   submitState: ReturnType<typeof useSubmitPrice>["state"];
   error: string | null;
 }) {
+  const t = useTranslations("scan.status");
   if (error) return <span className="text-xs text-destructive">{error}</span>;
   if (uploading)
     return (
-      <span className="text-xs text-muted-foreground">Uploading receipt…</span>
+      <span className="text-xs text-muted-foreground">{t("uploading")}</span>
     );
   switch (submitState.kind) {
     case "awaiting_signature":
       return (
         <span className="text-xs text-muted-foreground">
-          Confirm in wallet…
+          {t("awaitingSignature")}
         </span>
       );
     case "confirming":
       return (
-        <span className="text-xs text-muted-foreground">
-          Waiting for confirmation…
-        </span>
+        <span className="text-xs text-muted-foreground">{t("confirming")}</span>
       );
     case "error":
       return (
