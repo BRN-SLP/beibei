@@ -115,7 +115,7 @@ function MedianTooltip({
         {label}
       </p>
       <p className="font-numeric mt-1 text-base font-semibold text-foreground">
-        ${typeof price === "number" ? price.toFixed(2) : "—"}
+        ${typeof price === "number" ? price.toFixed(2) : "·"}
       </p>
       {typeof sampleSize === "number" && (
         <p className="mt-0.5 text-[10px] text-muted-foreground">
