@@ -5,7 +5,8 @@
     "submit": "Додати",
     "rewards": "Винагороди",
     "menu": "Меню",
-    "logoAria": "Mercato, головна"
+    "logoAria": "Mercato, головна",
+    "close": "Закрити"
   },
   "hero": {
     "liveBadge": "live · celo mainnet",

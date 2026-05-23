@@ -5,7 +5,8 @@
     "submit": "Submit",
     "rewards": "Rewards",
     "menu": "Toggle menu",
-    "logoAria": "Mercato, home"
+    "logoAria": "Mercato, home",
+    "close": "Close"
   },
   "hero": {
     "liveBadge": "live · celo mainnet",
