@@ -45,7 +45,7 @@ export default function GlobalError({ error, reset }: ErrorBoundaryProps) {
         The feed glitched.
       </h1>
       <p className="mt-4 max-w-md text-sm text-muted-foreground md:text-base">
-        We hit an unhandled error rendering this page. Try refreshing — most
+        We hit an unhandled error rendering this page. Try refreshing, most
         of the time the underlying state has already recovered.
       </p>
       {error.digest && (
