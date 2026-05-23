@@ -94,6 +94,52 @@
   "balance": {
     "title": "Vos soldes"
   },
+  "scan": {
+    "connectPrompt": "Connecte ton portefeuille en haut à droite pour soumettre. Le formulaire ci-dessous fonctionne en mode aperçu sans portefeuille.",
+    "form": {
+      "title": "Ajouter un prix au panier",
+      "subtitle": "Choisis un produit, ton pays et le prix que tu as payé.",
+      "cancel": "Annuler",
+      "product": {
+        "label": "Produit",
+        "aria": "Choisis un produit"
+      },
+      "country": {
+        "label": "Pays",
+        "aria": "Choisis ton pays",
+        "currencyHint": "La devise suit ton pays : prix en {currency}."
+      },
+      "price": {
+        "label": "Prix payé",
+        "wholeAria": "Unités entières",
+        "centsAria": "Centimes ou partie fractionnaire"
+      },
+      "receipt": {
+        "label": "Photo du ticket (optionnel)",
+        "fileSize": "{name} ({kb} Ko)"
+      },
+      "submit": {
+        "idle": "Envoyer {product}",
+        "busy": "Envoi…"
+      }
+    },
+    "success": {
+      "title": "Soumission #{id} acceptée on-chain.",
+      "body": "En attente de vérification par la communauté (3 votes requis). La récompense apparaîtra sur ta page /rewards une fois finalisée.",
+      "again": "Envoyer un autre"
+    },
+    "errors": {
+      "unsupportedFile": "Type de fichier non supporté {type}. Utilise JPEG, PNG ou WebP.",
+      "fileTooLarge": "Ticket trop volumineux ({size} octets, max {max}).",
+      "uploadFailed": "échec du téléversement ({status})",
+      "unknown": "erreur inconnue"
+    },
+    "status": {
+      "uploading": "Téléversement du ticket…",
+      "awaitingSignature": "Confirme dans le portefeuille…",
+      "confirming": "En attente de confirmation…"
+    }
+  },
   "languageSwitcher": {
     "label": "Langue",
     "english": "English",

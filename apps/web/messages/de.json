@@ -94,6 +94,52 @@
   "balance": {
     "title": "Deine Guthaben"
   },
+  "scan": {
+    "connectPrompt": "Verbinde dein Wallet oben rechts, um zu senden. Das Formular unten funktioniert im Vorschaumodus auch ohne Wallet.",
+    "form": {
+      "title": "Preis zum Warenkorb hinzufügen",
+      "subtitle": "Wähle ein Produkt, dein Land und den Preis, den du gezahlt hast.",
+      "cancel": "Abbrechen",
+      "product": {
+        "label": "Produkt",
+        "aria": "Produkt auswählen"
+      },
+      "country": {
+        "label": "Land",
+        "aria": "Land auswählen",
+        "currencyHint": "Die Währung folgt deinem Land: Preise in {currency}."
+      },
+      "price": {
+        "label": "Gezahlter Preis",
+        "wholeAria": "Ganze Einheiten",
+        "centsAria": "Cent oder Bruchteil"
+      },
+      "receipt": {
+        "label": "Quittungsfoto (optional)",
+        "fileSize": "{name} ({kb} KB)"
+      },
+      "submit": {
+        "idle": "{product} senden",
+        "busy": "Senden…"
+      }
+    },
+    "success": {
+      "title": "Einreichung #{id} on-chain angenommen.",
+      "body": "Warten auf Community-Verifizierung (3 Stimmen erforderlich). Die Belohnung erscheint auf deiner /rewards-Seite, sobald finalisiert.",
+      "again": "Weiteren Eintrag senden"
+    },
+    "errors": {
+      "unsupportedFile": "Dateityp nicht unterstützt {type}. Verwende JPEG, PNG oder WebP.",
+      "fileTooLarge": "Beleg zu groß ({size} Bytes, max {max}).",
+      "uploadFailed": "Upload fehlgeschlagen ({status})",
+      "unknown": "unbekannter Fehler"
+    },
+    "status": {
+      "uploading": "Beleg wird hochgeladen…",
+      "awaitingSignature": "Im Wallet bestätigen…",
+      "confirming": "Warten auf Bestätigung…"
+    }
+  },
   "languageSwitcher": {
     "label": "Sprache",
     "english": "English",

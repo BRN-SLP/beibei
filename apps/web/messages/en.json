@@ -94,6 +94,52 @@
   "balance": {
     "title": "Your balances"
   },
+  "scan": {
+    "connectPrompt": "Connect your wallet at the top right to submit. The form below works in preview mode without a wallet.",
+    "form": {
+      "title": "Add a price to the basket",
+      "subtitle": "Pick a product, your country, the price you paid.",
+      "cancel": "Cancel",
+      "product": {
+        "label": "Product",
+        "aria": "Choose a product"
+      },
+      "country": {
+        "label": "Country",
+        "aria": "Choose your country",
+        "currencyHint": "Currency follows your country: prices in {currency}."
+      },
+      "price": {
+        "label": "Price you paid",
+        "wholeAria": "Whole units",
+        "centsAria": "Cents or fractional units"
+      },
+      "receipt": {
+        "label": "Receipt photo (optional)",
+        "fileSize": "{name} ({kb} KB)"
+      },
+      "submit": {
+        "idle": "Submit {product}",
+        "busy": "Submitting…"
+      }
+    },
+    "success": {
+      "title": "Submission #{id} accepted on-chain.",
+      "body": "Waiting for community verification (3 votes needed). Reward will appear on your /rewards page once finalized.",
+      "again": "Submit another"
+    },
+    "errors": {
+      "unsupportedFile": "Unsupported file type {type}. Use JPEG, PNG or WebP.",
+      "fileTooLarge": "Receipt too large ({size} bytes, max {max}).",
+      "uploadFailed": "upload failed ({status})",
+      "unknown": "unknown error"
+    },
+    "status": {
+      "uploading": "Uploading receipt…",
+      "awaitingSignature": "Confirm in wallet…",
+      "confirming": "Waiting for confirmation…"
+    }
+  },
   "languageSwitcher": {
     "label": "Language",
     "english": "English",

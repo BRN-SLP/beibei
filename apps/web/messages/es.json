@@ -94,6 +94,52 @@
   "balance": {
     "title": "Tus saldos"
   },
+  "scan": {
+    "connectPrompt": "Conecta tu billetera arriba a la derecha para enviar. El formulario funciona en modo previsualización sin billetera.",
+    "form": {
+      "title": "Añade un precio a la canasta",
+      "subtitle": "Elige un producto, tu país y el precio que pagaste.",
+      "cancel": "Cancelar",
+      "product": {
+        "label": "Producto",
+        "aria": "Elige un producto"
+      },
+      "country": {
+        "label": "País",
+        "aria": "Elige tu país",
+        "currencyHint": "La moneda sigue a tu país: precios en {currency}."
+      },
+      "price": {
+        "label": "Precio que pagaste",
+        "wholeAria": "Unidades enteras",
+        "centsAria": "Céntimos o parte fraccionaria"
+      },
+      "receipt": {
+        "label": "Foto del ticket (opcional)",
+        "fileSize": "{name} ({kb} KB)"
+      },
+      "submit": {
+        "idle": "Enviar {product}",
+        "busy": "Enviando…"
+      }
+    },
+    "success": {
+      "title": "Envío #{id} aceptado en cadena.",
+      "body": "Esperando verificación de la comunidad (se necesitan 3 votos). La recompensa aparecerá en tu página /rewards una vez finalizado.",
+      "again": "Enviar otro"
+    },
+    "errors": {
+      "unsupportedFile": "Tipo de archivo no compatible {type}. Usa JPEG, PNG o WebP.",
+      "fileTooLarge": "Ticket demasiado grande ({size} bytes, máx {max}).",
+      "uploadFailed": "carga fallida ({status})",
+      "unknown": "error desconocido"
+    },
+    "status": {
+      "uploading": "Subiendo ticket…",
+      "awaitingSignature": "Confirma en la billetera…",
+      "confirming": "Esperando confirmación…"
+    }
+  },
   "languageSwitcher": {
     "label": "Idioma",
     "english": "English",

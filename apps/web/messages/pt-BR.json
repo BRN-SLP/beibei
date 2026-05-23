@@ -94,6 +94,52 @@
   "balance": {
     "title": "Seus saldos"
   },
+  "scan": {
+    "connectPrompt": "Conecte sua carteira no canto superior direito para enviar. O formulário funciona em modo de preview sem carteira.",
+    "form": {
+      "title": "Adicionar preço à cesta",
+      "subtitle": "Escolha um produto, seu país e o preço que você pagou.",
+      "cancel": "Cancelar",
+      "product": {
+        "label": "Produto",
+        "aria": "Escolha um produto"
+      },
+      "country": {
+        "label": "País",
+        "aria": "Escolha seu país",
+        "currencyHint": "A moeda segue seu país: preços em {currency}."
+      },
+      "price": {
+        "label": "Preço que você pagou",
+        "wholeAria": "Unidades inteiras",
+        "centsAria": "Centavos ou parte fracionária"
+      },
+      "receipt": {
+        "label": "Foto do recibo (opcional)",
+        "fileSize": "{name} ({kb} KB)"
+      },
+      "submit": {
+        "idle": "Enviar {product}",
+        "busy": "Enviando…"
+      }
+    },
+    "success": {
+      "title": "Envio #{id} aceito na rede.",
+      "body": "Aguardando verificação da comunidade (3 votos necessários). A recompensa aparecerá na sua página /rewards após a finalização.",
+      "again": "Enviar outro"
+    },
+    "errors": {
+      "unsupportedFile": "Tipo de arquivo não suportado {type}. Use JPEG, PNG ou WebP.",
+      "fileTooLarge": "Recibo grande demais ({size} bytes, máx {max}).",
+      "uploadFailed": "falha no upload ({status})",
+      "unknown": "erro desconhecido"
+    },
+    "status": {
+      "uploading": "Enviando recibo…",
+      "awaitingSignature": "Confirme na carteira…",
+      "confirming": "Aguardando confirmação…"
+    }
+  },
   "languageSwitcher": {
     "label": "Idioma",
     "english": "English",
