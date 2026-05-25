@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { CountryBasketPreview } from "@/components/landing/CountryBasketPreview";
 import { HeroLiveRankingServer } from "@/components/landing/HeroLiveRankingServer";
 import { HowItWorks } from "@/components/landing/HowItWorks";
+import { MeracleAttribution } from "@/components/landing/MeracleAttribution";
 import { RecentSubmissions } from "@/components/feed/RecentSubmissions";
 import { Link } from "@/i18n/navigation";
 
@@ -93,6 +94,11 @@ function HomeContent() {
 
       {/* HOW IT WORKS — editorial three-stage flow with artifact mocks. */}
       <HowItWorks />
+
+      {/* MERACLE ATTRIBUTION — the autonomous oracle that seeds the
+          index for new countries / products before community
+          submissions catch up. */}
+      <MeracleAttribution />
 
       <CountryBasketPreview />
 
