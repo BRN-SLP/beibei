@@ -3,13 +3,11 @@ import { useTranslations } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 
 import { HeroStatsServer } from "@/components/hero/HeroStatsServer";
-import { RevealOnScroll } from "@/components/hero/RevealOnScroll";
 import { Button } from "@/components/ui/button";
 import { CountryBasketPreview } from "@/components/landing/CountryBasketPreview";
 import { HeroLiveRankingServer } from "@/components/landing/HeroLiveRankingServer";
 import { HowItWorks } from "@/components/landing/HowItWorks";
 import { MeracleAttribution } from "@/components/landing/MeracleAttribution";
-import { RecentSubmissions } from "@/components/feed/RecentSubmissions";
 import { Link } from "@/i18n/navigation";
 
 interface HomeProps {
@@ -24,7 +22,6 @@ export default async function Home({ params }: HomeProps) {
 
 function HomeContent() {
   const t = useTranslations("hero");
-  const tFeed = useTranslations("feed");
 
   return (
     <main className="flex-1">
@@ -101,23 +98,6 @@ function HomeContent() {
       <MeracleAttribution />
 
       <CountryBasketPreview />
-
-      <section>
-        <div className="container mx-auto max-w-5xl px-4 py-20">
-          <RevealOnScroll>
-            <div className="mb-6 flex items-end justify-between gap-4">
-              <div>
-                <h2 className="font-serif text-2xl font-semibold tracking-tight md:text-3xl">
-                  {tFeed("title")}
-                </h2>
-              </div>
-            </div>
-          </RevealOnScroll>
-          <RevealOnScroll delay={0.08}>
-            <RecentSubmissions />
-          </RevealOnScroll>
-        </div>
-      </section>
     </main>
   );
 }
