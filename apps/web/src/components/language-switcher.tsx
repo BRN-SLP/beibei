@@ -16,19 +16,11 @@ import { routing, type Locale } from "@/i18n/routing";
  * On change we router.replace the same pathname with the new locale —
  * keeps the user on the page they're reading, just in a new language.
  *
- * The label list intentionally shows each language in its OWN script
- * (Українська, Español, ...) — never translate language names; users
- * recognize their own language faster than a localized name.
+ * Display is the locale code in uppercase (EN, UK, ES, PT-BR, DE, FR)
+ * to keep the navbar control compact alongside the FX base toggle.
+ * Codes are universally recognisable and avoid the wide footprint of
+ * translated language names like "Português (BR)".
  */
-const LABEL_KEY: Record<Locale, string> = {
-  en: "english",
-  uk: "ukrainian",
-  es: "spanish",
-  "pt-BR": "portugueseBR",
-  de: "german",
-  fr: "french",
-};
-
 export function LanguageSwitcher() {
   const t = useTranslations("languageSwitcher");
   const locale = useLocale() as Locale;
@@ -64,7 +56,7 @@ export function LanguageSwitcher() {
       >
         {routing.locales.map((code) => (
           <option key={code} value={code}>
-            {t(LABEL_KEY[code])}
+            {code.toUpperCase()}
           </option>
         ))}
       </select>

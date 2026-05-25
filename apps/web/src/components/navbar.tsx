@@ -97,26 +97,34 @@ export function Navbar() {
           </Link>
         </div>
 
-        {/* Desktop navigation */}
-        <nav className="hidden items-center gap-8 md:flex">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              target={link.external ? "_blank" : undefined}
-              rel={link.external ? "noopener noreferrer" : undefined}
-              className={`flex items-center gap-1.5 text-sm font-medium transition-colors hover:text-primary ${
-                pathname === link.href
-                  ? "text-foreground"
-                  : "text-foreground/70"
-              }`}
-            >
-              {t(link.key)}
-              {link.external && <ExternalLink className="h-4 w-4" />}
-            </Link>
-          ))}
+        {/* Desktop navigation — split into two visual groups so the
+            primary nav (Home/Basket/Submit/Rewards) reads as page
+            navigation while the locale / currency / theme / wallet
+            controls cluster reads as session settings. The two groups
+            are pushed apart by ml-10 + pl-6 on the controls cluster
+            so users don't visually merge "English" with the nav
+            links. */}
+        <nav className="hidden items-center md:flex">
+          <div className="flex items-center gap-8">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                target={link.external ? "_blank" : undefined}
+                rel={link.external ? "noopener noreferrer" : undefined}
+                className={`flex items-center gap-1.5 text-sm font-medium transition-colors hover:text-primary ${
+                  pathname === link.href
+                    ? "text-foreground"
+                    : "text-foreground/70"
+                }`}
+              >
+                {t(link.key)}
+                {link.external && <ExternalLink className="h-4 w-4" />}
+              </Link>
+            ))}
+          </div>
 
-          <div className="flex items-center gap-3">
+          <div className="ml-10 flex items-center gap-3 border-l border-border/40 pl-6">
             <Suspense fallback={null}>
               <LanguageSwitcher />
             </Suspense>
