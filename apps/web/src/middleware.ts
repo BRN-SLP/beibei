@@ -19,8 +19,6 @@ export const config = {
    *   - /_next/*         — Next.js internals
    *   - /_vercel/*       — Vercel internals
    *   - static files (anything with a file extension like .png, .ico)
-   *   - the talent-app meta-tag scanner pages (none currently, kept
-   *     as a generic filter for any non-locale routes we add later)
    */
   matcher: ["/((?!api|_next|_vercel|.*\\..*).*)"],
 };
