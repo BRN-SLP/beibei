@@ -47,7 +47,8 @@
       "rewardSweepRow": "sweep",
       "rewardSweepValue": "any time · no min"
     },
-    "tabsAria": "How it works stages"
+    "tabsAria": "How it works stages",
+    "intro": "Three on-chain events take a price observation from your phone to a verified entry in the community index."
   },
   "basketPreview": {
     "section": "The basket so far",

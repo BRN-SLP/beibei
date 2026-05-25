@@ -47,7 +47,8 @@
       "rewardSweepRow": "abheben",
       "rewardSweepValue": "jederzeit · ohne mindest"
     },
-    "tabsAria": "Schritte: So funktioniert es"
+    "tabsAria": "Schritte: So funktioniert es",
+    "intro": "Drei on-chain Ereignisse führen eine Preisbeobachtung von deinem Telefon zu einem verifizierten Eintrag im Community-Index."
   },
   "basketPreview": {
     "section": "Der Warenkorb bislang",

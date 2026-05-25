@@ -47,7 +47,8 @@
       "rewardSweepRow": "retirar",
       "rewardSweepValue": "cuando quieras · sin mínimo"
     },
-    "tabsAria": "Etapas de cómo funciona"
+    "tabsAria": "Etapas de cómo funciona",
+    "intro": "Tres eventos on-chain llevan la observación de un precio desde tu teléfono a una entrada verificada en el índice de la comunidad."
   },
   "basketPreview": {
     "section": "La canasta hasta ahora",

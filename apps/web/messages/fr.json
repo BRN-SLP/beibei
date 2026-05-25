@@ -47,7 +47,8 @@
       "rewardSweepRow": "retirer",
       "rewardSweepValue": "à tout moment · sans minimum"
     },
-    "tabsAria": "Étapes : comment ça marche"
+    "tabsAria": "Étapes : comment ça marche",
+    "intro": "Trois événements on-chain mènent une observation de prix de ton téléphone à une entrée vérifiée dans l'indice communautaire."
   },
   "basketPreview": {
     "section": "Le panier à ce jour",

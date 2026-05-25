@@ -92,13 +92,13 @@ export function HowItWorks() {
 
   return (
     <section className="container mx-auto max-w-5xl px-4 pb-24 pt-14 md:pt-16">
-      <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.2em] text-primary">
-        {t("section")}
-      </p>
-      <h2 className="mb-10 font-serif text-3xl font-semibold tracking-tight md:text-4xl">
+      <h2 className="mb-4 font-serif text-3xl font-semibold tracking-tight md:text-4xl">
         {t("title1")}{" "}
         <span className="italic text-primary">{t("title2")}</span>
       </h2>
+      <p className="mb-10 max-w-2xl text-sm leading-relaxed text-muted-foreground md:text-base">
+        {t("intro")}
+      </p>
 
       {/* Tab strip — editorial underlined nav resting on a single
           horizontal rule. Active stage gets a primary-colored 2px
