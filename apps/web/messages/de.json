@@ -23,6 +23,7 @@
     "eggs_12": { "label": "Eier", "hint": "12 Stück, Größe M" },
     "butter_200g": { "label": "Butter", "hint": "200 g, ungesalzen" },
     "rice_1kg": { "label": "Reis", "hint": "1 kg, weiß" },
+    "sugar_1kg": { "label": "Zucker", "hint": "1 kg, Kristallzucker weiß" },
     "chicken_breast_1kg": { "label": "Hähnchenbrust", "hint": "1 kg, ohne Knochen" },
     "beef_ground_1kg": { "label": "Rinderhack", "hint": "1 kg, 80/20" },
     "apples_1kg": { "label": "Äpfel", "hint": "1 kg" },

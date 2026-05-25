@@ -23,6 +23,7 @@
     "eggs_12": { "label": "Œufs", "hint": "12 unités, calibre moyen" },
     "butter_200g": { "label": "Beurre", "hint": "200 g, doux" },
     "rice_1kg": { "label": "Riz", "hint": "1 kg, blanc" },
+    "sugar_1kg": { "label": "Sucre", "hint": "1 kg, blanc en poudre" },
     "chicken_breast_1kg": { "label": "Blanc de poulet", "hint": "1 kg, sans os" },
     "beef_ground_1kg": { "label": "Bœuf haché", "hint": "1 kg, 80/20" },
     "apples_1kg": { "label": "Pommes", "hint": "1 kg" },

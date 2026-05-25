@@ -23,6 +23,7 @@
     "eggs_12": { "label": "Huevos", "hint": "12 unidades, tamaño normal" },
     "butter_200g": { "label": "Mantequilla", "hint": "200 g, sin sal" },
     "rice_1kg": { "label": "Arroz", "hint": "1 kg, blanco" },
+    "sugar_1kg": { "label": "Azúcar", "hint": "1 kg, blanco granulado" },
     "chicken_breast_1kg": { "label": "Pechuga de pollo", "hint": "1 kg, sin hueso" },
     "beef_ground_1kg": { "label": "Carne picada de ternera", "hint": "1 kg, 80/20" },
     "apples_1kg": { "label": "Manzanas", "hint": "1 kg" },
