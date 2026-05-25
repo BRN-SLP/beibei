@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/sheet";
 import { ConnectButton } from "@/components/connect-button";
 import { MercatoLogo } from "@/components/brand/MercatoLogo";
+import { FxBaseToggle } from "@/components/fx-base-toggle";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Link, usePathname } from "@/i18n/navigation";
@@ -73,6 +74,9 @@ export function Navbar() {
                   <Suspense fallback={null}>
                     <LanguageSwitcher />
                   </Suspense>
+                  <Suspense fallback={null}>
+                    <FxBaseToggle />
+                  </Suspense>
                   <div className="flex items-center gap-2">
                     <ThemeToggle />
                     <ConnectButton />
@@ -115,6 +119,9 @@ export function Navbar() {
           <div className="flex items-center gap-3">
             <Suspense fallback={null}>
               <LanguageSwitcher />
+            </Suspense>
+            <Suspense fallback={null}>
+              <FxBaseToggle />
             </Suspense>
             <ThemeToggle />
             <ConnectButton />

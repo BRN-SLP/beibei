@@ -402,6 +402,10 @@
     "german": "Deutsch",
     "french": "Français"
   },
+  "fxBaseToggle": {
+    "label": "Moneda de visualización",
+    "local": "Local"
+  },
   "meracleAttribution": {
     "section": "Impulsado por",
     "title": "meRacle, oráculo autónomo de precios",

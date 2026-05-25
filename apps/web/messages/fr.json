@@ -402,6 +402,10 @@
     "german": "Deutsch",
     "french": "Français"
   },
+  "fxBaseToggle": {
+    "label": "Devise d'affichage",
+    "local": "Locale"
+  },
   "meracleAttribution": {
     "section": "Propulsé par",
     "title": "meRacle, oracle de prix autonome",

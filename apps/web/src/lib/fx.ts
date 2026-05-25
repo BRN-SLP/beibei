@@ -61,19 +61,76 @@ async function fetchFromFrankfurter(base: FxBase): Promise<FxRates> {
 }
 
 /**
+ * Currencies Frankfurter does not cover today: emerging-market
+ * pairs (ARS, UAH, KES, NGN) that ECB excludes from its daily
+ * reference rates. Floatrates is a free no-key daily JSON feed
+ * that DOES cover them, so we fetch it once per base and merge
+ * the missing currencies into the Frankfurter sheet.
+ */
+interface FloatratesEntry {
+  code: string;
+  rate: number;
+}
+
+async function fetchFromFloatrates(
+  base: FxBase,
+): Promise<Record<string, number>> {
+  const url = `https://www.floatrates.com/daily/${base.toLowerCase()}.json`;
+  const res = await fetch(url, {
+    headers: { Accept: "application/json" },
+    cache: "no-store",
+  });
+  if (!res.ok) {
+    throw new Error(`Floatrates HTTP ${res.status}`);
+  }
+  const json = (await res.json()) as Record<string, FloatratesEntry>;
+  const rates: Record<string, number> = {};
+  for (const entry of Object.values(json)) {
+    rates[entry.code.toUpperCase()] = entry.rate;
+  }
+  return rates;
+}
+
+/**
+ * Fetch Frankfurter, then merge in any rates from Floatrates that
+ * Frankfurter doesn't carry. Frankfurter wins on overlap because
+ * ECB reference rates are the authoritative source. Floatrates
+ * only ever fills holes, never overrides.
+ */
+async function fetchMergedRates(base: FxBase): Promise<FxRates> {
+  const [frankfurter, floatrates] = await Promise.allSettled([
+    fetchFromFrankfurter(base),
+    fetchFromFloatrates(base),
+  ]);
+  // Frankfurter is the spine — if it fails entirely, surface that
+  // failure to the cache layer so the previous good response keeps
+  // serving instead of polluting the sheet with floatrates-only.
+  if (frankfurter.status !== "fulfilled") {
+    throw frankfurter.reason;
+  }
+  const merged = { ...frankfurter.value.rates };
+  if (floatrates.status === "fulfilled") {
+    for (const [code, rate] of Object.entries(floatrates.value)) {
+      if (merged[code] === undefined) merged[code] = rate;
+    }
+  }
+  return { ...frankfurter.value, rates: merged };
+}
+
+/**
  * Cached USD rate sheet. Always 1 hour TTL — Frankfurter publishes
  * daily, so polling faster is wasted bandwidth. Cache key includes
  * the base so USD and EUR get independent cache entries.
  */
 const fetchUsd = unstable_cache(
-  () => fetchFromFrankfurter("USD"),
-  ["fx-rates-usd-v1"],
+  () => fetchMergedRates("USD"),
+  ["fx-rates-usd-v2"],
   { revalidate: 3600, tags: ["fx"] },
 );
 
 const fetchEur = unstable_cache(
-  () => fetchFromFrankfurter("EUR"),
-  ["fx-rates-eur-v1"],
+  () => fetchMergedRates("EUR"),
+  ["fx-rates-eur-v2"],
   { revalidate: 3600, tags: ["fx"] },
 );
 

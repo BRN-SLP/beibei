@@ -402,6 +402,10 @@
     "german": "Deutsch",
     "french": "Français"
   },
+  "fxBaseToggle": {
+    "label": "Display currency",
+    "local": "Local"
+  },
   "meracleAttribution": {
     "section": "Powered by",
     "title": "meRacle, autonomous price oracle",

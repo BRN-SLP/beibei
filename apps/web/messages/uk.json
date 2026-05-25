@@ -402,6 +402,10 @@
     "german": "Deutsch",
     "french": "Français"
   },
+  "fxBaseToggle": {
+    "label": "Валюта відображення",
+    "local": "Локальна"
+  },
   "meracleAttribution": {
     "section": "На основі",
     "title": "meRacle, автономний оракул цін",
