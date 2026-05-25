@@ -19,9 +19,10 @@ const MAX_ROWS = 8;
  * landing page's narrative arc.
  */
 export async function RecentSubmissions() {
-  const [rows, t] = await Promise.all([
+  const [rows, t, tp] = await Promise.all([
     getRecentFeed(MAX_ROWS),
     getTranslations("feed"),
+    getTranslations("products"),
   ]);
 
   if (rows.length === 0) {
@@ -59,6 +60,7 @@ export async function RecentSubmissions() {
             key={row.submissionId.toString()}
             row={row}
             statusLabel={statusLabel}
+            productLabel={tp(`${row.product.slug}.label`)}
           />
         );
       })}
@@ -66,7 +68,15 @@ export async function RecentSubmissions() {
   );
 }
 
-function FeedItem({ row, statusLabel }: { row: FeedRow; statusLabel: string }) {
+function FeedItem({
+  row,
+  statusLabel,
+  productLabel,
+}: {
+  row: FeedRow;
+  statusLabel: string;
+  productLabel: string;
+}) {
   const major = (row.priceCents / 100).toLocaleString(undefined, {
     minimumFractionDigits: 0,
     maximumFractionDigits: 2,
@@ -101,7 +111,7 @@ function FeedItem({ row, statusLabel }: { row: FeedRow; statusLabel: string }) {
           href={`/item/${row.barcode}`}
           className="font-medium hover:underline"
         >
-          <span className="truncate">{row.product.label}</span>
+          <span className="truncate">{productLabel}</span>
         </Link>
         <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
           {row.country.name}

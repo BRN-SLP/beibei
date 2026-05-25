@@ -91,9 +91,8 @@ git push -u origin pass-X/short-slug
 gh pr create --title "..." --body "..." --base main
 
 # 4. Wait for the Vercel preview deployment URL to appear
-#    on the PR. Check it visually (or with /impeccable audit live)
-#    before merging. If the preview build fails, fix in the same
-#    branch, do not bypass.
+#    on the PR. Check it visually before merging. If the
+#    preview build fails, fix in the same branch, do not bypass.
 
 # 5. Merge preserving atomic history, do NOT squash
 gh pr merge --merge --delete-branch
@@ -123,7 +122,7 @@ Cream surface + deep-green primary (OKLCH). Tokens in `apps/web/src/app/globals.
 - Avoid `any`. Use `unknown` + narrow at boundaries.
 - bigint at chain edge, `number` (cents) in app domain (see `lib/chain-boundary.ts`).
 
-### Anti-patterns (Impeccable absolute bans)
+### Anti-patterns (absolute bans)
 
 - No card grids with identical cards
 - No gradient text (`background-clip: text`)

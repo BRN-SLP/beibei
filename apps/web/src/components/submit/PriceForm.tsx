@@ -56,6 +56,7 @@ const INITIAL_COUNTRY: Country = getCountryByCode("US") ?? COUNTRIES[0];
  */
 export function PriceForm({ onCancel }: PriceFormProps) {
   const t = useTranslations("scan");
+  const tp = useTranslations("products");
   const submit = useSubmitPrice();
 
   const [productSlug, setProductSlug] = useState<string>(DEFAULT_PRODUCT_SLUG);
@@ -211,11 +212,14 @@ export function PriceForm({ onCancel }: PriceFormProps) {
           className="block w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           {productGroups.map((group) => (
-            <optgroup key={group.category} label={group.label}>
+            <optgroup
+              key={group.category}
+              label={tp(`categories.${group.category}`)}
+            >
               {group.products.map((p) => (
                 <option key={p.slug} value={p.slug}>
-                  {p.label}
-                  {p.hint ? ` · ${p.hint}` : ""}
+                  {tp(`${p.slug}.label`)}
+                  {p.hasHint ? ` · ${tp(`${p.slug}.hint`)}` : ""}
                 </option>
               ))}
             </optgroup>
@@ -322,7 +326,9 @@ export function PriceForm({ onCancel }: PriceFormProps) {
           <Camera className="mr-2 h-4 w-4" aria-hidden="true" />
           {busy
             ? t("form.submit.busy")
-            : t("form.submit.idle", { product: product.label.toLowerCase() })}
+            : t("form.submit.idle", {
+                product: tp(`${product.slug}.label`).toLowerCase(),
+              })}
         </Button>
       </div>
     </div>

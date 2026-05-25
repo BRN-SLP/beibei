@@ -15,7 +15,7 @@ import {
   type ProductPriceSummary,
 } from "@/lib/aggregate";
 import { formatMajor } from "@/lib/format-cents";
-import { CATEGORY_LABELS, PRODUCTS, type ProductCategory } from "@/lib/products";
+import { PRODUCT_CATEGORIES, PRODUCTS, type ProductCategory } from "@/lib/products";
 
 /**
  * Cost-of-living dashboard at `/basket`.
@@ -263,15 +263,13 @@ async function CountryDetail({ basket }: { basket: CountryBasket }) {
         </Card>
       ) : (
         <div className="space-y-8">
-          {(
-            Object.keys(CATEGORY_LABELS) as ProductCategory[]
-          ).map((category) => {
+          {PRODUCT_CATEGORIES.map((category) => {
             const products = byCategory.get(category);
             if (!products || products.length === 0) return null;
             return (
               <CategorySection
                 key={category}
-                label={CATEGORY_LABELS[category]}
+                category={category}
                 products={products}
                 currency={basket.country.currency}
               />
@@ -284,20 +282,23 @@ async function CountryDetail({ basket }: { basket: CountryBasket }) {
 }
 
 async function CategorySection({
-  label,
+  category,
   products,
   currency,
 }: {
-  label: string;
+  category: ProductCategory;
   products: ProductPriceSummary[];
   currency: string;
 }) {
-  const t = await getTranslations("basket.detail");
+  const [t, tp] = await Promise.all([
+    getTranslations("basket.detail"),
+    getTranslations("products"),
+  ]);
   return (
     <Card>
       <CardHeader>
         <CardTitle className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-          {label}
+          {tp(`categories.${category}`)}
         </CardTitle>
       </CardHeader>
       <CardContent className="p-0">
@@ -311,10 +312,12 @@ async function CategorySection({
                   className={hasData ? "" : "opacity-50"}
                 >
                   <td className="px-6 py-3">
-                    <div className="font-medium">{p.product.label}</div>
-                    {p.product.hint && (
+                    <div className="font-medium">
+                      {tp(`${p.product.slug}.label`)}
+                    </div>
+                    {p.product.hasHint && (
                       <div className="text-xs text-muted-foreground">
-                        {p.product.hint}
+                        {tp(`${p.product.slug}.hint`)}
                       </div>
                     )}
                   </td>

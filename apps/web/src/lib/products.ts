@@ -8,20 +8,26 @@
  * `productSlugToBarcode` in lib/encode.ts.
  *
  * Why a fixed canonical list:
- *   1. Aggregation needs identity — a "milk_1l" price in Argentina is
+ *   1. Aggregation needs identity, a "milk_1l" price in Argentina is
  *      directly comparable to "milk_1l" in Kenya. Free-form text
  *      submissions ("milko", "1 litre milk", "молоко") break that.
  *   2. The submit form's dropdown turns a wide-open problem (any
- *      product) into a single tap, which is a 10× UX win on mobile.
- *   3. A bounded list keeps the country dashboard meaningful — 33
+ *      product) into a single tap, which is a 10x UX win on mobile.
+ *   3. A bounded list keeps the country dashboard meaningful, 33
  *      data points per country fit one screen and feel comprehensive,
  *      whereas 5 000 SKUs feel like noise.
  *
- * Edits to this list ARE breaking — submissions sent against the old
+ * Edits to this list ARE breaking: submissions sent against the old
  * slug ("bread_500g") will not aggregate with the new one
  * ("bread_loaf_500g") even if they mean the same product. Treat as
- * append-only post-launch; deprecate by adding a successor slug, not
+ * append-only post-launch, deprecate by adding a successor slug, not
  * renaming.
+ *
+ * Display labels live in the i18n namespace `products.<slug>.label`
+ * and `products.<slug>.hint`, plus `products.categories.<category>`
+ * for the grouped dropdown headers. `hasHint` signals which products
+ * have a hint key, so consumers can render conditionally without
+ * tripping `MISSING_MESSAGE` on the optional second line.
  */
 
 export type ProductCategory =
@@ -34,24 +40,22 @@ export type ProductCategory =
   | "housing";
 
 export interface Product {
-  /** Stable identifier — hashed to bytes12 for on-chain submission. */
+  /** Stable identifier, hashed to bytes12 for on-chain submission. */
   slug: string;
-  /** Human-readable label shown in the dropdown. */
-  label: string;
-  /** Short hint shown under the label for ambiguous items. */
-  hint?: string;
   category: ProductCategory;
+  /** Whether `products.<slug>.hint` exists in the i18n bundle. */
+  hasHint: boolean;
 }
 
-export const CATEGORY_LABELS: Record<ProductCategory, string> = {
-  food: "Food",
-  beverages: "Beverages",
-  transport: "Transport",
-  utilities: "Utilities",
-  lifestyle: "Lifestyle",
-  clothing: "Clothing",
-  housing: "Housing",
-};
+export const PRODUCT_CATEGORIES: readonly ProductCategory[] = [
+  "food",
+  "beverages",
+  "transport",
+  "utilities",
+  "lifestyle",
+  "clothing",
+  "housing",
+];
 
 /**
  * The canonical 33. Order inside each category is from "most
@@ -59,57 +63,57 @@ export const CATEGORY_LABELS: Record<ProductCategory, string> = {
  * so the dropdown surfaces the highest-signal items first.
  */
 export const PRODUCTS: readonly Product[] = [
-  // FOOD (13) — staples first, then proteins, then produce, then specialty
-  { slug: "bread_500g", label: "Bread", hint: "500 g loaf, white", category: "food" },
-  { slug: "milk_1l", label: "Milk", hint: "1 L, regular", category: "food" },
-  { slug: "eggs_12", label: "Eggs", hint: "12 pcs, regular size", category: "food" },
-  { slug: "rice_1kg", label: "Rice", hint: "1 kg, white", category: "food" },
-  { slug: "chicken_breast_1kg", label: "Chicken breast", hint: "1 kg, boneless", category: "food" },
-  { slug: "beef_ground_1kg", label: "Ground beef", hint: "1 kg, 80/20", category: "food" },
-  { slug: "apples_1kg", label: "Apples", hint: "1 kg", category: "food" },
-  { slug: "bananas_1kg", label: "Bananas", hint: "1 kg", category: "food" },
-  { slug: "tomatoes_1kg", label: "Tomatoes", hint: "1 kg", category: "food" },
-  { slug: "potatoes_1kg", label: "Potatoes", hint: "1 kg", category: "food" },
-  { slug: "cheese_local_500g", label: "Cheese", hint: "500 g, local hard cheese", category: "food" },
-  { slug: "olive_oil_1l", label: "Olive oil", hint: "1 L, extra virgin", category: "food" },
-  { slug: "water_bottled_1500ml", label: "Bottled water", hint: "1.5 L", category: "food" },
+  // FOOD (13)
+  { slug: "bread_500g", category: "food", hasHint: true },
+  { slug: "milk_1l", category: "food", hasHint: true },
+  { slug: "eggs_12", category: "food", hasHint: true },
+  { slug: "rice_1kg", category: "food", hasHint: true },
+  { slug: "chicken_breast_1kg", category: "food", hasHint: true },
+  { slug: "beef_ground_1kg", category: "food", hasHint: true },
+  { slug: "apples_1kg", category: "food", hasHint: true },
+  { slug: "bananas_1kg", category: "food", hasHint: true },
+  { slug: "tomatoes_1kg", category: "food", hasHint: true },
+  { slug: "potatoes_1kg", category: "food", hasHint: true },
+  { slug: "cheese_local_500g", category: "food", hasHint: true },
+  { slug: "olive_oil_1l", category: "food", hasHint: true },
+  { slug: "water_bottled_1500ml", category: "food", hasHint: true },
 
   // BEVERAGES (2)
-  { slug: "coffee_cappuccino_cafe", label: "Cappuccino", hint: "Regular size, at a café", category: "beverages" },
-  { slug: "beer_imported_500ml", label: "Beer", hint: "500 mL, imported brand", category: "beverages" },
+  { slug: "coffee_cappuccino_cafe", category: "beverages", hasHint: true },
+  { slug: "beer_imported_500ml", category: "beverages", hasHint: true },
 
   // TRANSPORT (4)
-  { slug: "gasoline_95_1l", label: "Gasoline", hint: "1 L, 95 octane", category: "transport" },
-  { slug: "diesel_1l", label: "Diesel", hint: "1 L", category: "transport" },
-  { slug: "public_transport_oneway", label: "Public transport", hint: "One-way ticket, local", category: "transport" },
-  { slug: "taxi_5km", label: "Taxi ride", hint: "Approx. 5 km, daytime", category: "transport" },
+  { slug: "gasoline_95_1l", category: "transport", hasHint: true },
+  { slug: "diesel_1l", category: "transport", hasHint: true },
+  { slug: "public_transport_oneway", category: "transport", hasHint: true },
+  { slug: "taxi_5km", category: "transport", hasHint: true },
 
   // UTILITIES (4)
-  { slug: "internet_60mbps_monthly", label: "Internet", hint: "60+ Mbps, unlimited, monthly", category: "utilities" },
-  { slug: "mobile_10gb_monthly", label: "Mobile data", hint: "10 GB plan, monthly", category: "utilities" },
-  { slug: "electricity_apartment_monthly", label: "Electricity", hint: "Avg. monthly bill, 1-bedroom apt.", category: "utilities" },
-  { slug: "gas_apartment_monthly", label: "Gas / heating", hint: "Avg. monthly bill, 1-bedroom apt.", category: "utilities" },
+  { slug: "internet_60mbps_monthly", category: "utilities", hasHint: true },
+  { slug: "mobile_10gb_monthly", category: "utilities", hasHint: true },
+  { slug: "electricity_apartment_monthly", category: "utilities", hasHint: true },
+  { slug: "gas_apartment_monthly", category: "utilities", hasHint: true },
 
   // LIFESTYLE (5)
-  { slug: "meal_inexpensive_restaurant", label: "Cheap meal out", hint: "Inexpensive restaurant, 1 person", category: "lifestyle" },
-  { slug: "meal_midrange_restaurant", label: "Mid-range dinner", hint: "Mid-range restaurant, 2 people, 3 courses", category: "lifestyle" },
-  { slug: "gym_monthly_pass", label: "Gym membership", hint: "Monthly, adult", category: "lifestyle" },
-  { slug: "cinema_ticket", label: "Cinema ticket", hint: "1 adult, evening", category: "lifestyle" },
-  { slug: "haircut_basic", label: "Haircut", hint: "Basic, men's barber or simple salon", category: "lifestyle" },
+  { slug: "meal_inexpensive_restaurant", category: "lifestyle", hasHint: true },
+  { slug: "meal_midrange_restaurant", category: "lifestyle", hasHint: true },
+  { slug: "gym_monthly_pass", category: "lifestyle", hasHint: true },
+  { slug: "cinema_ticket", category: "lifestyle", hasHint: true },
+  { slug: "haircut_basic", category: "lifestyle", hasHint: true },
 
   // CLOTHING (2)
-  { slug: "jeans_branded_pair", label: "Jeans", hint: "1 pair, branded (Levi's-tier)", category: "clothing" },
-  { slug: "sneakers_branded_pair", label: "Sneakers", hint: "1 pair, branded (Nike-tier)", category: "clothing" },
+  { slug: "jeans_branded_pair", category: "clothing", hasHint: true },
+  { slug: "sneakers_branded_pair", category: "clothing", hasHint: true },
 
   // HOUSING (3)
-  { slug: "rent_1bd_center", label: "Rent — 1 bedroom, center", hint: "Monthly, city center", category: "housing" },
-  { slug: "rent_1bd_outside", label: "Rent — 1 bedroom, outskirts", hint: "Monthly, outside city center", category: "housing" },
-  { slug: "rent_3bd_center", label: "Rent — 3 bedroom, center", hint: "Monthly, city center", category: "housing" },
+  { slug: "rent_1bd_center", category: "housing", hasHint: true },
+  { slug: "rent_1bd_outside", category: "housing", hasHint: true },
+  { slug: "rent_3bd_center", category: "housing", hasHint: true },
 ];
 
 /**
- * Lookup by slug — used to resolve a submission's bytes12 productId
- * back to a human label on the dashboard.
+ * Lookup by slug, used to resolve a submission's bytes12 productId
+ * back to its canonical product entry on the dashboard.
  */
 const PRODUCT_BY_SLUG: ReadonlyMap<string, Product> = new Map(
   PRODUCTS.map((p) => [p.slug, p]),
@@ -121,24 +125,15 @@ export function getProductBySlug(slug: string): Product | undefined {
 
 /**
  * Grouped view for the submit form's `<select>` with `<optgroup>`s.
+ * Consumers translate `category` via `products.categories.<category>`
+ * and each product's label via `products.<slug>.label`.
  */
 export function getProductsByCategory(): Array<{
   category: ProductCategory;
-  label: string;
   products: Product[];
 }> {
-  const order: ProductCategory[] = [
-    "food",
-    "beverages",
-    "transport",
-    "utilities",
-    "lifestyle",
-    "clothing",
-    "housing",
-  ];
-  return order.map((category) => ({
+  return PRODUCT_CATEGORIES.map((category) => ({
     category,
-    label: CATEGORY_LABELS[category],
     products: PRODUCTS.filter((p) => p.category === category),
   }));
 }
