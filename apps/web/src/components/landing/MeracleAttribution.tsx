@@ -52,8 +52,8 @@ export async function MeracleAttribution() {
         {t("title")}
       </h2>
 
-      <div className="grid items-start gap-8 md:grid-cols-[160px_1fr] md:gap-12">
-        <div className="shrink-0">
+      <div className="grid items-start gap-8 md:grid-cols-[1fr_160px] md:gap-12">
+        <div className="shrink-0 md:order-last">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="https://cdn.jsdelivr.net/gh/BRN-SLP/meracle@main/brand/meracle-square-on-green.svg"
