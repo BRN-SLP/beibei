@@ -5,6 +5,13 @@ import { getTranslations } from "next-intl/server";
 import { CountryMark } from "@/components/brand/CountryMark";
 import { getBasketSnapshot, type CountryBasket } from "@/lib/aggregate";
 import { formatMajor } from "@/lib/format-cents";
+import {
+  applyFxBase,
+  getActiveFxRates,
+  getFxBase,
+  type FxBase,
+} from "@/lib/fx-base";
+import type { FxRates } from "@/lib/fx";
 import { PRODUCTS } from "@/lib/products";
 
 /**
@@ -25,8 +32,12 @@ const TOTAL_PRODUCTS = PRODUCTS.length;
 const LIMIT = 8;
 
 export async function CountryBasketPreview() {
-  const snapshot = await getBasketSnapshot();
-  const t = await getTranslations("basketPreview");
+  const fxBase = await getFxBase();
+  const [snapshot, t, rates] = await Promise.all([
+    getBasketSnapshot(),
+    getTranslations("basketPreview"),
+    getActiveFxRates(fxBase),
+  ]);
   // Rank by coverage descending, tie-break by totalLocalCents
   // (mostly stable since totals across different currencies aren't
   // directly comparable, the tie-break is more about determinism
@@ -84,6 +95,8 @@ export async function CountryBasketPreview() {
               total: denominator,
             })}
             sumLabel={t("basketSum")}
+            fxBase={fxBase}
+            rates={rates}
           />
         ))}
       </ol>
@@ -106,6 +119,8 @@ interface CoverageRowProps {
   denominator: number;
   ariaLabel: string;
   sumLabel: string;
+  fxBase: FxBase;
+  rates: FxRates | null;
 }
 
 /**
@@ -119,9 +134,22 @@ interface CoverageRowProps {
  * span overlay so the X/33 label reads cleanly even at 1% fill, a
  * 0.2-wide bar would have no room for inline text.
  */
-function CoverageRow({ basket, denominator, ariaLabel, sumLabel }: CoverageRowProps) {
+function CoverageRow({
+  basket,
+  denominator,
+  ariaLabel,
+  sumLabel,
+  fxBase,
+  rates,
+}: CoverageRowProps) {
   const widthPct = Math.max(2, (basket.coverage / denominator) * 100);
-  const totalMajor = formatMajor(basket.totalLocalCents);
+  const { cents: displayCents, currency: displayCurrency } = applyFxBase(
+    basket.totalLocalCents,
+    basket.country.currency,
+    fxBase,
+    rates,
+  );
+  const totalMajor = formatMajor(displayCents);
 
   return (
     <li className="group">
@@ -160,7 +188,7 @@ function CoverageRow({ basket, denominator, ariaLabel, sumLabel }: CoverageRowPr
           <p className="text-base font-semibold tracking-tight">
             {totalMajor}{" "}
             <span className="text-xs font-normal text-muted-foreground">
-              {basket.country.currency}
+              {displayCurrency}
             </span>
           </p>
           <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
