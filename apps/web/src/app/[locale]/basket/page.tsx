@@ -15,6 +15,13 @@ import {
   type ProductPriceSummary,
 } from "@/lib/aggregate";
 import { formatMajor } from "@/lib/format-cents";
+import type { FxRates } from "@/lib/fx";
+import {
+  applyFxBase,
+  getActiveFxRates,
+  getFxBase,
+  type FxBase,
+} from "@/lib/fx-base";
 import { PRODUCT_CATEGORIES, PRODUCTS, type ProductCategory } from "@/lib/products";
 
 /**
@@ -45,7 +52,11 @@ export default async function BasketPage({ searchParams }: BasketPageProps) {
     : params.country;
   const selectedCode = rawCountry?.trim().toUpperCase();
 
-  const snapshot = await getBasketSnapshot();
+  const fxBase = await getFxBase();
+  const [snapshot, rates] = await Promise.all([
+    getBasketSnapshot(),
+    getActiveFxRates(fxBase),
+  ]);
 
   if (snapshot.countries.length === 0 || snapshot.countries.every((b) => b.coverage === 0)) {
     return <EmptyState />;
@@ -56,13 +67,27 @@ export default async function BasketPage({ searchParams }: BasketPageProps) {
     : undefined;
 
   if (selected) {
-    return <CountryDetail basket={selected} />;
+    return <CountryDetail basket={selected} fxBase={fxBase} rates={rates} />;
   }
 
-  return <CountryIndex baskets={snapshot.countries} />;
+  return (
+    <CountryIndex
+      baskets={snapshot.countries}
+      fxBase={fxBase}
+      rates={rates}
+    />
+  );
 }
 
-async function CountryIndex({ baskets }: { baskets: readonly CountryBasket[] }) {
+async function CountryIndex({
+  baskets,
+  fxBase,
+  rates,
+}: {
+  baskets: readonly CountryBasket[];
+  fxBase: FxBase;
+  rates: FxRates | null;
+}) {
   const t = await getTranslations("basket.index");
   // Show all countries, including zero-coverage ones at the bottom,
   // so contributors see what's missing and can fill gaps.
@@ -102,6 +127,8 @@ async function CountryIndex({ baskets }: { baskets: readonly CountryBasket[] }) 
             key={basket.country.code}
             basket={basket}
             rank={i + 1}
+            fxBase={fxBase}
+            rates={rates}
           />
         ))}
       </ol>
@@ -112,13 +139,23 @@ async function CountryIndex({ baskets }: { baskets: readonly CountryBasket[] }) 
 async function CountryRow({
   basket,
   rank,
+  fxBase,
+  rates,
 }: {
   basket: CountryBasket;
   rank: number;
+  fxBase: FxBase;
+  rates: FxRates | null;
 }) {
   const t = await getTranslations("basket.index");
   const hasData = basket.coverage > 0;
-  const total = formatMajor(basket.totalLocalCents);
+  const { cents: displayCents, currency: displayCurrency } = applyFxBase(
+    basket.totalLocalCents,
+    basket.country.currency,
+    fxBase,
+    rates,
+  );
+  const total = formatMajor(displayCents);
   const coveragePct = Math.max(
     hasData ? 4 : 0,
     (basket.coverage / PRODUCTS.length) * 100,
@@ -169,7 +206,7 @@ async function CountryRow({
               <span className="text-sm font-semibold">
                 {total}{" "}
                 <span className="text-[10px] font-normal uppercase tracking-wider text-muted-foreground">
-                  {basket.country.currency}
+                  {displayCurrency}
                 </span>
               </span>
               <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
@@ -190,8 +227,22 @@ async function CountryRow({
   );
 }
 
-async function CountryDetail({ basket }: { basket: CountryBasket }) {
+async function CountryDetail({
+  basket,
+  fxBase,
+  rates,
+}: {
+  basket: CountryBasket;
+  fxBase: FxBase;
+  rates: FxRates | null;
+}) {
   const t = await getTranslations("basket.detail");
+  const summary = applyFxBase(
+    basket.totalLocalCents,
+    basket.country.currency,
+    fxBase,
+    rates,
+  );
   // Group products by category for the breakdown table.
   const byCategory = new Map<ProductCategory, ProductPriceSummary[]>();
   for (const p of basket.prices) {
@@ -224,8 +275,8 @@ async function CountryDetail({ basket }: { basket: CountryBasket }) {
         </h1>
         <p className="max-w-2xl text-sm text-muted-foreground">
           {t.rich("summary", {
-            value: formatMajor(basket.totalLocalCents),
-            currency: basket.country.currency,
+            value: formatMajor(summary.cents),
+            currency: summary.currency,
             filled: basket.coverage,
             total: PRODUCTS.length,
             strong: (chunks) => <strong>{chunks}</strong>,
@@ -271,7 +322,9 @@ async function CountryDetail({ basket }: { basket: CountryBasket }) {
                 key={category}
                 category={category}
                 products={products}
-                currency={basket.country.currency}
+                localCurrency={basket.country.currency}
+                fxBase={fxBase}
+                rates={rates}
               />
             );
           })}
@@ -284,11 +337,15 @@ async function CountryDetail({ basket }: { basket: CountryBasket }) {
 async function CategorySection({
   category,
   products,
-  currency,
+  localCurrency,
+  fxBase,
+  rates,
 }: {
   category: ProductCategory;
   products: ProductPriceSummary[];
-  currency: string;
+  localCurrency: string;
+  fxBase: FxBase;
+  rates: FxRates | null;
 }) {
   const [t, tp] = await Promise.all([
     getTranslations("basket.detail"),
@@ -323,12 +380,22 @@ async function CategorySection({
                   </td>
                   <td className="px-6 py-3 text-right font-mono tabular-nums">
                     {hasData ? (
-                      <>
-                        {formatMajor(p.medianCents)}{" "}
-                        <span className="text-xs text-muted-foreground">
-                          {currency}
-                        </span>
-                      </>
+                      (() => {
+                        const { cents, currency } = applyFxBase(
+                          p.medianCents,
+                          localCurrency,
+                          fxBase,
+                          rates,
+                        );
+                        return (
+                          <>
+                            {formatMajor(cents)}{" "}
+                            <span className="text-xs text-muted-foreground">
+                              {currency}
+                            </span>
+                          </>
+                        );
+                      })()
                     ) : (
                       <span className="text-muted-foreground">·</span>
                     )}
