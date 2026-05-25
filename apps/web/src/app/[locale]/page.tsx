@@ -107,10 +107,7 @@ function HomeContent() {
           <RevealOnScroll>
             <div className="mb-6 flex items-end justify-between gap-4">
               <div>
-                <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-primary">
-                  {tFeed("section")}
-                </p>
-                <h2 className="mt-1 text-2xl font-semibold tracking-tight md:text-3xl">
+                <h2 className="font-serif text-2xl font-semibold tracking-tight md:text-3xl">
                   {tFeed("title")}
                 </h2>
               </div>
