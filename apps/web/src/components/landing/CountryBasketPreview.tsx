@@ -49,8 +49,8 @@ export async function CountryBasketPreview() {
   const denominator = TOTAL_PRODUCTS;
 
   return (
-    <section className="container mx-auto max-w-4xl px-4 py-24">
-      <div className="mb-12 flex items-end justify-between gap-4">
+    <section className="container mx-auto max-w-5xl px-4 pb-20 pt-14 md:pt-16">
+      <div className="mb-10 flex items-end justify-between gap-4">
         <div>
           <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.2em] text-primary">
             {t("section")}
@@ -127,7 +127,7 @@ function CoverageRow({ basket, denominator, ariaLabel, sumLabel }: CoverageRowPr
     <li className="group">
       <Link
         href={`/basket?country=${basket.country.code}`}
-        className="grid items-center gap-x-6 gap-y-1 px-2 py-5 transition hover:bg-primary/[0.04] focus-visible:bg-primary/[0.06] focus-visible:outline-none md:grid-cols-[auto_1fr_auto] md:py-6"
+        className="grid items-center gap-x-6 gap-y-1 px-2 py-3 transition hover:bg-primary/[0.04] focus-visible:bg-primary/[0.06] focus-visible:outline-none md:grid-cols-[auto_1fr_auto] md:py-3.5"
         aria-label={ariaLabel}
       >
         {/* Country mark — desaturated SVG flag + mono caps ISO code.
@@ -136,10 +136,10 @@ function CoverageRow({ basket, denominator, ariaLabel, sumLabel }: CoverageRowPr
 
         {/* Country meta + coverage progress underline */}
         <div className="min-w-0">
-          <p className="font-serif text-lg font-semibold leading-tight">
+          <p className="font-serif text-base font-semibold leading-tight">
             {basket.country.name}
           </p>
-          <div className="mt-2 flex items-center gap-3">
+          <div className="mt-1.5 flex items-center gap-3">
             <span
               aria-hidden="true"
               className="relative h-px flex-1 bg-border/50"
