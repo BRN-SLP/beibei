@@ -96,7 +96,7 @@ export function HowItWorks() {
         {t("title1")}{" "}
         <span className="italic text-primary">{t("title2")}</span>
       </h2>
-      <p className="mb-10 max-w-2xl text-sm leading-relaxed text-muted-foreground md:text-base">
+      <p className="mb-10 max-w-2xl text-justify text-sm leading-relaxed text-muted-foreground hyphens-auto md:text-base">
         {t("intro")}
       </p>
 
@@ -169,7 +169,7 @@ export function HowItWorks() {
                 ? current.titleNode
                 : current.title}
             </h3>
-            <p className="max-w-prose text-sm leading-relaxed text-muted-foreground md:text-base">
+            <p className="max-w-prose text-justify text-sm leading-relaxed text-muted-foreground hyphens-auto md:text-base">
               {current.body}
             </p>
           </div>

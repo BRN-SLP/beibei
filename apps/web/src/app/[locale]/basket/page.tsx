@@ -106,7 +106,7 @@ async function CountryIndex({
           {t("title1")}{" "}
           <span className="italic text-primary">{t("titleAccent")}</span>
         </h1>
-        <p className="mt-4 max-w-2xl text-sm text-muted-foreground md:text-base">
+        <p className="mt-4 max-w-2xl text-justify text-sm text-muted-foreground hyphens-auto md:text-base">
           {t("body", { count: PRODUCTS.length })}
         </p>
       </header>
@@ -273,7 +273,7 @@ async function CountryDetail({
         <h1 className="font-serif text-4xl font-bold tracking-tight md:text-5xl">
           {basket.country.nameLocal ?? basket.country.name}
         </h1>
-        <p className="max-w-2xl text-sm text-muted-foreground">
+        <p className="max-w-2xl text-justify text-sm text-muted-foreground hyphens-auto">
           {t.rich("summary", {
             value: formatMajor(summary.cents),
             currency: summary.currency,

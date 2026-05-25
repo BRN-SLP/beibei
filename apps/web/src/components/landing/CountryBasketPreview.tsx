@@ -70,7 +70,7 @@ export async function CountryBasketPreview() {
             {t("title1")}{" "}
             <span className="italic text-primary">{t("titleAccent")}</span>
           </h2>
-          <p className="mt-3 max-w-prose text-sm text-muted-foreground">
+          <p className="mt-3 max-w-prose text-justify text-sm text-muted-foreground hyphens-auto">
             {t("subtitle", { total: denominator })}
           </p>
         </div>

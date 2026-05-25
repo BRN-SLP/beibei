@@ -54,7 +54,7 @@ function HomeContent() {
               {t("title3")}
             </h1>
 
-            <p className="max-w-md text-sm text-muted-foreground md:text-base">
+            <p className="max-w-md text-justify text-sm text-muted-foreground hyphens-auto md:text-base">
               {t("subtitle")}
             </p>
 

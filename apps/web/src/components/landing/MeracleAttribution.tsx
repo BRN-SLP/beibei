@@ -65,7 +65,7 @@ export async function MeracleAttribution() {
         </div>
 
         <div className="space-y-6">
-          <p className="max-w-prose text-sm leading-relaxed text-muted-foreground md:text-base">
+          <p className="max-w-prose text-justify text-sm leading-relaxed text-muted-foreground hyphens-auto md:text-base">
             {t("body")}
           </p>
 
