@@ -21,6 +21,7 @@
     "bread_500g": { "label": "Pão", "hint": "500 g, branco" },
     "milk_1l": { "label": "Leite", "hint": "1 L, integral" },
     "eggs_12": { "label": "Ovos", "hint": "12 unidades, tamanho normal" },
+    "butter_200g": { "label": "Manteiga", "hint": "200 g, sem sal" },
     "rice_1kg": { "label": "Arroz", "hint": "1 kg, branco" },
     "chicken_breast_1kg": { "label": "Peito de frango", "hint": "1 kg, sem osso" },
     "beef_ground_1kg": { "label": "Carne moída", "hint": "1 kg, 80/20" },

@@ -63,10 +63,11 @@ export const PRODUCT_CATEGORIES: readonly ProductCategory[] = [
  * so the dropdown surfaces the highest-signal items first.
  */
 export const PRODUCTS: readonly Product[] = [
-  // FOOD (13)
+  // FOOD (14)
   { slug: "bread_500g", category: "food", hasHint: true },
   { slug: "milk_1l", category: "food", hasHint: true },
   { slug: "eggs_12", category: "food", hasHint: true },
+  { slug: "butter_200g", category: "food", hasHint: true },
   { slug: "rice_1kg", category: "food", hasHint: true },
   { slug: "chicken_breast_1kg", category: "food", hasHint: true },
   { slug: "beef_ground_1kg", category: "food", hasHint: true },
