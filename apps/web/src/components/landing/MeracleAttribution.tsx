@@ -1,6 +1,6 @@
-"use client";
+import { getLocale, getTranslations } from "next-intl/server";
 
-import { useTranslations } from "next-intl";
+import { getMeracleStats } from "@/lib/meracle-stats";
 
 /**
  * meRacle attribution section.
@@ -16,11 +16,33 @@ import { useTranslations } from "next-intl";
  * works" and is now told "and here is the oracle that bootstraps each
  * new market before the community catches up".
  *
+ * Stats are derived live from on-chain PriceSubmitted events filtered
+ * to meRacle's operational hot wallet, so the catalog / markets /
+ * cadence row stays honest as new countries and products come online
+ * without anyone editing the marketing copy.
+ *
  * Logo is hot-linked from the meRacle repo via jsDelivr CDN, so brand
  * stays in one canonical source without duplicating the SVG here.
  */
-export function MeracleAttribution() {
-  const t = useTranslations("meracleAttribution");
+export async function MeracleAttribution() {
+  const [t, locale, stats] = await Promise.all([
+    getTranslations("meracleAttribution"),
+    getLocale(),
+    getMeracleStats(),
+  ]);
+
+  const lastSync =
+    stats.lastSyncTs > 0
+      ? `${new Intl.DateTimeFormat(locale, {
+          month: "short",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          timeZone: "UTC",
+          hour12: false,
+        }).format(new Date(stats.lastSyncTs * 1000))} UTC`
+      : t("stat3Empty");
+
   return (
     <section className="container mx-auto max-w-5xl px-4 py-20 md:py-24">
       <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.2em] text-primary">
@@ -50,15 +72,19 @@ export function MeracleAttribution() {
           <dl className="grid grid-cols-2 gap-x-8 gap-y-4 font-mono text-[11px] uppercase tracking-[0.18em] sm:grid-cols-3">
             <div>
               <dt className="text-muted-foreground">{t("stat1Label")}</dt>
-              <dd className="mt-1 text-foreground/90">{t("stat1Value")}</dd>
+              <dd className="mt-1 text-foreground/90">
+                {t("stat1Unit", { count: stats.staples })}
+              </dd>
             </div>
             <div>
               <dt className="text-muted-foreground">{t("stat2Label")}</dt>
-              <dd className="mt-1 text-foreground/90">{t("stat2Value")}</dd>
+              <dd className="mt-1 text-foreground/90">
+                {t("stat2Unit", { count: stats.countries })}
+              </dd>
             </div>
             <div>
               <dt className="text-muted-foreground">{t("stat3Label")}</dt>
-              <dd className="mt-1 text-foreground/90">{t("stat3Value")}</dd>
+              <dd className="mt-1 text-foreground/90">{lastSync}</dd>
             </div>
           </dl>
 
