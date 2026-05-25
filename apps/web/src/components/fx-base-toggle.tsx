@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Coins } from "lucide-react";
 import { useTranslations } from "next-intl";
 
-import { FX_BASE_COOKIE, type FxBase } from "@/lib/fx-base";
+import { FX_BASE_COOKIE, type FxBase } from "@/lib/fx-base-types";
 
 /**
  * Currency-base switcher.

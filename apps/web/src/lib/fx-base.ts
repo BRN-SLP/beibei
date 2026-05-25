@@ -24,10 +24,9 @@ import {
   getFxRatesBoth,
   type FxRates,
 } from "./fx";
+import { FX_BASE_COOKIE, type FxBase } from "./fx-base-types";
 
-export type FxBase = "local" | "USD" | "EUR";
-
-export const FX_BASE_COOKIE = "mercato-fx-base";
+export { FX_BASE_COOKIE, type FxBase };
 
 /**
  * Read the user's selected FX base from the request cookies.
